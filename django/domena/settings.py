@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -75,8 +76,12 @@ WSGI_APPLICATION = 'domena.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'mysql.connector.django',
+        'NAME':os.environ.get('MYSQL_DATABASE'),
+        'USER':os.environ.get('MYSQL_USER'),
+        'PASSWORD':os.environ.get('MYSQL_PASSWORD'),
+        'HOST':'db',
+        'PORT':os.environ.get('MYSQL_PORT')
     }
 }
 

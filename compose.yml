@@ -9,8 +9,18 @@ services:
       - ./sql/conf.env
     ports:
       - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
   db:
     image: mysql
+    restart: always
+    healthcheck:
+          test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+          timeout: 20s
+          retries: 10
     volumes:
       - ./sql/data/:/var/lib/mysql
     env_file:
@@ -19,6 +29,7 @@ services:
       - 3306:3306
   mqtt:
     image: eclipse-mosquitto:2
+    restart: always
     volumes:
       - ./mqtt/config/:/mosquitto/config
       - ./mqtt/log/:/mosquitto/conf

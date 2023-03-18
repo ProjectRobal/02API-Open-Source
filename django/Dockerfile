@@ -1,15 +1,17 @@
-FROM --platform=$BUILDPLATFORM python:3.11.2-alpine3.17
+FROM --platform=$BUILDPLATFORM python:3.11.2-bullseye
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PORT=80
+    PORT=8000
 
 WORKDIR /app
 COPY requirements.txt /app
-RUN apt update && apt upgrade -y
+COPY entrypoint.sh /app
+
+RUN apt-get update && apt-get upgrade -y
 RUN pip3 install -r requirements.txt --no-cache-dir
 COPY . /app
 
 EXPOSE 8000
-ENTRYPOINT [ "python3" ]
-CMD ["manage.py","runserver","0.0.0.0:8000"]
+RUN chmod +x /app/entrypoint.sh
+CMD ["./entrypoint.sh"]
