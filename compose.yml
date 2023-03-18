@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  web:
+    container_name: django
+    build:
+      context: django
+    env_file:
+      - ./django/conf.env
+      - ./sql/conf.env
+    ports:
+      - 8000:8000
+  db:
+    image: mysql
+    volumes:
+      - ./sql/data/:/var/lib/mysql
+    env_file:
+      - ./sql/conf.env
+    ports:
+      - 3306:3306
+  mqtt:
+    image: eclipse-mosquitto:2
+    volumes:
+      - ./mqtt/config/:/mosquitto/config
+      - ./mqtt/log/:/mosquitto/conf
+    ports:
+      - 1883:1883
+      - 9001:9001
