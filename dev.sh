@@ -11,6 +11,13 @@ if [ $cmd = "build" ]; then
 
     docker compose build
 
+elif [ $cmd = "rebuild" ]; then
+
+    docker compose rm -f -s -v
+    rm -R  sql/data
+    rm -R mqtt/data
+    docker compose build
+
 elif [ $cmd = "up" ]; then
 
     docker compose up
@@ -50,6 +57,7 @@ elif [ $cmd = "init_root" ]; then
 elif [ $cmd = "help" ]; then
 
 echo "build - zbuduj kontenery"
+echo "rebuild - purge + build"
 echo "up - uruchom i utwórz kontenery"
 echo "down - zatrzymaj i usuń kontenery"
 echo "start - uruchom kontenery"
