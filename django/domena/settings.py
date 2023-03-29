@@ -38,9 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'dmqtt',
     'devices'
 ]
+
+MQTT_SERVER="mqtt"
+MQTT_USER="admin"
+MQTT_PASSWORD="root"
+MQTT_PORT=1883
+MQTT_KEEPALIVE = 60
 
 
 MIDDLEWARE = [
