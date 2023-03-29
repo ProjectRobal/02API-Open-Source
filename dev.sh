@@ -55,7 +55,7 @@ elif [ $cmd = "init_root" ]; then
 
 elif [ $cmd = "init_mqtt" ]; then
 
-    docker-compose run -T mqtt mosquitto_passwd -b /mosquitto/config/password.txt user password
+    docker-compose run -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt
 
 elif [ $cmd = "help" ]; then
 
