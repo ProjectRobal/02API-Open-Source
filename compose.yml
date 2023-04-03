@@ -31,8 +31,12 @@ services:
     image: eclipse-mosquitto:2
     restart: always
     volumes:
-      - ./mqtt/config/:/mosquitto/config
-      - ./mqtt/log/:/mosquitto/conf
+      - type: bind 
+        source: ./mqtt/config/
+        target: /mosquitto/config/
+      - type: bind
+        source: ./mqtt/log/
+        target: /mosquitto/log/
     ports:
       - 1883:1883
       - 9001:9001

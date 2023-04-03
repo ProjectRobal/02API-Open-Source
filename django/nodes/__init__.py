@@ -1,0 +1,1 @@
+'''A app that will hold devices nodes'''
