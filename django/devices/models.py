@@ -9,7 +9,7 @@ class Device(common):
     register_date - a date when device was registered
     last_login_date - a date when device was last logged in
         '''
-        name= models.CharField(max_length=64)
+        name= models.CharField(max_length=64,unique=True)
         register_date= models.DateTimeField(blank=True,null=True)
         last_login_date=models.DateTimeField(blank=True,null=True)
         status=models.IntegerChoices('DeviceStatus',"DISCONNECTED CONNECTED BUSY BOOTTING")

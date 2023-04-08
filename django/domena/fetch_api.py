@@ -2,7 +2,7 @@
 API set for interface between mqtt and sql through django. 
 
 '''
-
+import logging
 from django.db import models
 
 class FetchResult:
@@ -11,12 +11,40 @@ class FetchResult:
         self.message=message
         self.result=result
 
+        logging.debug("code: "+str(self.code)+" msg: "+self.message)
+        
+
     def __bool__(self):
         return self.result!=None
+    
+    def __dict__(self):
+
+        output:dict={
+                "code":self.code,
+                "message":self.message,
+                }
+        
+        if self.result is not None:
+            output["result"]=self.result.__dict__()
+        
+        return output
 
 class Fetch:
+
+    requests=["","get","post","mod"]
+
     def __init__(self,model:models.Model) -> None:
         self.model=model
+
+    def match(self,request:str,data:dict|None)->FetchResult:
+        match request:
+            case "post":
+                return self.post(data)
+            case "get":
+                return self.get_ex(dict)
+            case _:
+                return self.get()
+
 
     def post(self,data:dict)->FetchResult:
 
@@ -32,7 +60,7 @@ class Fetch:
             
             return FetchResult(-1,"Entry not added: "+str(e))
 
-    def get(self):
+    def get(self)->FetchResult:
 
         if self.model.objects.count()==0:
             return FetchResult(-2,"Database is empty")
@@ -41,7 +69,7 @@ class Fetch:
 
         return FetchResult(0,"Object retrived",result)
     
-    def get_ex(self,data:dict):
+    def get_ex(self,data:dict)->FetchResult:
         
         if "id" in data.keys():
             result=self.model.objects.get(id=data["id"])
