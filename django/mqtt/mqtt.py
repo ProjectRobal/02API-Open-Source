@@ -1,11 +1,10 @@
 import json
 import paho.mqtt.client as mqtt
 from django.forms.models import model_to_dict
-from . import settings
-from nodes.models import *
-from nodes.models import NodeTopics
+from domena import settings
+from .models import Topics
 from devices.models import Device
-from fetch_api import Fetch,FetchResult
+from common.fetch_api import Fetch,FetchResult
 import logging
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
@@ -22,7 +21,7 @@ def subscribe_to_topics(mqtt_client:mqtt.Client):
     else:
         logging.error("No devices has been found!")
 
-    topics=NodeTopics.objects.all()
+    topics=Topics.objects.all()
 
     if topics.exists():
 
@@ -80,7 +79,7 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
        result=fetch.match("",data)
    
    # return data
-   mqtt_client.publish(topic+"/"+msg.mid)
+   mqtt_client.publish(topic+"/"+msg.mid,str(result))
 
    # subscribe to another message
    mqtt_client.subscribe(topic)
@@ -89,15 +88,18 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    #retrive 
 
+def create_client()->mqtt.Client:
+    
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.username_pw_set(settings.MQTT_USER, settings.MQTT_PASSWORD)
+    client.connect(
+        host=settings.MQTT_SERVER,
+        port=settings.MQTT_PORT,
+        keepalive=settings.MQTT_KEEPALIVE
+    )
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
-client.username_pw_set(settings.MQTT_USER, settings.MQTT_PASSWORD)
-client.connect(
-    host=settings.MQTT_SERVER,
-    port=settings.MQTT_PORT,
-    keepalive=settings.MQTT_KEEPALIVE
-)
+    return client
 
-client.loop_start()
+#client.loop_start()
