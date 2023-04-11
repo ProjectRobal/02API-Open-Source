@@ -26,6 +26,6 @@ class SampleNode(NodeEntry):
     '''
     A sample node for class entry
     '''
-    temperature=models.FloatField(name="temperatura")
-    humidity=models.FloatField(name="wilgotność")
+    temperature=models.FloatField(name="temperature")
+    humidity=models.FloatField(name="humidity")
 

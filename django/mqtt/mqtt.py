@@ -5,30 +5,21 @@ from domena import settings
 from .models import Topics
 from devices.models import Device
 from common.fetch_api import Fetch,FetchResult
+from django.apps import apps
 import logging
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
-    
-    devices=Device.objects.all()
-
-    # devices basic informations
-    if devices.exists():
-
-        for dev in devices:
-            
-            mqtt_client.subscribe("/"+settings.ROOT_API_PATH+"/"+dev.name)
-    
-    else:
-        logging.error("No devices has been found!")
 
     topics=Topics.objects.all()
 
     if topics.exists():
-
-        for topic in topics:
+        logging.debug("Nodes topics: ")
+        for node in topics:
 
             for req in Fetch.requests:
-                mqtt_client.subscribe("/"+settings.ROOT_API_PATH+"/"+topic.device+"/"+topic.path+"/"+req)
+                topic:str=node.path+req
+                mqtt_client.subscribe(topic)
+                logging.debug(topic)
     
     else:
         logging.error("No valid topics has been found!")
@@ -36,55 +27,43 @@ def subscribe_to_topics(mqtt_client:mqtt.Client):
 
 def on_connect(mqtt_client, userdata, flags, rc):
     if rc == 0:
-        print('Connected successfully')        
+        logging.debug('Connected successfully')        
         subscribe_to_topics(mqtt_client)
     else:
-        print('Bad connection. Code:', rc)
+        logging.debug('Bad connection. Code:', rc)
 
 def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
    
-   print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
+   logging.debug(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
    
    topic:str=msg.topic
 
+   logging.debug("Topic: "+topic)
+
+   check=Topics.objects.filter(path=topic.rpartition("/")[0]+"/")
+
+   if not check.exists():
+       logging.debug("Topic not found")
+       return
+   
+   mqtt_client.subscribe(topic)
+
    paths:list[str]=topic.split('/')
-
-   if len(paths)==0:
-       return
    
-   if paths[0]!=settings.ROOT_API_PATH:
-       return
-   
-   if len(paths)==2:
-       device=Device.objects.get(name=paths[1])    
-       if device.exits():
-           # send informations about device
-           result=FetchResult(0,"Device informations",model_to_dict(device[0]))
+   cmd:str=paths[-1]
 
-
-       else:
-           # send informations about failure
-           pass
-       
-       return
+   logging.debug("Found command: "+cmd)
    
-   if not paths[2] in globals:
-       return
-   
-   fetch=Fetch(globals[paths[2]])
+   fetch=Fetch(apps.get_model("nodes",check[0].node))
 
-   if len(paths)>=3:
-       result=fetch.match(paths[3],data)
-   else:
-       result=fetch.match("",data)
+   data:dict=json.loads(msg.payload.decode('utf-8'))
+   
+   result=fetch.match(cmd,data)
    
    # return data
-   mqtt_client.publish(topic+"/"+msg.mid,str(result))
+   mqtt_client.publish(topic+str(msg.mid),str(result))
 
-   # subscribe to another message
-   mqtt_client.subscribe(topic)
-   
-   data:dict=json.load(msg.payload)
+   logging.debug("Answer at: "+topic+str(msg.mid))
 
    #retrive 
 

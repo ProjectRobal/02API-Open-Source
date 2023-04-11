@@ -12,6 +12,5 @@ class Topics(models.Model):
     node - a name of a node topic is pointing to
     '''
 
-    path=models.CharField(max_length=512,name="path",unique=True,primary_key=True)
-    device=models.ForeignKey(Device,on_delete=models.PROTECT)
+    path=models.CharField(max_length=255,name="path",unique=True,primary_key=True)
     node=models.CharField(max_length=255,name="node",unique=True)

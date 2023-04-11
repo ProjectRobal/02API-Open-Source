@@ -3,6 +3,7 @@ API set for interface between mqtt and sql through django.
 
 '''
 import logging
+import json
 from django.db import models
 
 class FetchResult:
@@ -25,9 +26,20 @@ class FetchResult:
                 }
         
         if self.result is not None:
-            output["result"]=self.result.__dict__()
+            output["result"]=self.result
         
         return output
+    
+    def __str__(self):
+        output:dict={
+            "code":self.code,
+            "message":self.message
+        }
+
+        if self.result is not None:
+            output["result"]=self.result
+
+        return json.dumps(output)
 
 class Fetch:
 
