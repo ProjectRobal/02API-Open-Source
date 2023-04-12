@@ -5,6 +5,9 @@ API set for interface between mqtt and sql through django.
 import logging
 import json
 from django.db import models
+from django.forms.models import model_to_dict
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 class FetchResult:
     def __init__(self,code:int,message:str,result=None) -> None:
@@ -39,7 +42,7 @@ class FetchResult:
         if self.result is not None:
             output["result"]=self.result
 
-        return json.dumps(output)
+        return json.dumps(output, cls=DjangoJSONEncoder)
 
 class Fetch:
 
@@ -53,16 +56,46 @@ class Fetch:
             case "post":
                 return self.post(data)
             case "get":
-                return self.get_ex(dict)
+                return self.get_ex(data)
+            case "mod":
+                return self.mod(data)
             case _:
                 return self.get()
+            
+    def mod(self,data:dict)->FetchResult:
+
+        to_modify=None
+        labels={}
+
+        if 'labels' in data.keys():
+            labels=data["labels"]
+        else:
+            return FetchResult(-1,"No labels field provided")
+
+
+        if 'id' in data.keys():
+            try:
+
+                to_modify=self.model.objects.get(id=data["id"])
+            except:
+                return FetchResult(-2,"No object with specified id")
+
+        else:
+            return FetchResult(-3,"No id provided")
+        
+        for attr,val in labels.items():
+            setattr(to_modify,attr,val)
+
+        to_modify.save()
+
+        return FetchResult(0,"Object modified")
 
 
     def post(self,data:dict)->FetchResult:
 
         try:
         
-            record=self.model(*data)
+            record=self.model(**data)
 
             record.save()
 
@@ -79,19 +112,19 @@ class Fetch:
 
         result=self.model.objects.all()[0]
 
-        return FetchResult(0,"Object retrived",result)
+        return FetchResult(0,"Object retrived",model_to_dict(result))
     
     def get_ex(self,data:dict)->FetchResult:
         
-        if "id" in data.keys():
-            result=self.model.objects.get(id=data["id"])
+        if 'id' in data.keys():
+            try:
+                result=self.model.objects.get(id=data["id"])
 
-            if result.exists():
-                return FetchResult(0,"Got object by id",result)
-            else:
+                return FetchResult(0,"Got object by id",model_to_dict(result))
+            except:
                 return FetchResult(-1,"Object not found!")
 
-        if "labels" in data.keys():
+        if 'labels' in data.keys():
 
             if type(data["labels"])==dict:
 
@@ -108,7 +141,7 @@ class Fetch:
                     if type(data["mask"])==list:
                         mask=data["mask"]
 
-                result=self.model.filter(**conditions)
+                result=self.model.objects.filter(**conditions)
 
                 if len(mask)!=0:
                     result=result.only(*mask)
@@ -116,11 +149,20 @@ class Fetch:
                 if max>0:
                     result=result[:max]
 
-                if result.exits():
+                output:list[dict]=[]
 
-                    return FetchResult(0,"Objects retrived",result)
+                for res in result:
+                    output.append(model_to_dict(res))
+
+                if result.exists():
+
+                    return FetchResult(0,"Objects retrived",
+                                       {
+                        "data":output
+                                       })
                 
                 else:
+
                     return FetchResult(-1,"Objects not found")
 
 

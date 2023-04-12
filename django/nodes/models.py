@@ -17,11 +17,8 @@ class NodeEntry(common):
     '''
     A base class for every node
     '''
-    def __str__(self):
-        return self.__name__
     
     
-
 class SampleNode(NodeEntry):
     '''
     A sample node for class entry

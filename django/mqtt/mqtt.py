@@ -40,30 +40,42 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    logging.debug("Topic: "+topic)
 
-   check=Topics.objects.filter(path=topic.rpartition("/")[0]+"/")
+   paths:list[str]=topic.rpartition("/")
+
+   check=Topics.objects.filter(path=paths[0]+"/")
 
    if not check.exists():
        logging.debug("Topic not found")
        return
    
    mqtt_client.subscribe(topic)
-
-   paths:list[str]=topic.split('/')
    
-   cmd:str=paths[-1]
+   cmd:str=paths[2]
 
    logging.debug("Found command: "+cmd)
    
    fetch=Fetch(apps.get_model("nodes",check[0].node))
 
    data:dict=json.loads(msg.payload.decode('utf-8'))
+
+   id=None
+
+   if "id" in data:
+       id=data["id"]
+
+   if "data" in data:
+       data=data["data"]
    
    result=fetch.match(cmd,data)
-   
-   # return data
-   mqtt_client.publish(topic+str(msg.mid),str(result))
 
-   logging.debug("Answer at: "+topic+str(msg.mid))
+   if id is not None:
+    # return data
+    mqtt_client.publish(topic+"/"+str(id),str(result))
+
+    logging.debug("Answer at: "+topic+"/"+str(id))
+    logging.debug("With result: "+str(result))
+   else:
+       logging.debug("No id provided!")
 
    #retrive 
 
