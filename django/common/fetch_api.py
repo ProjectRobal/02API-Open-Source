@@ -8,6 +8,11 @@ from django.db import models
 from django.forms.models import model_to_dict
 from django.core.serializers.json import DjangoJSONEncoder
 
+class Access(models.IntegerChoices):
+        READ=0,
+        WRITE=1,
+        MODIFY=2
+
 
 class FetchResult:
     def __init__(self,code:int,message:str,result=None) -> None:
@@ -48,8 +53,9 @@ class Fetch:
 
     requests=["","get","post","mod"]
 
-    def __init__(self,model:models.Model) -> None:
+    def __init__(self,model:models.Model,acess:Access) -> None:
         self.model=model
+        self.acess=acess
 
     def match(self,request:str,data:dict|None)->FetchResult:
         match request:
@@ -63,6 +69,9 @@ class Fetch:
                 return self.get()
             
     def mod(self,data:dict)->FetchResult:
+
+        if self.acess!=Access.MODIFY:
+            return FetchResult(-10,"Wrong privileges")
 
         to_modify=None
         labels={}
@@ -92,6 +101,9 @@ class Fetch:
 
 
     def post(self,data:dict)->FetchResult:
+
+        if self.acess==Access.READ:
+            return FetchResult(-10,"Wrong privileges")
 
         try:
         

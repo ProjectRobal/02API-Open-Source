@@ -1,6 +1,7 @@
 from django.db import models
 from common.models import common
 from devices.models import Device
+from enum import Enum
 
 # Create your models here.
 

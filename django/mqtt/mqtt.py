@@ -49,12 +49,14 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
        return
    
    mqtt_client.subscribe(topic)
+
+   access=check[0].access
    
    cmd:str=paths[2]
 
    logging.debug("Found command: "+cmd)
    
-   fetch=Fetch(apps.get_model("nodes",check[0].node))
+   fetch=Fetch(apps.get_model("nodes",check[0].node),access)
 
    data:dict=json.loads(msg.payload.decode('utf-8'))
 
