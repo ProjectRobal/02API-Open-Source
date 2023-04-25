@@ -11,6 +11,8 @@ import logging
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
 
+    logging.debug("Device auth topics: ")
+
     topics=Topics.objects.all()
 
     if topics.exists():
@@ -57,7 +59,7 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    logging.debug("Found command: "+cmd)
    
-   fetch=Fetch(PublicNodes.get_obj(check.node),access)
+   fetch=Fetch(PublicNodes.get_obj(check[0].node),access)
 
    data:dict=json.loads(msg.payload.decode('utf-8'))
 

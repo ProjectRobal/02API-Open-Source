@@ -14,6 +14,28 @@ class Access(models.IntegerChoices):
         MODIFY=2
 
 
+
+class FetchAuth:
+    '''
+    A class that will handle authentication of a device.
+    '''
+    pass
+    def info(self,id):
+        pass
+
+    def auth(self,id,passwd):
+        pass
+
+    def set_status(self,id):
+        pass
+
+    def generate_jwt(self):
+        pass
+
+    def logged(self,id)->bool:
+        pass
+
+
 class FetchResult:
     def __init__(self,code:int,message:str,result=None) -> None:
         self.code=code
@@ -71,7 +93,7 @@ class Fetch:
     def mod(self,data:dict)->FetchResult:
 
         if self.acess!=Access.MODIFY:
-            return FetchResult(-10,"Wrong privileges")
+            return FetchResult(-11,"Node not modifiable")
 
         to_modify=None
         labels={}
@@ -103,7 +125,7 @@ class Fetch:
     def post(self,data:dict)->FetchResult:
 
         if self.acess==Access.READ:
-            return FetchResult(-10,"Wrong privileges")
+            return FetchResult(-10,"Node is read only")
 
         try:
         
