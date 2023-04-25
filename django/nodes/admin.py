@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import SampleNode
+from .models import PublicNodes
 
 # Register your models here.
 
-admin.site.register(SampleNode)
+admin.site.register(PublicNodes.SampleNode)

@@ -94,7 +94,10 @@ DATABASES = {
         'USER':os.environ.get('MYSQL_USER'),
         'PASSWORD':os.environ.get('MYSQL_PASSWORD'),
         'HOST':'db',
-        'PORT':os.environ.get('MYSQL_PORT')
+        'PORT':os.environ.get('MYSQL_PORT'),
+        'OPTIONS': {
+            'charset': 'utf8mb4'
+        }
     }
 }
 

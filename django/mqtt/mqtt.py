@@ -5,6 +5,7 @@ from domena import settings
 from .models import Topics
 from devices.models import Device
 from common.fetch_api import Fetch,FetchResult
+from nodes.models import PublicNodes
 from django.apps import apps
 import logging
 
@@ -56,7 +57,7 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    logging.debug("Found command: "+cmd)
    
-   fetch=Fetch(apps.get_model("nodes",check[0].node),access)
+   fetch=Fetch(PublicNodes.get_obj(check.node),access)
 
    data:dict=json.loads(msg.payload.decode('utf-8'))
 
