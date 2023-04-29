@@ -112,7 +112,7 @@ class Fetch:
                 return FetchResult(-2,"No object with specified id")
 
         else:
-            return FetchResult(-3,"No id provided")
+            return FetchResult(-1,"No id provided")
         
         for attr,val in labels.items():
             setattr(to_modify,attr,val)
@@ -156,7 +156,7 @@ class Fetch:
 
                 return FetchResult(0,"Got object by id",model_to_dict(result))
             except:
-                return FetchResult(-1,"Object not found!")
+                return FetchResult(-2,"Object not found!")
 
         if 'labels' in data.keys():
 
@@ -197,7 +197,7 @@ class Fetch:
                 
                 else:
 
-                    return FetchResult(-1,"Objects not found")
+                    return FetchResult(-2,"Objects not found")
 
 
 

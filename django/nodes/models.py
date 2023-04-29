@@ -51,8 +51,6 @@ class DeviceNode(NodeEntry):
     register_date= models.DateTimeField(blank=True,null=True,default=datetime.datetime.today())
     last_login_date=models.DateTimeField(blank=True,null=True)
     identificator=models.CharField(max_length=32,unique=True)
-    key=models.CharField(max_length=256,editable=False)
-    password=models.CharField(max_length=32,default=secrets.token_urlsafe(24))
     status=models.IntegerField(choices=_status,default=_status[0])
 
 
