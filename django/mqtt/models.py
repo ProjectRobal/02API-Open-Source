@@ -1,9 +1,6 @@
 from django.db import models
-from devices.models import Device
-from common.fetch_api import Access
+from common.acess_levels import Access
 from nodes.models import PublicNodes
-
-from django_cryptography.fields import encrypt
 
 # Create your models here.
 

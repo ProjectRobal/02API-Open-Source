@@ -7,33 +7,34 @@ import json
 from django.db import models
 from django.forms.models import model_to_dict
 from django.core.serializers.json import DjangoJSONEncoder
-
-class Access(models.IntegerChoices):
-        READ=0,
-        WRITE=1,
-        MODIFY=2
-
+from nodeacl.models import NodeACL
+from devices.models import Device
+from .acess_levels import Access
+from mqtt.models import Topics
 
 
 class FetchAuth:
     '''
     A class that will handle authentication of a device.
     '''
-    pass
-    def info(self,id):
-        pass
 
-    def auth(self,id,passwd):
-        pass
+    def check(dev_key:str or None,access:list[Access],topic:Topics)->bool:
 
-    def set_status(self,id):
-        pass
+        try:
+        
+            device=Device.objects.get(key=dev_key)
 
-    def generate_jwt(self):
-        pass
+            query=NodeACL.objects.get(device=device,topic=topic)
 
-    def logged(self,id)->bool:
-        pass
+            for level in access:
+                if query.access_level==level:
+                    return True
+                
+        except (Device.DoesNotExist,NodeACL.DoesNotExist) as error:
+            logging.error(str(error))
+
+        
+        return False
 
 
 class FetchResult:
@@ -73,28 +74,30 @@ class FetchResult:
 
 class Fetch:
 
-    requests=["","get","post","mod"]
-
-    def __init__(self,model:models.Model,acess:Access) -> None:
+    def __init__(self,dev_id:str,model:models.Model,acess:Access,topic:Topics) -> None:
         self.model=model
+        self.dev_id=dev_id
         self.acess=acess
+        self.topic=topic
+        self.requests:dict={
+            "get":self.get_ex,
+            "post":self.post,
+            "mod":self.mod,
+            "":self.get
+        }
 
     def match(self,request:str,data:dict|None)->FetchResult:
-        match request:
-            case "post":
-                return self.post(data)
-            case "get":
-                return self.get_ex(data)
-            case "mod":
-                return self.mod(data)
-            case _:
-                return self.get()
+            
+            return self.requests.setdefault(request,self.get)(data)
             
     def mod(self,data:dict)->FetchResult:
 
         if self.acess!=Access.MODIFY:
             return FetchResult(-11,"Node not modifiable")
-
+        
+        if not FetchAuth.check(self.dev_id,[Access.MODIFY],self.topic):
+            return FetchResult(-11,"Wrong authentications")
+        
         to_modify=None
         labels={}
 
@@ -126,6 +129,9 @@ class Fetch:
 
         if self.acess==Access.READ:
             return FetchResult(-10,"Node is read only")
+        
+        if not FetchAuth.check(self.dev_id,[Access.WRITE,Access.MODIFY],self.topic):
+            return FetchResult(-11,"Wrong authentications")
 
         try:
         
@@ -141,6 +147,9 @@ class Fetch:
 
     def get(self)->FetchResult:
 
+        if self.dev_id is None and self.acess!=Access.ANYMONUS_READ:
+            return FetchResult(-12,"Anynomus reading not allowed")
+
         if self.model.objects.count()==0:
             return FetchResult(-2,"Database is empty")
 
@@ -149,6 +158,9 @@ class Fetch:
         return FetchResult(0,"Object retrived",model_to_dict(result))
     
     def get_ex(self,data:dict)->FetchResult:
+
+        if self.dev_id is None and self.acess!=Access.ANYMONUS_READ:
+            return FetchResult(-12,"Anynomus reading not allowed")
         
         if 'id' in data.keys():
             try:

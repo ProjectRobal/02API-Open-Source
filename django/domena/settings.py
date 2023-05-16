@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'devices',
     'nodes',
-    'mqtt'
+    'mqtt',
+    'nodeacl'
 ]
 
 MQTT_SERVER="mqtt"

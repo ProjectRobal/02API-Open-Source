@@ -5,9 +5,8 @@ from domena import settings
 from .models import Topics
 from devices.models import Device
 from common.fetch_api import Fetch,FetchResult
-from nodes.models import PublicNodes
-from django.apps import apps
 import logging
+from .models import PublicNodes
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
 
@@ -59,8 +58,6 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    logging.debug("Found command: "+cmd)
    
-   fetch=Fetch(PublicNodes.get_obj(check[0].node),access)
-
    data:dict=json.loads(msg.payload.decode('utf-8'))
 
    id=None
@@ -70,7 +67,10 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    if "data" in data:
        data=data["data"]
-   
+          
+          
+   fetch=Fetch(id,PublicNodes.get_obj(check[0].node),access)
+
    result=fetch.match(cmd,data)
 
    if id is not None:
