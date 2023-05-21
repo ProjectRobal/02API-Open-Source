@@ -1,9 +1,12 @@
 from django.db import models
 from common.models import common
-import datetime
 import django.utils as utils
+from protocols import Protocols
+import secrets
 
 # Create your models here.
+
+
 
 class Device(common):
     _status=[
@@ -21,8 +24,15 @@ class Device(common):
     status - current device status
     '''
     name= models.CharField(max_length=64)
-    register_date= models.DateTimeField(blank=True,null=True,default=utils.timezone.now())
     last_login_date=models.DateTimeField(blank=True,null=True)
-    key=models.CharField(max_length=32,unique=True)
+    key=models.CharField(max_length=32,unique=True,default=secrets.token_urlsafe(24))
     status=models.IntegerField(choices=_status,default=_status[0])
-    
+ 
+
+class SupportedProtocols(common):
+
+    '''
+    A model that will hold a list of protocols supported by device
+    '''
+    protocol=models.IntegerField(choices=Protocols.choices)
+    device=models.ForeignKey(Device,on_delete=models.SET_NULL,null=True)
