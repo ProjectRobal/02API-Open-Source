@@ -10,7 +10,7 @@ COPY ./compose/dev/entrypoint.sh /app/entrypoint.sh
 
 RUN apt-get update && apt-get upgrade -y
 RUN pip3 install -r requirements.txt --no-cache-dir
-COPY . /app
+COPY ./src /app
 
 EXPOSE 8000
 RUN chmod +x /app/entrypoint.sh

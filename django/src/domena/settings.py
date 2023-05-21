@@ -48,10 +48,10 @@ INSTALLED_APPS = [
 ]
 
 MQTT_SERVER="mqtt"
-MQTT_USER="admin"
-MQTT_PASSWORD="password"
-MQTT_PORT=1883
-MQTT_KEEPALIVE = 60
+MQTT_USER=os.environ.get('MQTT_USER')
+MQTT_PASSWORD=os.environ.get('MQTT_PASSWORD')
+MQTT_PORT=int(os.environ.get('MQTT_PORT'))
+MQTT_KEEPALIVE = int(os.environ.get('MQTT_KEEPALIVE'))
 
 
 MIDDLEWARE = [

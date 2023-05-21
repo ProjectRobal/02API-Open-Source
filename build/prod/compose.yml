@@ -8,11 +8,11 @@ networks:
 
 services:
   web:
-    container_name: django
+    container_name: django_02_prod
     restart: unless-stopped
     build:
       context: ../../django
-      dockerfile: compose/prod/Dockerfile
+      dockerfile: ./compose/prod/Dockerfile
     networks:
       - internal
       - external
@@ -28,6 +28,7 @@ services:
         condition: service_started
   db:
     image: mysql
+    container_name: mysql_02_prod
     restart: always
     healthcheck:
           test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
@@ -36,13 +37,14 @@ services:
     networks:
       - internal
     volumes:
-      - ../../sql/data/:/var/lib/mysql
+      - ./sql/data/:/var/lib/mysql
     env_file:
       - ./conf/sql.env
     ports:
       - 3306:3306
   mqtt:
     image: eclipse-mosquitto:2
+    container_name: mqtt_02_prod
     restart: always
     networks:
       - external

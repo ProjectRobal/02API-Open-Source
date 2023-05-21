@@ -1,22 +1,18 @@
 version: '3.9'
 networks:
-  external:
-    external: true
   internal:
     name: "internal"
 
-
 services:
   web:
-    container_name: django
+    container_name: django_02_dev
     build:
       context: ../../django
-      dockerfile: compose/dev/Dockerfile
+      dockerfile: ./compose/dev/Dockerfile
     env_file:
       - ./conf/django.env
       - ./conf/sql.env
     networks:
-      - external
       - internal
     ports:
       - 8000:8000
@@ -27,6 +23,7 @@ services:
         condition: service_started
   db:
     image: mysql
+    container_name: mysql_02_dev
     restart: always
     healthcheck:
           test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
@@ -35,13 +32,14 @@ services:
     networks:
       - internal
     volumes:
-      - ../../sql/data/:/var/lib/mysql
+      - ./sql/data/:/var/lib/mysql
     env_file:
       - ./conf/sql.env
     ports:
       - 3306:3306
   mqtt:
     image: eclipse-mosquitto:2
+    container_name: mqtt_02_dev
     restart: always
     volumes:
       - type: bind 
@@ -51,7 +49,7 @@ services:
         source: ./conf/mqtt/log/
         target: /mosquitto/log/
     networks:
-      - external
+      - internal
     ports:
       - 1883:1883
       - 9001:9001
