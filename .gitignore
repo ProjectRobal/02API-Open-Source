@@ -4,6 +4,6 @@ lib
 lib64
 pyvenv.cfg
 mqtt/config/password.txt
-sql/data/
-mqtt/data
-mqtt/log
+build/dev/sql
+build/prod/sql
+build/stagging/sql
