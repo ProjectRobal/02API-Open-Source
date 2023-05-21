@@ -1,12 +1,24 @@
 version: '3.9'
+
+networks:
+  external:
+    external: true
+  internal:
+    name: "internal"
+
 services:
   web:
     container_name: django
+    restart: unless-stopped
     build:
-      context: django
+      context: ../../django
+      dockerfile: compose/prod/Dockerfile
+    networks:
+      - internal
+      - external
     env_file:
-      - ./django/conf.env
-      - ./sql/conf.env
+      - ./conf/django.env
+      - ./conf/sql.env
     ports:
       - 8000:8000
     depends_on:
@@ -21,21 +33,25 @@ services:
           test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
           timeout: 20s
           retries: 10
+    networks:
+      - internal
     volumes:
-      - ./sql/data/:/var/lib/mysql
+      - ../../sql/data/:/var/lib/mysql
     env_file:
-      - ./sql/conf.env
+      - ./conf/sql.env
     ports:
       - 3306:3306
   mqtt:
     image: eclipse-mosquitto:2
     restart: always
+    networks:
+      - external
     volumes:
       - type: bind 
-        source: ./mqtt/config/
+        source: ./conf/mqtt/config/
         target: /mosquitto/config/
       - type: bind
-        source: ./mqtt/log/
+        source: ./conf/mqtt/log/
         target: /mosquitto/log/
     ports:
       - 1883:1883

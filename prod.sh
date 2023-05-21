@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd build/dev
+cd build/prod
 
 cmd="help"
 
