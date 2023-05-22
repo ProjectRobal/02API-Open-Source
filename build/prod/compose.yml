@@ -1,7 +1,7 @@
 version: '3.9'
 
 networks:
-  external:
+  proxy:
     external: true
   internal:
     name: "internal"
@@ -26,6 +26,12 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.django_02_prod.rule=Host(`02web`)
+      - traefik.http.routers.django_02_prod.entrypoints=websecure
+      - traefik.http.services.django_02_prod.loadbalancer.server.port=8000
+
   db:
     image: postgres
     container_name: sql_02_prod
@@ -43,6 +49,7 @@ services:
       - ./conf/sql.env
     ports:
       - 5432:5432
+    
   mqtt:
     image: eclipse-mosquitto:2
     container_name: mqtt_02_prod
@@ -59,3 +66,8 @@ services:
     ports:
       - 1883:1883
       - 9001:9001
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mqtt_02_prod.rule=Host(`02web`) && PathPrefix(`/mqtt`)
+      - traefik.http.routers.mqtt_02_prod.entrypoints=websecure
+      - traefik.http.services.mqtt_02_prod.loadbalancer.server.port=80

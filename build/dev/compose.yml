@@ -4,6 +4,22 @@ networks:
     name: "internal"
 
 services:
+
+  proxy:
+    image: "traefik:v2.10"
+    container_name: 02_proxy_dev
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+    - --api.insecure=true
+    - --providers.docker=true
+    - --providers.docker.exposedbydefault=false
+    - --entrypoints.web.address=:80
+    ports:
+    - 80:80
+    networks:
+      - internal
+
   web:
     container_name: django_02_dev
     build:
@@ -14,13 +30,18 @@ services:
       - ./conf/sql.env
     networks:
       - internal
-    ports:
-      - 8000:8000
     depends_on:
       db:
         condition: service_healthy
       mqtt:
         condition: service_started
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.django_02_dev.rule=Host(`localhost`)
+      - traefik.http.routers.django_02_dev.entrypoints=web
+      - traefik.http.services.django_02_dev.loadbalancer.server.port=8000
+
+      
   db:
     image: postgres
     container_name: sql_02_dev
@@ -38,6 +59,7 @@ services:
       - ./conf/sql.env
     ports:
       - 5432:5432
+
   mqtt:
     image: eclipse-mosquitto:2
     container_name: mqtt_02_dev
@@ -54,3 +76,8 @@ services:
     ports:
       - 1883:1883
       - 9001:9001
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mqtt_02_dev.rule=Host(`localhost`) && PathPrefix(`/mqtt`)
+      - traefik.http.routers.mqtt_02_dev.entrypoints=web
+      - traefik.http.services.mqtt_02_dev.loadbalancer.server.port=80

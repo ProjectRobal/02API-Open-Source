@@ -24,10 +24,10 @@ ROOT_API_PATH=os.getenv("FETCH_API_ROOT_PATH")
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-lzy_!e($ignlixi+wz*3w*p&*j7t#^f)k+#m1ne!gyg841ksov'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.getenv("DEBUG"))
 
 ALLOWED_HOSTS = []
 

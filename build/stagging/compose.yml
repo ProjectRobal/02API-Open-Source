@@ -1,7 +1,7 @@
 version: '3.9'
 
 networks:
-  external:
+  proxy:
     external: true
   internal:
     name: "internal"
@@ -15,7 +15,7 @@ services:
       dockerfile: ./compose/prod/Dockerfile
     networks:
       - internal
-      - external
+      - proxy
     env_file:
       - ./conf/django.env
       - ./conf/sql.env
@@ -48,7 +48,7 @@ services:
     container_name: mqtt_02_stagging
     restart: always
     networks:
-      - external
+      - proxy
     volumes:
       - type: bind 
         source: ./conf/mqtt/config/
