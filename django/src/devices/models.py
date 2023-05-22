@@ -1,7 +1,7 @@
 from django.db import models
 from common.models import common
 import django.utils as utils
-from protocols import Protocols
+from .protocols import Protocols
 import secrets
 
 # Create your models here.

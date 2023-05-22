@@ -90,15 +90,12 @@ WSGI_APPLICATION = 'domena.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME':os.environ.get('MYSQL_DATABASE'),
-        'USER':os.environ.get('MYSQL_USER'),
-        'PASSWORD':os.environ.get('MYSQL_PASSWORD'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME':os.environ.get('POSTGRES_DB'),
+        'USER':os.environ.get('POSTGRES_USER'),
+        'PASSWORD':os.environ.get('POSTGRES_PASSWORD'),
         'HOST':'db',
-        'PORT':os.environ.get('MYSQL_PORT'),
-        'OPTIONS': {
-            'charset': 'utf8mb4'
-        }
+        'PORT':os.environ.get('POSTGRES_PORT')
     }
 }
 

@@ -27,21 +27,22 @@ services:
       mqtt:
         condition: service_started
   db:
-    image: mysql
-    container_name: mysql_02_prod
+    image: postgres
+    container_name: sql_02_prod
     restart: always
     healthcheck:
-          test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-          timeout: 20s
-          retries: 10
+          test: ["CMD", "pg_isready", "-U", "devs", "-d", "domena_db"]
+          interval: 5s
+          timeout: 10s
+          retries: 120
     networks:
       - internal
     volumes:
-      - ./sql/data/:/var/lib/mysql
+      - ./sql/data/:/var/lib/postgresql/data
     env_file:
       - ./conf/sql.env
     ports:
-      - 3306:3306
+      - 5432:5432
   mqtt:
     image: eclipse-mosquitto:2
     container_name: mqtt_02_prod
