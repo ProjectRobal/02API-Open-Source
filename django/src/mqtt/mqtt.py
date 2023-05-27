@@ -69,6 +69,8 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    if "data" in data:
        data=data["data"]
+   else:
+       data={}
                  
    fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
 
@@ -76,9 +78,9 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    if key is not None:
     # return data
-    mqtt_client.publish(topic+"/"+str(key),str(result))
+    mqtt_client.publish(paths[0]+"/"+str(key),str(result))
 
-    logging.debug("Answer at: "+topic+"/"+str(key))
+    logging.debug("Answer at: "+paths[0]+"/"+str(key))
     logging.debug("With result: "+str(result))
    else:
        logging.debug("No key provided!")

@@ -20,7 +20,6 @@ class Device(common):
     name - a name of the device
     key - a key used for authentication
     last_login_date - last time device was logged in
-    register_date - when device was registered
     status - current device status
     '''
     name= models.CharField(max_length=64)

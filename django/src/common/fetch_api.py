@@ -4,6 +4,8 @@ API set for interface between mqtt and sql through django.
 '''
 import logging
 import json
+from copy import deepcopy
+from datetime import datetime
 from django.db import models
 from django.forms.models import model_to_dict
 from django.core.serializers.json import DjangoJSONEncoder
@@ -11,7 +13,6 @@ from nodeacl.models import NodeACL
 from devices.models import Device
 from .acess_levels import Access
 from mqtt.models import Topic
-from copy import deepcopy
 
 
 class FetchAuth:
@@ -24,6 +25,10 @@ class FetchAuth:
         try:
         
             device=Device.objects.get(key=dev_key)
+
+            device.last_login_date=datetime.today()
+
+            device.save()
 
             query=NodeACL.objects.get(device=device,topic=topic,access_level=access)
 
@@ -92,15 +97,27 @@ class Fetch:
         if not FetchAuth.check(self.dev_id,Access.POP,self.topic):
             return FetchResult(-11,"Wrong privileges")
         
+        if len(data)==0:
+            if self.model.objects.count()==0:
+                return FetchResult(-2,"Database is empty")
+
+            result=self.model.objects.all()[0]
+
+            copy=model_to_dict(result)
+
+            result.delete()
+
+            return FetchResult(0,"Poped first element",copy)
+        
         if 'id' in data.keys():
             try:
                 result:models.Model=self.model.objects.get(id=data["id"])
 
-                copy=deepcopy(result)
+                copy=model_to_dict(result)
 
                 result.delete()
 
-                return FetchResult(0,"Got object by id",model_to_dict(copy))
+                return FetchResult(0,"Got object by id",copy)
             except:
                 return FetchResult(-2,"Object not found!")
 
@@ -142,7 +159,7 @@ class Fetch:
                 for res in result:
                     res.delete()
 
-                return FetchResult(0,"Objects retrived",
+                return FetchResult(0,"Objects poped",
                                        {
                         "data":output
                                        })
