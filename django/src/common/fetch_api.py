@@ -10,7 +10,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from nodeacl.models import NodeACL
 from devices.models import Device
 from .acess_levels import Access
-from mqtt.models import Topics
+from mqtt.models import Topic
+from copy import deepcopy
 
 
 class FetchAuth:
@@ -18,17 +19,15 @@ class FetchAuth:
     A class that will handle authentication of a device.
     '''
 
-    def check(dev_key:str or None,access:list[Access],topic:Topics)->bool:
+    def check(dev_key:str or None,access:Access.choices,topic:Topic)->bool:
 
         try:
         
             device=Device.objects.get(key=dev_key)
 
-            query=NodeACL.objects.get(device=device,topic=topic)
+            query=NodeACL.objects.get(device=device,topic=topic,access_level=access)
 
-            for level in access:
-                if query.access_level==level:
-                    return True
+            return True
                 
         except (Device.DoesNotExist,NodeACL.DoesNotExist) as error:
             logging.error(str(error))
@@ -72,31 +71,86 @@ class FetchResult:
 
         return json.dumps(output, cls=DjangoJSONEncoder)
 
+
 class Fetch:
 
-    def __init__(self,dev_id:str,model:models.Model,acess:Access,topic:Topics) -> None:
+    
+    def __init__(self,dev_id:str=None,model:models.Model=None,topic:Topic=None) -> None:
         self.model=model
         self.dev_id=dev_id
-        self.acess=acess
-        self.topic=topic
-        self.requests:dict={
-            "get":self.get_ex,
-            "post":self.post,
-            "mod":self.mod,
-            "":self.get
-        }
-
+        self.topic=topic     
+    
     def match(self,request:str,data:dict|None)->FetchResult:
-            
-            return self.requests.setdefault(request,self.get)(data)
+
+        if request in self.requests:
+            return self.requests[request](self,data)
+        else:
+            return self.get(data)
+                
+    def pop(self,data:dict)->FetchResult:
+
+        if not FetchAuth.check(self.dev_id,Access.POP,self.topic):
+            return FetchResult(-11,"Wrong privileges")
+        
+        if 'id' in data.keys():
+            try:
+                result:models.Model=self.model.objects.get(id=data["id"])
+
+                copy=deepcopy(result)
+
+                result.delete()
+
+                return FetchResult(0,"Got object by id",model_to_dict(copy))
+            except:
+                return FetchResult(-2,"Object not found!")
+
+        if 'labels' in data.keys():
+
+            if type(data["labels"])==dict:
+
+                conditions:dict=data["labels"]
+
+                max:int=0
+
+                mask:list[str]=[]
+
+                if "max" in data.keys():
+                    max=int(data["max"])
+
+                if "mask" in data.keys():
+                    if type(data["mask"])==list:
+                        mask=data["mask"]
+
+                result:models.QuerySet=self.model.objects.filter(**conditions)
+
+                if not result.exists():
+
+                    return FetchResult(-2,"Objects not found")
+                    
+
+                if len(mask)!=0:
+                    result=result.only(*mask)
+                
+                if max>0:
+                    result=result[:max]
+
+                output:list[dict]=[]
+
+                for res in result:
+                    output.append(model_to_dict(res))
+
+                for res in result:
+                    res.delete()
+
+                return FetchResult(0,"Objects retrived",
+                                       {
+                        "data":output
+                                       })
             
     def mod(self,data:dict)->FetchResult:
 
-        if self.acess!=Access.MODIFY:
-            return FetchResult(-11,"Node not modifiable")
-        
-        if not FetchAuth.check(self.dev_id,[Access.MODIFY],self.topic):
-            return FetchResult(-11,"Wrong authentications")
+        if not FetchAuth.check(self.dev_id,Access.MOD,self.topic):
+            return FetchResult(-11,"Wrong privileges")
         
         to_modify=None
         labels={}
@@ -109,7 +163,6 @@ class Fetch:
 
         if 'id' in data.keys():
             try:
-
                 to_modify=self.model.objects.get(id=data["id"])
             except:
                 return FetchResult(-2,"No object with specified id")
@@ -127,11 +180,8 @@ class Fetch:
 
     def post(self,data:dict)->FetchResult:
 
-        if self.acess==Access.READ:
-            return FetchResult(-10,"Node is read only")
-        
-        if not FetchAuth.check(self.dev_id,[Access.WRITE,Access.MODIFY],self.topic):
-            return FetchResult(-11,"Wrong authentications")
+        if not FetchAuth.check(self.dev_id,Access.POST,self.topic):
+            return FetchResult(-11,"Wrong privileges")
 
         try:
         
@@ -145,10 +195,10 @@ class Fetch:
             
             return FetchResult(-1,"Entry not added: "+str(e))
 
-    def get(self)->FetchResult:
-
-        if self.dev_id is None and self.acess!=Access.ANYMONUS_READ:
-            return FetchResult(-12,"Anynomus reading not allowed")
+    def get(self,data:dict)->FetchResult:
+        
+        if not FetchAuth.check(self.dev_id,Access.GET,self.topic):
+            return FetchResult(-11,"Wrong privileges")
 
         if self.model.objects.count()==0:
             return FetchResult(-2,"Database is empty")
@@ -159,8 +209,8 @@ class Fetch:
     
     def get_ex(self,data:dict)->FetchResult:
 
-        if self.dev_id is None and self.acess!=Access.ANYMONUS_READ:
-            return FetchResult(-12,"Anynomus reading not allowed")
+        if not FetchAuth.check(self.dev_id,Access.GET,self.topic):
+            return FetchResult(-11,"Wrong privileges")
         
         if 'id' in data.keys():
             try:
@@ -189,6 +239,9 @@ class Fetch:
 
                 result=self.model.objects.filter(**conditions)
 
+                if not result.exists():
+                    return FetchResult(-2,"Objects not found")
+
                 if len(mask)!=0:
                     result=result.only(*mask)
                 
@@ -200,16 +253,22 @@ class Fetch:
                 for res in result:
                     output.append(model_to_dict(res))
 
-                if result.exists():
-
-                    return FetchResult(0,"Objects retrived",
+                return FetchResult(0,"Objects retrived",
                                        {
                         "data":output
                                        })
-                
-                else:
+            
+        return FetchResult(-1,"No labels provided")
 
-                    return FetchResult(-2,"Objects not found")
+              
+    requests={
+        "get":get_ex,
+        "post":post,
+        "mod":mod,
+        "pop":pop,
+        "":get 
+        }
+                    
 
 
 

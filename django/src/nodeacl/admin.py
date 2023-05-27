@@ -3,4 +3,4 @@ from .models import NodeACL
 
 # Register your models here.
 
-admin.register(NodeACL)
+admin.site.register(NodeACL)

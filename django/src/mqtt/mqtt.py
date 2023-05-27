@@ -1,24 +1,26 @@
 import json
 import paho.mqtt.client as mqtt
+from django.apps import apps
 from django.forms.models import model_to_dict
 from domena import settings
-from .models import Topics
+from .models import Topic
 from devices.models import Device
 from common.fetch_api import Fetch,FetchResult
 import logging
 from .models import PublicNodes
+from nodes.apps import NodesConfig
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
 
     logging.debug("Device auth topics: ")
 
-    topics=Topics.objects.all()
+    topics=Topic.objects.all()
 
     if topics.exists():
         logging.debug("Nodes topics: ")
         for node in topics:
 
-            for req in Fetch.requests:
+            for req in Fetch.requests.keys():
                 topic:str=node.path+req
                 mqtt_client.subscribe(topic)
                 logging.debug(topic)
@@ -44,15 +46,15 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    paths:list[str]=topic.rpartition("/")
 
-   check=Topics.objects.filter(path=paths[0]+"/")
+   try:
 
-   if not check.exists():
+    check=Topic.objects.get(path=paths[0]+"/")
+
+   except Topic.DoesNotExist:
        logging.debug("Topic not found")
        return
    
    mqtt_client.subscribe(topic)
-
-   access=check[0].access
    
    cmd:str=paths[2]
 
@@ -60,27 +62,26 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
    
    data:dict=json.loads(msg.payload.decode('utf-8'))
 
-   id=None
+   key=None
 
-   if "id" in data:
-       id=data["id"]
+   if "key" in data:
+       key=data["key"]
 
    if "data" in data:
        data=data["data"]
-          
-          
-   fetch=Fetch(id,PublicNodes.get_obj(check[0].node),access)
+                 
+   fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
 
    result=fetch.match(cmd,data)
 
-   if id is not None:
+   if key is not None:
     # return data
-    mqtt_client.publish(topic+"/"+str(id),str(result))
+    mqtt_client.publish(topic+"/"+str(key),str(result))
 
-    logging.debug("Answer at: "+topic+"/"+str(id))
+    logging.debug("Answer at: "+topic+"/"+str(key))
     logging.debug("With result: "+str(result))
    else:
-       logging.debug("No id provided!")
+       logging.debug("No key provided!")
 
    #retrive 
 

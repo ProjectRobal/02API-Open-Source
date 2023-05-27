@@ -4,7 +4,7 @@ from nodes.models import PublicNodes
 
 # Create your models here.
 
-class Topics(models.Model):
+class Topic(models.Model):
 
     '''
     A class that holds path for api communications
@@ -16,4 +16,3 @@ class Topics(models.Model):
 
     path=models.CharField(max_length=255,name="path",unique=True,primary_key=True)
     node=models.CharField(max_length=255,name="node",choices=PublicNodes.get_nodes_list())
-    access=models.IntegerField(choices=Access.choices,default=Access.READ)

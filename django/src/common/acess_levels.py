@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Access(models.IntegerChoices):
-        ANYMONUS_READ=-1,"ANYMONUS"
-        READ=0,"READ"
-        WRITE=1,"WRITE"
-        MODIFY=2,"MODIFY"
+        GET=0,"GET"
+        POST=1,"POST"
+        MOD=2,"MOD"
+        POP=3,"POP"
