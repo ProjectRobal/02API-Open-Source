@@ -26,6 +26,12 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.django_02_prod.rule=Host(`stagging.02web`)
+      - traefik.http.routers.django_02_prod.entrypoints=websecure
+      - traefik.http.services.django_02_prod.loadbalancer.server.port=8000
+
   db:
     image: postgres
     container_name: sql_02_stagging
@@ -59,3 +65,8 @@ services:
     ports:
       - 1883:1883
       - 9001:9001
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mqtt_02_prod.rule=Host(`stagging.02web`) && PathPrefix(`/mqtt`)
+      - traefik.http.routers.mqtt_02_prod.entrypoints=websecure
+      - traefik.http.services.mqtt_02_prod.loadbalancer.server.port=80
