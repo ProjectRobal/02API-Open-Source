@@ -38,7 +38,7 @@ services:
     container_name: 02_sql_stagging
     restart: always
     healthcheck:
-          test: ["CMD", "pg_isready", "-U", "devs", "-d", "domena_db"]
+          test: ["CMD", "pg_isready", "-U", "prod", "-d", "domena_db"]
           interval: 5s
           timeout: 10s
           retries: 120
@@ -62,14 +62,16 @@ services:
       - type: bind 
         source: ./conf/mqtt/config/
         target: /mosquitto/config/
+        read_only: true
       - type: bind
         source: ./conf/mqtt/log/
         target: /mosquitto/log/
+        read_only: true
     expose:
       - 9001
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mqtt_02_staging.rule=Host(`staging.zerotwo.tenere.konar.pwr.edu.pl`) && PathPrefix(`/mqtt`)
+      - traefik.http.routers.mqtt_02_staging.rule=Host(`staging.zerotwo.tenere.konar.pwr.edu.pl`) && PathPrefix(`/broker`)
       - traefik.http.routers.mqtt_02_staging.entrypoints=websecure
       - traefik.http.routers.mqtt_02_staging.tls.certresolver=leresolver
       - traefik.http.services.mqtt_02_staging.loadbalancer.server.port=9001

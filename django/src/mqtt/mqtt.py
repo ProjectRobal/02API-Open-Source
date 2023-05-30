@@ -89,7 +89,7 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
 def create_client()->mqtt.Client:
     
-    client = mqtt.Client()
+    client = mqtt.Client(transport='websockets')
     client.on_connect = on_connect
     client.on_message = on_message
     client.username_pw_set(settings.MQTT_USER, settings.MQTT_PASSWORD)

@@ -15,10 +15,8 @@ services:
     - --providers.docker=true
     - --providers.docker.exposedbydefault=true
     - --entrypoints.web.address=:80
-    - --entrypoints.mqtt.address=:9001
     ports:
     - 80:80
-    - 9001:9001
     networks:
       - internal
 
@@ -72,9 +70,11 @@ services:
       - type: bind 
         source: ./conf/mqtt/config/
         target: /mosquitto/config/
+        read_only: true
       - type: bind
         source: ./conf/mqtt/log/
         target: /mosquitto/log/
+        read_only: true
     networks:
       - internal
     expose:

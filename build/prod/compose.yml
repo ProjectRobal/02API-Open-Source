@@ -30,6 +30,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.django_02_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`)
       - traefik.http.routers.django_02_prod.entrypoints=websecure
+      - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
       - traefik.http.services.django_02_prod.loadbalancer.server.port=8000
 
   db:
@@ -37,7 +38,7 @@ services:
     container_name: 02_sql_prod
     restart: always
     healthcheck:
-          test: ["CMD", "pg_isready", "-U", "devs", "-d", "domena_db"]
+          test: ["CMD", "pg_isready", "-U", "prod", "-d", "domena_db"]
           interval: 5s
           timeout: 10s
           retries: 120
@@ -60,13 +61,17 @@ services:
       - type: bind 
         source: ./conf/mqtt/config/
         target: /mosquitto/config/
+        read_only: true
       - type: bind
         source: ./conf/mqtt/log/
         target: /mosquitto/log/
+        read_only: true
     expose:
       - 9001
     labels:
       - traefik.enable=true
       - traefik.http.routers.mqtt_02_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`) && PathPrefix(`/broker`)
       - traefik.http.routers.mqtt_02_prod.entrypoints=websecure
+      - traefik.http.routers.mqtt_02_prod.tls.certresolver=leresolver
       - traefik.http.services.mqtt_02_prod.loadbalancer.server.port=9001
+      - traefik.http.services.mqtt_02_prod.loadBalancer.sticky.cookie=true
