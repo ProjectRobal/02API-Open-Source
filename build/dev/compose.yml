@@ -30,6 +30,10 @@ services:
       - ./conf/sql.env
     networks:
       - internal
+    volumes:
+      - type: bind
+        source: ../../django/web/static
+        target: /web/static
     depends_on:
       db:
         condition: service_healthy
@@ -42,6 +46,28 @@ services:
       - traefik.http.routers.django_02_dev.rule=Host(`localhost`)
       - traefik.http.routers.django_02_dev.entrypoints=web
       - traefik.http.services.django_02_dev.loadbalancer.server.port=8000
+
+  media:
+    container_name: 02_media_dev
+    build: 
+      context: ../../django/web
+      dockerfile: ../../django/web/Dockerfile
+    volumes:
+      - type: bind
+        source: ../../django/web/static
+        target: /usr/share/nginx/static
+      - type: bind
+        source: ../../django/web/media
+        target: /usr/share/nginx/media
+    networks:
+      - internal
+    expose:
+      - 80
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.02_media_dev.rule=Host(`localhost`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
+      - traefik.http.routers.02_media_dev.entrypoints=web
+      - traefik.http.services.02_media_dev.loadbalancer.server.port=80
 
       
   db:

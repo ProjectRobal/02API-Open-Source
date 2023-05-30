@@ -33,6 +33,30 @@ services:
       - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
       - traefik.http.services.django_02_prod.loadbalancer.server.port=8000
 
+  media:
+    container_name: 02_media_prod
+    build: 
+      context: ../../django/web
+      dockerfile: ../../django/web/Dockerfile
+    volumes:
+      - type: bind
+        source: ../../django/web/static
+        target: /usr/share/nginx/static
+      - type: bind
+        source: ../../django/web/media
+        target: /usr/share/nginx/media
+    networks:
+      - internal
+      - external
+    expose:
+      - 80
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.02_media_dev.rule=Host(`localhost`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
+      - traefik.http.routers.django_02_prod.entrypoints=websecure
+      - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
+      - traefik.http.services.django_02_prod.loadbalancer.server.port=80
+
   db:
     image: postgres
     container_name: 02_sql_prod
