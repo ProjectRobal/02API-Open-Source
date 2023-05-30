@@ -1,7 +1,7 @@
 version: '3.9'
 networks:
   internal:
-    name: "internal"
+    name: "02_dev_network"
 
 services:
 
@@ -13,10 +13,12 @@ services:
     command:
     - --api.insecure=true
     - --providers.docker=true
-    - --providers.docker.exposedbydefault=false
+    - --providers.docker.exposedbydefault=true
     - --entrypoints.web.address=:80
+    - --entrypoints.mqtt.address=:9001
     ports:
     - 80:80
+    - 9001:9001
     networks:
       - internal
 
@@ -35,6 +37,8 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
+    expose:
+      - 8000
     labels:
       - traefik.enable=true
       - traefik.http.routers.django_02_dev.rule=Host(`localhost`)
@@ -57,8 +61,8 @@ services:
       - ./sql/data/:/var/lib/postgresql/data
     env_file:
       - ./conf/sql.env
-    ports:
-      - 5432:5432
+    expose:
+      - 5432
 
   mqtt:
     image: eclipse-mosquitto:2
@@ -73,11 +77,10 @@ services:
         target: /mosquitto/log/
     networks:
       - internal
-    ports:
-      - 1883:1883
-      - 9001:9001
+    expose:
+      - 9001
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mqtt_02_dev.rule=Host(`localhost`) && PathPrefix(`/mqtt`)
+      - traefik.http.routers.mqtt_02_dev.rule=Host(`localhost`)&&PathPrefix(`/broker`)
       - traefik.http.routers.mqtt_02_dev.entrypoints=web
-      - traefik.http.services.mqtt_02_dev.loadbalancer.server.port=80
+      - traefik.http.services.mqtt_02_dev.loadbalancer.server.port=9001

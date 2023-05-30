@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM python:3.11.2-bullseye
+FROM python:3.11.2-bullseye
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \

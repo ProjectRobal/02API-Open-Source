@@ -7,3 +7,11 @@ mqtt/config/password.txt
 build/dev/sql
 build/prod/sql
 build/stagging/sql
+
+build/prod/conf/django.env
+build/prod/conf/sql.env
+build/prod/conf/mqtt/config/password.txt
+
+build/stagging/conf/django.env
+build/stagging/conf/sql.env
+build/stagging/conf/mqtt/config/password.txt

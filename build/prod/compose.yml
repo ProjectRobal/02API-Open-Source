@@ -4,11 +4,11 @@ networks:
   proxy:
     external: true
   internal:
-    name: "internal"
+    name: "zerotwo_prod_internal"
 
 services:
   web:
-    container_name: django_02_prod
+    container_name: 02_django_prod
     restart: unless-stopped
     build:
       context: ../../django
@@ -19,8 +19,8 @@ services:
     env_file:
       - ./conf/django.env
       - ./conf/sql.env
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
     depends_on:
       db:
         condition: service_healthy
@@ -28,13 +28,13 @@ services:
         condition: service_started
     labels:
       - traefik.enable=true
-      - traefik.http.routers.django_02_prod.rule=Host(`02web`)
+      - traefik.http.routers.django_02_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`)
       - traefik.http.routers.django_02_prod.entrypoints=websecure
       - traefik.http.services.django_02_prod.loadbalancer.server.port=8000
 
   db:
     image: postgres
-    container_name: sql_02_prod
+    container_name: 02_sql_prod
     restart: always
     healthcheck:
           test: ["CMD", "pg_isready", "-U", "devs", "-d", "domena_db"]
@@ -47,12 +47,12 @@ services:
       - ./sql/data/:/var/lib/postgresql/data
     env_file:
       - ./conf/sql.env
-    ports:
-      - 5432:5432
+    expose:
+      - 5432
     
   mqtt:
     image: eclipse-mosquitto:2
-    container_name: mqtt_02_prod
+    container_name: 02_mqtt_prod
     restart: always
     networks:
       - external
@@ -63,11 +63,10 @@ services:
       - type: bind
         source: ./conf/mqtt/log/
         target: /mosquitto/log/
-    ports:
-      - 1883:1883
-      - 9001:9001
+    expose:
+      - 9001
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mqtt_02_prod.rule=Host(`02web`) && PathPrefix(`/mqtt`)
+      - traefik.http.routers.mqtt_02_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`) && PathPrefix(`/broker`)
       - traefik.http.routers.mqtt_02_prod.entrypoints=websecure
-      - traefik.http.services.mqtt_02_prod.loadbalancer.server.port=80
+      - traefik.http.services.mqtt_02_prod.loadbalancer.server.port=9001
