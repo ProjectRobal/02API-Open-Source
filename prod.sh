@@ -11,58 +11,58 @@ fi
 
 if [ $cmd = "build" ]; then
 
-    docker compose build
+    docker-compose -f compose.yml build
 
 elif [ $cmd = "rebuild" ]; then
 
-    docker compose rm -f -s -v
+    docker-compose -f compose.yml rm -f -s -v
     rm -R  sql/data
     rm -R mqtt/data
-    docker compose build
+    docker-compose -f compose.yml build
 
 elif [ $cmd = "up" ]; then
 
-    docker compose up
+    docker-compose -f compose.yml -d up
 
 elif [ $cmd = "down" ]; then
 
-    docker compose down
+    docker-compose -f compose.yml stop
 
 elif [ $cmd = "start" ]; then
 
-    docker compose start
+    docker-compose -f compose.yml start
 
 elif [ $cmd = "stop" ]; then
 
-    docker compose stop
+    docker-compose -f compose.yml down
 
 elif [ $cmd = "run" ]; then
 
-    docker compose build
-    docker compose up
+    docker-compose -f compose.yml build
+    docker-compose -f compose.yml -d up
 
 elif [ $cmd = "purge" ]; then
 
-    docker compose rm -f -s -v
+    docker-compose -f compose.yml rm  -s -v
     rm -R  sql/data
     rm -R mqtt/data
 
 elif [ $cmd = "debug" ]; then
 
-    docker compose run -i web bash
+    docker-compose -f compose.yml exec -i web bash
 
 elif [ $cmd = "migrate" ]; then
 
-    docker compose run -T web python manage.py makemigrations --noinput
-    docker compose run -T web python manage.py migrate --noinput
+    docker-compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
+    docker-compose -f compose.yml exec -T web python3 manage.py migrate --noinput
 
 elif [ $cmd = "init_root" ]; then
 
-    docker compose run -T web python manage.py createsuperuser --noinput
+    docker-compose -f compose.yml exec web python3 manage.py createsuperuser --noinput
 
 elif [ $cmd = "init_mqtt" ]; then
 
-    docker-compose run -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt
+    docker-compose exec mqtt mosquitto_passwd -U /mosquitto/config/password.txt
 
 elif [ $cmd = "help" ]; then
 

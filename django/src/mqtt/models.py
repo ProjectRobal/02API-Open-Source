@@ -2,6 +2,8 @@ from django.db import models
 from common.acess_levels import Access
 from nodes.models import PublicNodes
 
+regex_path='^(?!.*[\\\/]\s+)(?!(?:.*\s|.*\.|\W+)$)(?:[a-zA-Z]:)?(?:(?:[^<>:"\|\?\*\n])+(?:\/\/|\/|\\\\|\\)?)+$'
+
 # Create your models here.
 
 class Topic(models.Model):

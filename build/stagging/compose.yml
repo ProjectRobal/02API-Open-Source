@@ -17,8 +17,8 @@ services:
       - internal
       - proxy
     env_file:
-      - ./conf/django.env
-      - ./conf/sql.env
+      - ./conf1/django.env
+      - ./conf1/sql.env
     expose:
       - 8000
     depends_on:
@@ -44,18 +44,16 @@ services:
           retries: 120
     networks:
       - internal
-    volumes:
-      - ./sql/data/:/var/lib/postgresql/data
     env_file:
-      - ./conf/sql.env
+      - ./conf1/sql.env
     expose:
       - 5432
 
   media:
-    container_name: 02_media_prod
+    container_name: 02_media_stagging
     build: 
       context: ../../django/web
-      dockerfile: ../../django/web/Dockerfile
+      dockerfile: ./Dockerfile
     volumes:
       - type: bind
         source: ../../django/web/static
@@ -64,16 +62,16 @@ services:
         source: ../../django/web/media
         target: /usr/share/nginx/media
     networks:
+      - proxy
       - internal
-      - external
     expose:
       - 80
     labels:
       - traefik.enable=true
-      - traefik.http.routers.02_media_dev.rule=Host(`localhost`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
-      - traefik.http.routers.django_02_prod.entrypoints=websecure
-      - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
-      - traefik.http.services.django_02_prod.loadbalancer.server.port=80
+      - traefik.http.routers.02_media_stagging.rule=Host(`staging.zerotwo.tenere.konar.pwr.edu.pl`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
+      - traefik.http.routers.02_media_stagging.entrypoints=websecure
+      - traefik.http.routers.02_media_stagging.tls.certresolver=leresolver
+      - traefik.http.services.02_media_stagging.loadbalancer.server.port=80
 
   mqtt:
     image: eclipse-mosquitto:2

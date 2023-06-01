@@ -29,8 +29,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["zerotwo.tenere.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl","localhost"]
+ALLOWED_HOSTS = ["zerotwo.tenere.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl"]
 CORS_ALLOWED_ORIGINS = ["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+CSRF_TRUSTED_ORIGINS=["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
 
 # Application definition
 
@@ -61,8 +62,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    ]
 
 ROOT_URLCONF = 'domena.urls'
 
