@@ -5,3 +5,6 @@ from .models import PublicNodes
 
 admin.site.register(PublicNodes.SampleNode)
 
+admin.site.register(PublicNodes.CardNode)
+
+

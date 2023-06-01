@@ -84,11 +84,11 @@ services:
       - internal
     volumes:
       - type: bind 
-        source: ./conf/mqtt/config/
+        source: ./conf1/mqtt/config/
         target: /mosquitto/config/
         read_only: true
       - type: bind
-        source: ./conf/mqtt/log/
+        source: ./conf1/mqtt/log/
         target: /mosquitto/log/
         read_only: true
     expose:

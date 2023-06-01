@@ -1,9 +1,11 @@
 from django.db import models
 from common.models import common
 from devices.models import Device
+from django.contrib.auth.models import User
 import inspect
 from typing import Tuple
 from common.acess_levels import Access
+import secrets
 
 # Create your models here.
 
@@ -16,8 +18,18 @@ class NodeEntry(common):
     _name=None
 
 
-class PublicNodes:    
-    
+class PublicNodes:   
+
+    class CardNode(NodeEntry):
+        '''
+        A node that represents each cards
+        '''
+        _name="cards"
+        hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32))
+        user_id=models.ForeignKey(User, on_delete=models.CASCADE)
+        is_in_basement=models.BooleanField(default=False)
+
+
     class SampleNode(NodeEntry):
         '''
         A sample node for class entry
