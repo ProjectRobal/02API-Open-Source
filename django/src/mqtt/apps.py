@@ -1,13 +1,18 @@
+import paho.mqtt.client as mqtt
 from typing import Optional,Any
 from django.apps import apps,AppConfig
 from typing import Iterator
 import logging
 
+
 class MqttConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'mqtt'
+    client:mqtt.Client|None=None
 
     def __init__(self, app_name: str, app_module: Optional[Any]) -> None:
+
+        MqttConfig.client=None
         
         super().__init__(app_name, app_module)
 
@@ -15,8 +20,8 @@ class MqttConfig(AppConfig):
 
         import mqtt.mqtt as mqtt
 
-        client=mqtt.create_client()
+        MqttConfig.client=mqtt.create_client()
 
-        client.loop_start()
+        MqttConfig.client.loop_start()
 
         return super().ready()

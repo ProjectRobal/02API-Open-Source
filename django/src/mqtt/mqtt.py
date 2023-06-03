@@ -1,18 +1,14 @@
 import json
 import paho.mqtt.client as mqtt
-from django.apps import apps
-from django.forms.models import model_to_dict
 from domena import settings
 from .models import Topic
-from devices.models import Device
-from common.fetch_api import Fetch,FetchResult
+from common.fetch_api import Fetch
 import logging
 from .models import PublicNodes
-from nodes.apps import NodesConfig
+
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
 
-    logging.debug("Device auth topics: ")
 
     topics=Topic.objects.all()
 
@@ -27,7 +23,7 @@ def subscribe_to_topics(mqtt_client:mqtt.Client):
     
     else:
         logging.error("No valid topics has been found!")
-    
+
 
 def on_connect(mqtt_client, userdata, flags, rc):
     if rc == 0:
@@ -86,6 +82,14 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
        logging.debug("No key provided!")
 
    #retrive 
+
+def on_unsubscribe(client, userdata, mid):
+    logging.debug("Unsubscribed: ")
+    logging.debug("MID : "+str(mid))
+
+def on_subscribe(client, userdata, mid, granted_qos):
+    logging.debug("Subscribed: ")
+    logging.debug("MID : "+str(mid))
 
 def create_client()->mqtt.Client:
     
