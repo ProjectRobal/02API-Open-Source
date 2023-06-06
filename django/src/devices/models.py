@@ -21,11 +21,19 @@ class Device(common):
     key - a key used for authentication
     last_login_date - last time device was logged in
     status - current device status
+    major_version
+    minor_version
+    patch_version
+
+    A version string: major_version.minor_version.patch_version
     '''
     name= models.CharField(max_length=64)
     last_login_date=models.DateTimeField(blank=True,null=True)
     key=models.CharField(max_length=32,unique=True,default=secrets.token_urlsafe(24))
     status=models.IntegerField(choices=_status,default=_status[0])
+    major_version=models.IntegerField(default=0)
+    minor_version=models.IntegerField(default=0)
+    patch_version=models.IntegerField(default=0)
  
 
 class SupportedProtocols(common):

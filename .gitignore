@@ -21,3 +21,5 @@ build/stagging/conf/mqtt/config/password.txt
 build/stagging/conf1/django.env
 build/stagging/conf1/sql.env
 build/stagging/conf1/mqtt/config/password.txt
+
+django/src/nodes/imported/

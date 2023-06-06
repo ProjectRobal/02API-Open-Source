@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+</head>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div id="device-block-info">
+
+        <h2>{{device.name}}</h2>
+        <p>ver.{{device.major_version}}.{{device.minor_version}}.{{device.match_version}}</p>
+        <p>Last login: {{login_date}}</p>
+    
+    </div>
+
+    <div class="device-header">
+        <h2>MQTT topics:</h2>
+    </div>
+
+    <div class="block-space">
+
+    {% for topic in topics%}
+
+        <div class="topic-block">
+            <p>Path: {{topic.path}} </p>
+            <p>Node: {{topic.node}} </p>
+        </div>
+
+    {% empty %}
+
+    <div class="device-header" style="background-color:lightgray;">
+        <p style="font-weight: bold;">There is no topics!</p>
+    </div>
+
+    {% endfor %}
+
+    </div>
+
+</body>
+
+</html>

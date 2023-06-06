@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from devices.views import homePage
+from devices.views import homePage,twingoPage,device_page
 
 urlpatterns = [
     path('',homePage),
+    path('twingo/',twingoPage),
+    path('device/<str:name>',device_page),
     path('admin/', admin.site.urls),
 ]

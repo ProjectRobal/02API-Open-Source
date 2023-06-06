@@ -1,6 +1,7 @@
 from django.db import models
 from common.models import common
 from devices.models import Device
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 import inspect
 from typing import Tuple
@@ -29,6 +30,12 @@ class PublicNodes:
         user_id=models.ForeignKey(User, on_delete=models.CASCADE)
         is_in_basement=models.BooleanField(default=False)
 
+    class LedControllerMarcin(NodeEntry):
+
+        _name="marcin"
+        led_freq=ArrayField(base_field=models.IntegerField(default=0),name="frequency",size=16)
+        led_prec=ArrayField(base_field=models.IntegerField(default=0),name="brightness",size=16)
+
 
     class SampleNode(NodeEntry):
         '''
@@ -37,6 +44,10 @@ class PublicNodes:
         temperature=models.FloatField(name="temperature")
         humidity=models.FloatField(name="humidity")
         _name="sample"
+
+    def atach_class(obj):
+        '''Attach class with type obj'''
+        pass
 
     def get_nodes_list()->list[Tuple[str,str]]:
 

@@ -6,6 +6,7 @@ from django.core.validators import RegexValidator
 from common.acess_levels import Access
 from nodes.models import PublicNodes
 from .apps import MqttConfig
+from common.models import common
 import logging
 
 # It ensures that topic path has a form of /.../
@@ -13,7 +14,7 @@ regex_path=re.compile("^/+[\w /]+/+$")
 
 # Create your models here.
 
-class Topic(models.Model):
+class Topic(common):
 
     '''
     A class that holds path for api communications
@@ -23,7 +24,7 @@ class Topic(models.Model):
     access - a global access level to topic
     '''
 
-    path=models.CharField(max_length=255,name="path",unique=True,primary_key=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
+    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
     node=models.CharField(max_length=255,name="node",choices=PublicNodes.get_nodes_list())
 
     def save(self, *args, **kwargs):

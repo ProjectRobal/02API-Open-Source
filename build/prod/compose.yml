@@ -15,7 +15,7 @@ services:
       dockerfile: ./compose/prod/Dockerfile
     networks:
       - internal
-      - external
+      - proxy
     env_file:
       - ./conf/django.env
       - ./conf/sql.env
@@ -78,7 +78,8 @@ services:
     container_name: 02_mqtt_prod
     restart: always
     networks:
-      - external
+      - proxy
+      - internal
     volumes:
       - type: bind 
         source: ./conf/mqtt/config/
