@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    {% include 'nav.html' %}
+
+    <div class="device-header">
+        <h2>List of {{name}}</h2>
+    </div>
+
+    <div class="block-space">
+
+    {% for node in nodes %}
+
+        <div class='node-block'>
+            
+            {% for n in node %}
+            <div style="flex-direction: row; display:flex; vertical-algin:middle;"><h3>{{n.0}}: </h3> <p style="margin-left: 5px; margin-top:auto; margin-bottom:auto;"> {{n.1}}</p></div>
+            {%endfor%}
+
+        </div>
+
+    {% endfor %}
+
+    </div>
+
+</body>
+</html>

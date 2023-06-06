@@ -30,6 +30,14 @@ class PublicNodes:
         user_id=models.ForeignKey(User, on_delete=models.CASCADE)
         is_in_basement=models.BooleanField(default=False)
 
+    class CardProgram(NodeEntry):
+        '''
+        A node that represents cards to program, should have access to pop command
+        '''
+        _name="card_progs"
+        hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32))
+        user_id=models.ForeignKey(User, on_delete=models.CASCADE)
+
     class LedControllerMarcin(NodeEntry):
 
         _name="marcin"

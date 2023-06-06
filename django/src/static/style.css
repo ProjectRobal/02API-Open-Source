@@ -25,6 +25,21 @@
     }
 }
 
+@keyframes topichover
+{
+    from{
+        background-color: aquamarine;
+        color: black;
+        box-shadow: 12px 12px 2px 1px gray;
+    }
+    to
+    {
+        background-color: black;
+        color: white;
+        box-shadow: 0 0 0 0 gray;
+    }
+}
+
 *
 {
     font-family: Arial, Helvetica, sans-serif;
@@ -94,6 +109,37 @@ h1
     font-family: Arial, Helvetica, sans-serif;
     justify-items: left;
     box-shadow: 12px 12px 2px 1px gray;
+    display: flex;
+    flex-direction: row;
+    gap:10px;
+    cursor: pointer;
+}
+
+.topic-block:hover
+{
+    background-color: black;
+    color:white;
+    box-shadow: 0 0 0 0 gray;
+    animation-name: topichover;
+    animation-duration: 0.5s;
+}
+
+.node-block
+{
+    width: fit-content;
+    height: fit-content;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: aqua;
+    padding: 15px;
+    padding-left: 5px;
+    border-radius: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    justify-items: left;
+    box-shadow: 12px 12px 2px 1px gray;
+    display: flex;
+    flex-direction: column;
+    gap:2px;
 }
 
 .device-block:hover
@@ -172,7 +218,7 @@ h1
 }
 
 
-@media only screen and (max-width:650px) {
+@media only screen and (max-width:900px) {
 
     .device-block
     {
@@ -190,6 +236,7 @@ h1
     .block-space
     {
         width: 100%;
+        height: 100%;
         gap:5px;
         box-shadow: none;
         margin: 0;

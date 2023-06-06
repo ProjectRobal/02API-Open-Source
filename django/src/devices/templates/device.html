@@ -20,17 +20,20 @@
     </div>
 
     <div class="device-header">
-        <h2>MQTT topics:</h2>
+        <h2>MQTT topics with acess level</h2>
     </div>
 
     <div class="block-space">
 
-    {% for topic in topics%}
-
+    {% for acl in nodesacl %}
+    
+    <a href="/nodes/{{acl.topic.node}}">
         <div class="topic-block">
-            <p>Path: {{topic.path}} </p>
-            <p>Node: {{topic.node}} </p>
+            <p style="font-weight:bold;">{{acl.access}}:</p> 
+            <p>Path: {{acl.topic.path}} </p>
+            <p>Node:{{acl.topic.node}}</p>            
         </div>
+    </a> 
 
     {% empty %}
 
