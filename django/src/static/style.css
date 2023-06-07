@@ -181,6 +181,63 @@ h1
     box-shadow: 12px 12px 2px 1px gray;
 }
 
+.logform
+{
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: fit-content;
+    padding-top: 5px;
+    padding-bottom: 25px;
+    background-color: aqua;
+    padding-left: 5px;
+    padding-right: 5px;
+    box-shadow: 12px 12px 2px 1px gray;
+    border-radius: 20px;
+    gap:0;
+
+}
+
+.logform p
+{
+    margin-bottom: 1px;
+    font-size: large;
+}
+
+.logform input
+{
+    margin-top: 0;
+}
+
+.logform input[type=submit]
+{
+    border: none;
+    margin-top: 30px;
+    background-color: white;
+    color: black;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.logform input[type=submit]:hover
+{
+    background-color: black;
+    color: white;
+    padding: 5px;
+}
+
+.login_space
+{
+    background-color: azure;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap:25px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 #navbar
 {

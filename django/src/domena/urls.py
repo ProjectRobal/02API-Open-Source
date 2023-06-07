@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from devices.views import homePage,twingoPage,device_page,node_list
+from webadmin.views import login_form
 
 urlpatterns = [
     path('',homePage),
+    path('login/',login_form),
     path('twingo/',twingoPage),
     path('device/<str:name>',device_page),
     path('nodes/<str:name>',node_list),

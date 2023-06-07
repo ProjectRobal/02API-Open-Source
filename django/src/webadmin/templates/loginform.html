@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+</head>
+
+<body>
+
+    <div class="device-header" style="margin-left:auto; margin-right:auto;">
+        <h2>Login page</h2>
+    </div>
+
+    <div style="width:100%;">
+       
+
+        <form method="POST" action="/log" class="login_space">
+            <div class="logform">
+            <p>Login:</p>
+            <input type="text" name="user">
+
+            <p>Password:</p>
+            <input type="password" name="pwd">
+            
+            <input type="submit" value="Login">
+            </div>
+            
+        </form>
+    
+    </div>
+
+</body>
+
+</html>

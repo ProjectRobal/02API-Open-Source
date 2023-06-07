@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'devices',
     'nodes',
     'nodeacl',
-    'mqtt'
+    'mqtt',
+    'webadmin'
 ]
 
 MQTT_SERVER="mqtt"

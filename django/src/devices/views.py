@@ -6,7 +6,6 @@ from nodeacl.models import NodeACL
 from common.acess_levels import Access
 from nodes.models import PublicNodes
 from django.forms.models import model_to_dict
-import json
 
 # Create your views here.
 

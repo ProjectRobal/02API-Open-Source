@@ -16,6 +16,7 @@
         <h2>{{device.name}}</h2>
         <p>ver.{{device.major_version}}.{{device.minor_version}}.{{device.match_version}}</p>
         <p>Last login: {{login_date}}</p>
+        <p>Keys: {{device.key}}</p>
     
     </div>
 
@@ -26,7 +27,7 @@
     <div class="block-space">
 
     {% for acl in nodesacl %}
-    
+
     <a href="/nodes/{{acl.topic.node}}">
         <div class="topic-block">
             <p style="font-weight:bold;">{{acl.access}}:</p> 
