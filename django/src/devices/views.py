@@ -6,6 +6,7 @@ from nodeacl.models import NodeACL
 from common.acess_levels import Access
 from nodes.models import PublicNodes
 from django.forms.models import model_to_dict
+from django.contrib.auth.decorators import login_required,permission_required
 
 # Create your views here.
 
@@ -15,6 +16,8 @@ class TopicInterface:
         self.topic=node.topic
         self.node=node
         
+@login_required(login_url="/login")
+@permission_required("devices.device_view",login_url="/permf")
 def node_list(request,name):
     
     if request.method != 'GET':
@@ -38,6 +41,8 @@ def node_list(request,name):
     
     return render(request,"/app/devices/templates/list_nodes.html",context={"nodes":list_nodes,"name":name})
 
+@login_required(login_url="/login")
+@permission_required("devices.device_view",login_url="/permf")
 def homePage(request):
     '''placeholder page'''
 
@@ -45,6 +50,8 @@ def homePage(request):
 
     return render(request,"/app/devices/templates/index.html",context={"devices":devices})
 
+@login_required(login_url="/login")
+@permission_required("devices.device_view",login_url="/permf")
 def device_page(request,name):
     '''page to display informations about device'''
 
@@ -68,6 +75,7 @@ def device_page(request,name):
     
     return render(request,"/app/devices/templates/device.html",context={"device":device,"login_date":last_login,"nodesacl":node_list})
 
+@login_required(login_url="/login")
 def twingoPage(request):
     '''twoja stara'''
 

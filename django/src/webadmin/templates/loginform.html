@@ -4,8 +4,8 @@
 
 <head>
 
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-
+    {% include 'header.html' %}
+    <title>Login Page</title>
 </head>
 
 <body>
@@ -15,20 +15,31 @@
     </div>
 
        
-
-        <form method="POST" action="/log" class="login_space">
+        <form method="post" action="/auth/" class="login_space">
             <div class="logform">
-            <p>Login:</p>
-            <input type="text" name="user">
-
-            <p>Password:</p>
-            <input type="password" name="pwd">
+                {% csrf_token %}
+                {{form}}
             
             <input type="submit" value="Login">
             </div>
             
         </form>
+
+    {% if form.errors %}
+
+    <div class="device-header" style="margin-left:auto; margin-right:auto; background-color:red;">
+        <h2 style="width:fit-content;margin-left:auto; margin-right:auto;">Check your forms!</h2>
+    </div>
+
+    {% endif %}
+
+    {% if bad_login %}
     
+     <div class="device-header" style="margin-left:auto; margin-right:auto; background-color:red;">
+        <h2 style="width:fit-content;margin-left:auto; margin-right:auto;">Bad login creditentials!</h2>
+    </div>
+
+    {% endif %}
 
 </body>
 

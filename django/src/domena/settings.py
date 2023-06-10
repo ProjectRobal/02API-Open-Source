@@ -30,8 +30,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = ["zerotwo.tenere.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl","localhost"]
-CORS_ALLOWED_ORIGINS = ["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
-CSRF_TRUSTED_ORIGINS=["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+CORS_ALLOWED_ORIGINS = ["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl","http://localhost"]
+CSRF_TRUSTED_ORIGINS=["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl","http://localhost"]
 
 # Application definition
 

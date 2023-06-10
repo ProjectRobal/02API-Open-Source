@@ -34,6 +34,13 @@ class Device(common):
     major_version=models.IntegerField(default=0)
     minor_version=models.IntegerField(default=0)
     patch_version=models.IntegerField(default=0)
+    
+    class Meta:
+            permissions = [
+                ("device_view", "Can access device page"),
+                ("device_user","Can create other users with device admin"),
+                ("device_admin","Can manage devices, add or delete them")
+            ]
  
 
 class SupportedProtocols(common):
