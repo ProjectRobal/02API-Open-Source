@@ -81,8 +81,6 @@ services:
           retries: 120
     networks:
       - internal
-    volumes:
-      - ./sql/data/:/var/lib/postgresql/data
     env_file:
       - ./conf/sql.env
     expose:

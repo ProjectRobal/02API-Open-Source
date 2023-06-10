@@ -15,6 +15,11 @@ class TopicInterface:
         self.access=Access(node.access_level).name
         self.topic=node.topic
         self.node=node
+
+def home_page(request,name=None):
+
+    return render(request,"/app/devices/templates/home.html",context={"name":name})
+
         
 @login_required(login_url="/login")
 @permission_required("devices.device_view",login_url="/permf")
@@ -43,7 +48,7 @@ def node_list(request,name):
 
 @login_required(login_url="/login")
 @permission_required("devices.device_view",login_url="/permf")
-def homePage(request):
+def devsPage(request):
     '''placeholder page'''
 
     devices=Device.objects.all()

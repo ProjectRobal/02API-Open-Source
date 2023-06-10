@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    {% include 'header.html' %}
+    <title>Login Page</title>
+</head>
+
+<body>
+
+    {% include 'nav.html' %}
+
+    <div class="device-header" style="margin-left:auto; margin-right:auto;">
+        <h2 style="width:fit-content;margin-left:auto; margin-right:auto;">Register page</h2>
+    </div>
+
+       
+        <form method="post" action="/reg/" class="login_space">
+            <div class="logform">
+                {% csrf_token %}
+                {{form}}
+            
+            <input type="submit" value="Register">
+            </div>
+            
+        </form>
+
+    {% if form.errors %}
+
+    <div class="device-header" style="margin-left:auto; margin-right:auto; background-color:red;">
+        <h2 style="width:fit-content;margin-left:auto; margin-right:auto;">{{form.errors}}</h2>
+    </div>
+
+    {% endif %}
+
+
+</body>
+
+</html>

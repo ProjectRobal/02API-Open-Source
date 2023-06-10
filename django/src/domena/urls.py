@@ -14,18 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
-from devices.views import homePage,twingoPage,device_page,node_list
-from webadmin.views import login_form,auth,unauth,perm_fail
+from django.urls import path
+from devices.views import devsPage,twingoPage,device_page,node_list,home_page
+from webadmin.views import login_form,auth,unauth,perm_fail,reg_form,reg
 
 urlpatterns = [
-    path('',homePage),
+    path('devs/',devsPage),
     path('login/',login_form),
     path('auth/',auth),
     path('unauth/',unauth),
+    path('permf/',perm_fail),
+    path('register/',reg_form),
+    path('reg/',reg),
+    path('django-admin/', admin.site.urls),
+
+    path('',home_page),
+    path('hello/<str:name>',home_page),
     path('twingo/',twingoPage),
     path('device/<str:name>',device_page),
-    path('nodes/<str:name>',node_list),
-    path('django-admin/', admin.site.urls),
-    path('permf/',perm_fail)
+    path('nodes/<str:name>',node_list)
 ]

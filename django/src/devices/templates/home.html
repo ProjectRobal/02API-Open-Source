@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'header.html'  %}
+    <title>Home Page</title>
+</head>
+<body>
+
+    <h1 class="homeheader">02 Project Home Page</h1>
+
+    {% if name %}
+
+    <p style="margin-left:auto; margin-right:auto; width:fit-content;">Hello panie: {{name}}</p>
+
+    {% endif %}
+
+    {% if user.is_authenticated %}
+
+    <p style="margin-left:auto; margin-right:auto; width:fit-content; font-size:medium;">Hello: {{user.username}}!</p>
+
+    {% endif %}
+
+    <div id="homepage">
+
+
+        <a href="/devs"  class="homeblock block">
+                Devices Menu
+        </a>
+        
+    
+        <a href="/twingo"  class="homeblock block">
+                Twingo
+        </a>
+    
+    {% if user.is_authenticated %}
+    
+        <a href="/django-admin"  class="homeblock block">
+                Admin
+        </a>
+    
+        <a href="/unauth"  class="homeblock block">
+                Logout
+        </a>
+    
+    {% else %}
+    
+        <a href="/login"  class="homeblock block">
+                Login
+        </a>
+    
+        <a href="/register"  class="homeblock block">
+                Register
+        </a>
+    
+    {% endif %}
+    
+    </div>
+
+</body>
+</html>
