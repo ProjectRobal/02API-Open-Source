@@ -31,7 +31,7 @@ class Register02Form(forms.Form):
     email=forms.CharField(label="E-mail:",max_length=255,widget=forms.EmailInput,required=False)
     
     project=forms.MultipleChoiceField(label="Project",widget=forms.CheckboxSelectMultiple,
-        choices=WebadminConfig.AVAILABLE_GROUPS,required=False)
+        choices=WebadminConfig.get_available_groups(),required=False)
     
     def clean(self):
         cleaned_data = super(Register02Form, self).clean()

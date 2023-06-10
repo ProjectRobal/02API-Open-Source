@@ -5,9 +5,13 @@ class WebadminConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'webadmin'
 
-    AVAILABLE_GROUPS=[]
+    APP_READY=False
+
 
     def get_available_groups():
+
+        if not WebadminConfig.APP_READY:
+            return []
 
         from .models import ProjectGroup
 
@@ -16,7 +20,6 @@ class WebadminConfig(AppConfig):
         for group in ProjectGroup.objects.all():
             groups.append((group.name,group.project_name))
 
-        WebadminConfig.AVAILABLE_GROUPS=groups
 
         return groups
 
@@ -24,5 +27,7 @@ class WebadminConfig(AppConfig):
     def ready(self) -> None:
 
         WebadminConfig.get_available_groups()
+
+        WebadminConfig.APP_READY=True
 
         return super().ready()
