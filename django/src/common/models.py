@@ -13,4 +13,4 @@ class common(models.Model):
                                editable=False)
     class Meta:
         abstract = True
-    
+

@@ -7,6 +7,7 @@ from common.acess_levels import Access
 from nodes.models import PublicNodes
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required,permission_required
+from domena.home import entries
 
 # Create your views here.
 
@@ -20,7 +21,7 @@ class TopicInterface:
 
 def home_page(request,name=None):
 
-    return render(request,"/app/devices/templates/home.html",context={"name":name})
+    return render(request,"/app/devices/templates/home.html",context={"name":name,"blocks":entries})
 
         
 @login_required(login_url="/login")

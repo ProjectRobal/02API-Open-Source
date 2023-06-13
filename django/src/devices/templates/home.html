@@ -54,6 +54,14 @@
         </a>
     
     {% endif %}
+
+    {% autoescape off %}
+    {%for block in blocks%}
+
+    {{block}}
+
+    {%endfor%}
+    {% endautoescape %}
     
     </div>
 

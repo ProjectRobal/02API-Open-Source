@@ -13,6 +13,13 @@ services:
     build:
       context: ../../django
       dockerfile: ./compose/prod/Dockerfile
+    volumes:
+      - type: bind
+        source: ../../django/web/static
+        target: /web/static
+      - type: bind
+        source: ../../django/web/media
+        target: /web/media
     networks:
       - internal
       - proxy

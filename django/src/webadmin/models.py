@@ -5,6 +5,7 @@ from domena.settings import MEDIA_ROOT
 
 from common.models import common
 
+from uuid import uuid4
 import os
 
 
@@ -16,15 +17,24 @@ class ProjectGroup(common):
 
     user=models.ManyToManyField(User)
 
+def user_directory_path(instance, filename):
+    
+    name=uuid4()
+
+    while os.path.exists('{0}/{1}'.format(MEDIA_ROOT,str(name))):
+        name=uuid4()
+    
+    return 'profiles/{0}'.format(str(name))
+
 class ProfilePicture(common):
     '''
     A model for storing profile pictures.
     '''
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    path=models.CharField(name="filepath")
+    image=models.ImageField(upload_to=user_directory_path)
 
     def delete(self, using = DEFAULT_DB_ALIAS, keep_parents: bool = False) -> tuple[int, dict[str, int]]:
 
-        os.remove(os.path.join(MEDIA_ROOT, self.path))
+        #os.remove(os.path.join(MEDIA_ROOT, self.path))
         
         return super().delete(using,keep_parents)
