@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'header.html'  %}
+    <title>Devices</title>
+</head>
+<body>
+
+{% include 'nav.html'  %}
+
+<div class="block-space">
+
+<div class="device-header">
+
+    <h2>Device list:</h2>
+
+</div>
+
+{% for dev in devices %}
+
+<a href="/device/{{dev.name}}">
+<div class="device-block">
+
+    <h2>{{dev.name}}</h2>
+    <p>ver.{{dev.major_version}}.{{dev.minor_version}}.{{dev.match_version}}</p>
+
+</div>
+</a>
+
+{% empty %}
+
+<h2>No devices</h2>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

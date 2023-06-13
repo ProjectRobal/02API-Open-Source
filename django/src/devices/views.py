@@ -16,6 +16,8 @@ class TopicInterface:
         self.topic=node.topic
         self.node=node
 
+
+
 def home_page(request,name=None):
 
     return render(request,"/app/devices/templates/home.html",context={"name":name})

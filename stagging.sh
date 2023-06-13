@@ -65,6 +65,12 @@ elif [ $cmd = "migrate" ]; then
     docker-compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
     docker-compose -f compose.yml exec -T web python3 manage.py migrate --noinput
 
+elif [ $cmd = "remigrate" ]; then
+
+    docker-compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
+    docker-compose -f compose.yml exec -T web python3 manage.py migrate --noinput
+
+
 elif [ $cmd = "init_mqtt" ]; then
 
     docker-compose -f compose.yml exec -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt

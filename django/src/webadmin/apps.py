@@ -10,23 +10,33 @@ class WebadminConfig(AppConfig):
 
     def get_available_groups():
 
-        if not WebadminConfig.APP_READY:
-            return []
+        try:
 
-        from .models import ProjectGroup
+            if not WebadminConfig.APP_READY:
+                return [("","")]
 
-        groups=[]
+            from .models import ProjectGroup
 
-        for group in ProjectGroup.objects.all():
-            groups.append((group.name,group.project_name))
+            groups=[]
 
+            for group in ProjectGroup.objects.all():
+                groups.append((group.name,group.project_name))
 
-        return groups
+            return groups
+
+        except:
+            return [("","")]
+        
 
 
     def ready(self) -> None:
 
-        WebadminConfig.get_available_groups()
+        from domena.urls import urlpatterns
+        from webadmin.views import reg_form,reg
+        from django.urls import path
+
+        urlpatterns.append(path('register/',reg_form))
+        urlpatterns.append(path('reg/',reg))
 
         WebadminConfig.APP_READY=True
 

@@ -16,19 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from devices.views import devsPage,twingoPage,device_page,node_list,home_page
-from webadmin.views import login_form,auth,unauth,perm_fail,reg_form,reg
 
 urlpatterns = [
-    path('devs/',devsPage),
-    path('login/',login_form),
-    path('auth/',auth),
-    path('unauth/',unauth),
-    path('permf/',perm_fail),
-    path('register/',reg_form),
-    path('reg/',reg),
-    path('django-admin/', admin.site.urls),
 
     path('',home_page),
+    path('devs/',devsPage),
+    path('django-admin/', admin.site.urls),
     path('hello/<str:name>',home_page),
     path('twingo/',twingoPage),
     path('device/<str:name>',device_page),

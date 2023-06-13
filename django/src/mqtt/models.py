@@ -42,7 +42,7 @@ class Topic(common):
 
         super(Topic, self).save(*args, **kwargs)
 
-    def delete(self, using: Any = DEFAULT_DB_ALIAS, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
+    def delete(self, using: Any = DEFAULT_DB_ALIAS, keep_parents: bool = False) -> tuple[int, dict[str, int]]:
 
         from common.fetch_api import Fetch
 

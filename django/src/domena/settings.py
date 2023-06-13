@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'auth02',
     'devices',
     'nodes',
     'nodeacl',
@@ -53,7 +54,7 @@ MQTT_SERVER="mqtt"
 MQTT_USER=os.environ.get('MQTT_USER')
 MQTT_PASSWORD=os.environ.get('MQTT_PASSWORD')
 MQTT_PORT=int(os.environ.get('MQTT_PORT'))
-MQTT_KEEPALIVE = int(os.environ.get('MQTT_KEEPALIVE'))
+MQTT_KEEPALIVE =int(os.environ.get('MQTT_KEEPALIVE'))
 
 
 MIDDLEWARE = [
@@ -153,6 +154,6 @@ STATICFILES_FINDERS = [
 # MEDIA
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-MEDIA_ROOT = str("/mediafiles")
+MEDIA_ROOT = str("/web/media")
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = "/media/"
