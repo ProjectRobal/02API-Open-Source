@@ -23,7 +23,11 @@ def home_page(request,name=None):
 
     return render(request,"/app/devices/templates/home.html",context={"name":name,"blocks":entries})
 
-        
+@login_required(login_url="/login")
+def rat(request):
+
+    return render(request,"/app/devices/templates/rat.html")
+
 @login_required(login_url="/login")
 @permission_required("devices.device_view",login_url="/permf")
 def node_list(request,name):

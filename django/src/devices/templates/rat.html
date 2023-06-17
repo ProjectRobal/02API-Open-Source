@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'header.html'  %}
+    <title>AVE PREZES 2023</title>
+</head>
+<style>
+
+    img
+    {
+        object-fit: contain;
+    }
+
+</style>
+<body>
+{% include 'nav.html' %}
+
+<div style="display:flex;justify-items:center;flex-direction: column;flex-wrap: wrap;align-content: space-around;justify-content: center;">
+<a href="https://www.youtube.com/watch?v=tvkxupwbFLk&t=4154s&pp=ygUMc3Bpbm5pbmcgcmF0">
+<img src="{% static "rat-spinning.gif" %}" width="800" height="600">
+</a>
+</div>
+
+</body>
+</html>
