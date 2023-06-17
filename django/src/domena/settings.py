@@ -13,6 +13,8 @@ import os
 
 from pathlib import Path
 
+from .plugins import PLUGINS
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,9 +48,8 @@ INSTALLED_APPS = [
     'devices',
     'nodes',
     'nodeacl',
-    'mqtt',
-    'webadmin'
-]
+    'mqtt'
+] + PLUGINS
 
 MQTT_SERVER="mqtt"
 MQTT_USER=os.environ.get('MQTT_USER')

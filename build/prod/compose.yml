@@ -40,6 +40,27 @@ services:
       - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
       - traefik.http.services.django_02_prod.loadbalancer.server.port=8000
 
+
+  sheduler:
+    container_name: 02_sheduler_prod
+    image: mcuadros/ofelia
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      media:
+        condition: service_started
+      web:
+        condition: service_started
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - type: bind
+        source: ./tasks.ini
+        target: /etc/ofelia/config.ini
+        read_only: true
+
   media:
     container_name: 02_media_prod
     build: 

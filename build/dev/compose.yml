@@ -50,6 +50,26 @@ services:
       - traefik.http.routers.django_02_dev.entrypoints=web
       - traefik.http.services.django_02_dev.loadbalancer.server.port=8000
 
+  sheduler:
+    container_name: 02_sheduler_dev
+    image: mcuadros/ofelia
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      media:
+        condition: service_started
+      web:
+        condition: service_started
+    networks:
+      - internal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - type: bind
+        source: ./tasks.ini
+        target: /etc/ofelia/config.ini
+        read_only: true
+
   media:
     container_name: 02_media_dev
     build: 
@@ -82,6 +102,16 @@ services:
           interval: 5s
           timeout: 10s
           retries: 120
+    volumes:
+      - type: bind
+        source: ./sql_buckups/daily
+        target: /backup/daily
+      - type: bind
+        source: ./sql_buckups/weekly
+        target: /backup/weekly
+      - type: bind
+        source: ./sql_buckups/monthly
+        target: /backup/monthly
     networks:
       - internal
     env_file:

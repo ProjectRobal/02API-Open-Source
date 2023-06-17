@@ -57,7 +57,11 @@ elif [ $cmd = "init_root" ]; then
 
 elif [ $cmd = "init_mqtt" ]; then
 
-    docker-compose run -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt
+    docker compose run -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt
+
+elif [ $cmd = "restore" ]; then
+
+    docker compose exec -T db pg_restore -v --if-exists -c -U devs -d domena_db /backup/$2/db
 
 elif [ $cmd = "help" ]; then
 
@@ -72,6 +76,10 @@ echo "purge - usuń kontenery wraz z ich danymi"
 echo "debug - uruchom terminal bash na kontenerze django"
 echo "init_root - utwórz użytkownika roota w django"
 echo "init_mqtt - ustaw użytkownika dla serwera mqtt"
+echo "restore - załaduj buckup bazy danych, do wyboru: "
+echo "  -daily - codzienny"
+echo "  -weekly - tygodniowy"
+echo "  -monthly - miesieczny"
 echo "help - komenda pomoc"
 
 fi

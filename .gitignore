@@ -23,3 +23,7 @@ build/stagging/conf1/sql.env
 build/stagging/conf1/mqtt/config/password.txt
 
 django/src/nodes/imported/
+
+build/dev/sql_buckups/
+build/prod/sql_buckups/
+build/stagging/sql_buckups/
