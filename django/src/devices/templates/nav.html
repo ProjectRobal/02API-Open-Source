@@ -2,7 +2,6 @@
 
 <div id="navbar">
 
-
     <a href="/">
         <div class="navblock">
             Home
@@ -20,6 +19,14 @@
             Twingo
         </div>
     </a>
+
+{% autoescape off %}
+    {%for item in menu_items %}
+
+    {{item}}
+
+    {%endfor%}
+{% endautoescape %}
 
 {% if user.is_authenticated %}
 
@@ -54,5 +61,6 @@
     </a>
 
 {% endif %}
+
 
 </div>

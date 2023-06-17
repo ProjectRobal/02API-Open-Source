@@ -51,9 +51,27 @@ elif [ $cmd = "debug" ]; then
 
     docker compose run -i web bash
 
+elif [ $cmd = "remigrate" ]; then
+
+    #docker compose exec -i db pg_dump --data-only -Fc  -U devs -Z 9 -f /backup/db domena_db
+
+    docker compose exec -i web ./remigrate.sh
+
+    #docker compose exec -T db pg_restore -v -U devs -d domena_db /backup/db
+
+    #docker compose exec -T db rm /backup/db
+
+elif [ $cmd = "makemigration" ]; then
+
+    docker compose exec -i web python3 -u manage.py makemigrations -v 3
+
+elif [ $cmd = "migrate" ]; then
+    
+    docker compose exec -i web python3 -u manage.py migrate -v 3
+
 elif [ $cmd = "init_root" ]; then
 
-    docker compose run -T web python manage.py createsuperuser --noinput
+    docker compose exec -T web python manage.py createsuperuser --noinput
 
 elif [ $cmd = "init_mqtt" ]; then
 
@@ -76,6 +94,7 @@ echo "purge - usuń kontenery wraz z ich danymi"
 echo "debug - uruchom terminal bash na kontenerze django"
 echo "init_root - utwórz użytkownika roota w django"
 echo "init_mqtt - ustaw użytkownika dla serwera mqtt"
+echo "remigrate - ponów migracje"
 echo "restore - załaduj buckup bazy danych, do wyboru: "
 echo "  -daily - codzienny"
 echo "  -weekly - tygodniowy"
