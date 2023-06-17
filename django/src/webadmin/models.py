@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db import DEFAULT_DB_ALIAS
 from domena.settings import MEDIA_ROOT
-
+from django.contrib.auth.models import User
 from common.models import common
 
 from uuid import uuid4
@@ -25,6 +25,10 @@ def user_directory_path(instance, filename):
         name=uuid4()
     
     return 'profiles/{0}'.format(str(name))
+
+class ProfileUser(common):
+    user=models.OneToOneField(User, on_delete=models.CASCADE)
+    login=models.CharField(max_length=100)
 
 class ProfilePicture(common):
     '''

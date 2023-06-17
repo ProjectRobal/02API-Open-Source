@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from domena.settings import MEDIA_URL
 import logging
 
-from .models import ProfilePicture,ProjectGroup
+from .models import ProfilePicture,ProjectGroup,ProfileUser
 from .forms import Register02Form,ProfileImage02Form,Profile02Form
 from .apps import WebadminConfig
 from django import forms
@@ -69,6 +69,16 @@ def update_profile(request):
 
     user.save()
 
+    try:
+
+        if len(user_form["login"].value())!=0:
+            profile:ProfileUser=ProfileUser.objects.get(user=user)
+            profile.login=user_form["login"].value()
+            profile.save()
+
+    except ProfileUser.DoesNotExist:
+        ProfileUser.objects.create(user=user,login=user_form["login"].value())
+
     for group in ProjectGroup.objects.filter(user=user):
         if not group.name in user_form["project"].value():
             group.user.remove(user)
@@ -90,6 +100,14 @@ def profile(request):
 
     user:User=request.user
 
+    try:
+
+        profile:ProfileUser=ProfileUser.objects.get(user=user)
+    
+    except ProfileUser.DoesNotExist:
+
+        profile:ProfileUser=ProfileUser(login="")
+
     groups=ProjectGroup.objects.filter(user=user)
 
     groups_choosed=[]
@@ -100,6 +118,7 @@ def profile(request):
     #logging.debug("Groups choosed: "+str(groups_choosed))
 
     profile_form:Profile02Form=Profile02Form(initial={
+        "login":profile.login,
         "username":user.username,
         "email":user.email,
         "first_name":user.first_name,
@@ -143,6 +162,9 @@ def reg(request):
             email=register["email"].value(),
             password=register["password"].value()
         )
+
+        ProfileUser.objects.create(login=register["login"].value(),
+                                           user=user)
 
 
     for group in ProjectGroup.objects.filter(name__in=register["project"].value()):

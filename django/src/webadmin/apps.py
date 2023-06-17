@@ -47,6 +47,7 @@ class WebadminConfig(AppConfig):
         urlpatterns.append(path('userup/',update_profile))
         urlpatterns.append(path('img_set/',img_set))
         entries.append(HomeBlock("Profile","profile/"))
+        entries.append(HomeBlock("Card register","register/"))
 
         WebadminConfig.APP_READY=True
 

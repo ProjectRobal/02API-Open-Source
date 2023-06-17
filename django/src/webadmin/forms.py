@@ -8,7 +8,8 @@ from domena.settings import MEDIA_ROOT
 
 class Profile02Form(forms.Form):
 
-    username= forms.CharField(label="User name::",max_length=255,required=True)
+    username= forms.CharField(label="Login:",max_length=255,required=True)
+    login= forms.CharField(label="User name:",max_length=100,required=False)
 
     first_name=forms.CharField(label="First name:",max_length=255,required=False)
     last_name=forms.CharField(label="Last name:",max_length=255,required=False)
@@ -26,6 +27,7 @@ class ProfileImage02Form(forms.Form):
 class Register02Form(forms.Form):
 
     username= forms.CharField(label="Login:",max_length=255,required=True)
+    login= forms.CharField(label="User name:",max_length=100,required=True)
     password= forms.CharField(label="Password:",max_length=255,
                               widget=forms.PasswordInput,required=True)
     confirm_password=forms.CharField(label="Confirm Password:",max_length=255,
