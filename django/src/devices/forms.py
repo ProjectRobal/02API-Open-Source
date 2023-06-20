@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from django import forms
+import logging
 
 class PluginFileForm(forms.Form):
     file = forms.FileField()
@@ -8,4 +9,8 @@ class PluginFileForm(forms.Form):
         cleaned_data=super(PluginFileForm,self).clean()
         file=cleaned_data.get("file")
 
-        print(file)
+        extension:str=file.name.rpartition('.')
+
+        if extension[2] != "ztp":
+            logging.error("Not a valid plugin file: "+file.name)
+            raise forms.ValidationError("Not a valid plugin file")

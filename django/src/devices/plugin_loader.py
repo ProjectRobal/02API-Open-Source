@@ -28,6 +28,8 @@ PLUGIN_TMP_FILE="tmp/plugin.tmp"
 
 PLUGIN_TMP_ARCHIVE="tmp/unpacked"
 
+PLUGIN_ARCHIVE_EXTENSION="ztp"
+
 class PluginInfo:
     name:str
     author:str
@@ -61,29 +63,82 @@ def parse_plugin(app_name:str)->PluginInfo or None:
     return None
 
 def clean_temporary():
-    os.remove(PLUGIN_TMP_FILE)
-    os.remove(PLUGIN_TMP_ARCHIVE)
+    shutil.rmtree('tmp', ignore_errors=True)
 
 
-def add_plugin():
+def add_plugin()->bool:
     '''A file with compressed archive'''
     
     try:
 
+        logging.info("Unpacking the ZTP archive into temporary")
         shutil.unpack_archive(
             filename=PLUGIN_TMP_FILE,
-            extract_dir=PLUGIN_TMP_ARCHIVE
+            extract_dir=PLUGIN_TMP_ARCHIVE,
+            format='zip'
         )
 
+        logging.info("Looking for meta.json file")
+
         # check if meta file exists
-        if not os.path.exists(PLUGIN_TMP_ARCHIVE+'meta.json'):
+        if not os.path.exists(PLUGIN_TMP_ARCHIVE+'/meta.json'):
             logging.error("No valid meta.json file")
             clean_temporary()
-            return
+            return False
+        
+        logging.info("Loading metadata...")
+        
+        _json:dict=json.load(open(PLUGIN_TMP_ARCHIVE+'/meta.json','r'))
 
-    except ValueError:
-        logging.error("Cannot open archive")
+        try:
+            # check if meta.json is valid meta file
+            meta:PluginInfo=namedtuple("PluginInfo",_json.keys())(*_json.values())
+
+        except ValueError as e:
+            logging.error(str(e))
+            clean_temporary()
+            return False
+        
+        logging.info("Looking for source code")
+        
+        #check if folder with django source code exits
+        if not os.path.exists(PLUGIN_TMP_ARCHIVE+"/src"):
+            logging.error("No source code has been found")
+            clean_temporary()
+            return False
+        
+        app_dir:str="/app/"+meta.app_name
+        
+        if os.path.exists(app_dir):
+            logging.error("App already exits")
+            clean_temporary()
+            return False
+        
+        logging.info("Creating a folder for: "+meta.app_name)
+        
+        os.mkdir(app_dir)
+
+        logging.info("Moving meta.json file to a new directory")
+
+        # move meta.json file
+        shutil.move(PLUGIN_TMP_ARCHIVE+"/meta.json",app_dir+"/meta.json")
+
+        logging.info("Moving source into a new directory")
+
+        # move src to app source
+        shutil.move(PLUGIN_TMP_ARCHIVE+"/src",app_dir)
+
+        logging.info("Cleaning temporary data")
+
         clean_temporary()
+
+        logging.info("App has been imported")
+        return True
+
+    except ValueError as e:
+        logging.error("Cannot open archive: "+str(e))
+        clean_temporary()
+        return False
 
     
 

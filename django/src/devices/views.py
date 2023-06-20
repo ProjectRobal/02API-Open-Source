@@ -9,8 +9,9 @@ from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
 from domena.plugins import PLUGINS
-from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE
+from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,scan_for_plugin
 from .forms import PluginFileForm
+import os
 
 import logging
 
@@ -40,17 +41,22 @@ def ploader(request):
     form:PluginFileForm=PluginFileForm(request.POST,request.FILES)
 
     if not form.is_valid():
-        return redirect("/devs")
+        return redirect("/plugin_add")
 
     file=form.cleaned_data.get('file')
 
     #save as temporary
 
+    if not os.path.exists("tmp"):
+        os.mkdir("tmp")
+
     with open(PLUGIN_TMP_FILE,"wb+") as pfile:
         for chunk in file.chunks():
             pfile.write(chunk)
     
-    add_plugin()
+    # reset django on success
+    if add_plugin():
+        pass
 
     return redirect("/devs")
 
@@ -97,7 +103,7 @@ def devsPage(request):
 
     plugins:list[PluginInfo]=[]
 
-    for plugin in PLUGINS:
+    for plugin in scan_for_plugin():
         plug=parse_plugin(plugin)
         if plug is not None:
             plugins.append(plug)
