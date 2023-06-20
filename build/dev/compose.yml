@@ -25,6 +25,7 @@ services:
     build:
       context: ../../django
       dockerfile: ./compose/dev/Dockerfile
+    restart: always
     env_file:
       - ./conf/django.env
       - ./conf/sql.env

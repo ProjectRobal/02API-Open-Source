@@ -9,9 +9,10 @@ from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
 from domena.plugins import PLUGINS
-from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,scan_for_plugin
+from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,scan_for_plugin,remove_plugin
 from .forms import PluginFileForm
 import os
+import json
 
 import logging
 
@@ -23,12 +24,35 @@ class TopicInterface:
         self.topic=node.topic
         self.node=node
 
+@login_required(login_url="/login")
+@permission_required("devices.plugin_rm",login_url="/permf")
+def plugin_rm(request):
 
+    if request.method == "POST":   
+        
+        data=json.loads(request.body)
+    
+        logging.debug("app name: "+data["app"])
+
+        if remove_plugin(data["app"]):
+            logging.debug("Plugin "+data["app"]+" has been removed")
+        else:
+            logging.debug("Plugin has not been found")
+
+        return redirect("/devs")
+    
+    return HttpResponseBadRequest()
+    
 @login_required(login_url="/login")
 @permission_required("devices.plugin_add",login_url="/permf")
 def plugin_add(request):
 
     return render(request,"/app/devices/templates/add_plugin.html",context={"plugin_form":PluginFileForm})
+
+@login_required(login_url="/login")
+def plugin_show(request,name):
+
+    return render(request,"/app/devices/templates/show_plugin.html",context={"plugin":parse_plugin(name)})
 
 @login_required(login_url="/login")
 @permission_required("devices.plugin_add",login_url="/permf")
@@ -56,6 +80,7 @@ def ploader(request):
     
     # reset django on success
     if add_plugin():
+
         pass
 
     return redirect("/devs")

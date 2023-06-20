@@ -66,6 +66,15 @@ def clean_temporary():
     shutil.rmtree('tmp', ignore_errors=True)
 
 
+def remove_plugin(name:str)->bool:
+    if os.path.exists("/app/"+name):
+        shutil.rmtree("/app/"+name,ignore_errors=True)
+        return True
+
+    return False
+
+
+
 def add_plugin()->bool:
     '''A file with compressed archive'''
     
@@ -110,9 +119,15 @@ def add_plugin()->bool:
         app_dir:str="/app/"+meta.app_name
         
         if os.path.exists(app_dir):
-            logging.error("App already exits")
-            clean_temporary()
-            return False
+            old_meta=parse_plugin(meta.app_name)
+
+            if old_meta.version!=meta.app_name:
+
+                logging.error("App already exits")
+                clean_temporary()
+                return False
+            
+        meta.installation_date=datetime.datetime.today()
         
         logging.info("Creating a folder for: "+meta.app_name)
         

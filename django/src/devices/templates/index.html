@@ -48,7 +48,7 @@
 
     {% for plugin in plugins %}
 
-    <a href="/plugin/{{plugin.app_name}}">
+    <a href="/pshow/{{plugin.app_name}}">
     <div class="device-block">
 
         <h2>{{plugin.name}}</h2>
@@ -64,11 +64,15 @@
 
     {% endfor %}
 
+    {% if perms.devices.plugin_add %}
+
     <a href="/plugin_add">
 
     <button>Add new plugin</button>
 
     </a>
+
+    {% endif %}
 
 </div>
 

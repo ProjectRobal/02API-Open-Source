@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'header.html'  %}
+    <title>Devices</title>
+</head>
+<body>
+
+{% include 'nav.html' %}
+
+<div class="rows-space">
+
+<div class="device-block">
+
+<h2>{{plugin.name}}</h2>
+
+<h4>by {{plugin.author}}</h4>
+
+<p>ver: {{plugin.version}}</p>
+
+<p>Installed on: {{plugin.installation_date}}</p>
+
+<p>Build from: {{plugin.creation_date}}</p>
+
+<p>app name: {{plugin.app_name}}</p>
+
+</div>
+
+{% if perms.devices.plugin_rm %}
+<div>
+
+
+<button onclick="show_block()" style="background-color:red;">Remove plugin</button>
+
+<div class="device-block" id="close_block" style="display:none;">
+    <div class="rows-space">
+<button class="cross" onclick="hide_block()">X</button>
+<h2>Are you sure?</h2>
+
+<button onclick="rm_device()" style="background-color:red;">Remove</button>
+
+    </div>
+</div>
+
+</div>
+
+<script>
+
+    function show_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="flex";
+    }
+    
+    function hide_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="none";
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    function rm_device()
+    {
+        fetch("/prm/",{
+            method:"post",
+            headers: {
+                'Accept': 'application/json',
+                "Content-Type": "application/json",
+                'X-CSRFToken': csrftoken,
+            },
+            mode: 'cors',
+            body: JSON.stringify({
+                app:"{{plugin.app_name}}"
+            })
+        })
+        .then((res) =>{
+            
+        })
+    }
+    
+    </script>
+
+{% endif %}
+
+</div>
+
+
+</body>
+</html>

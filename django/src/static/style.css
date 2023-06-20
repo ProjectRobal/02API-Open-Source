@@ -67,7 +67,7 @@ button
 {
     all:unset;
     background-color:aquamarine;
-    width: fit-content;
+    width: 100%;
     height: fit-content;
     border-radius: 10px;
     padding: 10px;
@@ -78,6 +78,21 @@ button:hover
 {
     color:white;
     background-color: black;
+}
+
+.cross
+{
+    color:black;
+    background-color: white;
+    font-size:large;
+    width: fit-content;
+    height: fit-content;
+}
+
+.cross:hover
+{
+    background-color: black;
+    color: white;
 }
 
 .block
@@ -273,6 +288,8 @@ button:hover
     border-radius: 10px;
     z-index: 20;
     font-size: large;
+    width: fit-content;
+    height: fit-content;
 }
 
 #navbutton:hover
@@ -354,6 +371,17 @@ button:hover
 }
 
 @media only screen and (min-width:768px) {
+
+    button
+    {
+        all:unset;
+        background-color:aquamarine;
+        width: fit-content;
+        height: fit-content;
+        border-radius: 10px;
+        padding: 10px;
+        cursor: pointer;
+    }
 
 
     #homepage
