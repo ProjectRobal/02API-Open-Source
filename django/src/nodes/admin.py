@@ -8,9 +8,6 @@ from .models import PublicNodes
 #admin.site.register(PublicNodes.CardNode)
 
 
-for node in PublicNodes.get_nodes_list():
+for node in PublicNodes.get_node():
 
-    obj=PublicNodes.get_obj(node[0])
-
-    if obj is not None:
-        admin.site.register(obj)
+    admin.site.register(node)

@@ -8,6 +8,8 @@ from nodes.models import PublicNodes
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
+from domena.plugins import PLUGINS
+from .plugin_loader import parse_plugin,PluginInfo
 
 # Create your views here.
 
@@ -60,7 +62,14 @@ def devsPage(request):
 
     devices=Device.objects.all()
 
-    return render(request,"/app/devices/templates/index.html",context={"devices":devices})
+    plugins:list[PluginInfo]=[]
+
+    for plugin in PLUGINS:
+        plug=parse_plugin(plugin)
+        if plug is not None:
+            plugins.append(plug)
+
+    return render(request,"/app/devices/templates/index.html",context={"devices":devices,"plugins":plugins})
 
 @login_required(login_url="/login")
 @permission_required("devices.device_view",login_url="/permf")

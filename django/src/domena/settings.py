@@ -47,8 +47,8 @@ INSTALLED_APPS = [
     'reset_migrations',
     'auth02',
     'devices',
-    'nodes',
     'nodeacl',
+    'nodes',
     'mqtt'
 ] + PLUGINS
 

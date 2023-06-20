@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 import inspect
 from typing import Tuple
 from common.acess_levels import Access
-import secrets
 
 # Create your models here.
 
@@ -17,65 +16,68 @@ class NodeEntry(common):
     _name - alternate node name
     '''
     _name=None
+    class Meta:
+        abstract = True
+        app_label= "nodes"
 
 
-class PublicNodes:   
-
-    class CardNode(NodeEntry):
-        '''
-        A node that represents each cards
-        '''
-        _name="cards"
-        hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32))
-        user_id=models.ForeignKey(User, on_delete=models.CASCADE)
-        is_in_basement=models.BooleanField(default=False)
-
-    class CardProgram(NodeEntry):
-        '''
-        A node that represents cards to program, should have access to pop command
-        '''
-        _name="card_progs"
-        hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32))
-        user_id=models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class LedControllerMarcin(NodeEntry):
-
-        _name="marcin"
-        led_freq=ArrayField(base_field=models.IntegerField(default=0),name="frequency",size=16)
-        led_prec=ArrayField(base_field=models.IntegerField(default=0),name="brightness",size=16)
+class PublicNode(NodeEntry):
+    '''
+    A base class for public nodes
+    '''
+    _name=None
+    class Meta:
+        abstract = True
+        app_label= "nodes"
 
 
-    class SampleNode(NodeEntry):
-        '''
-        A sample node for class entry
-        '''
-        temperature=models.FloatField(name="temperature")
-        humidity=models.FloatField(name="humidity")
-        _name="sample"
+class LedControllerMarcin(PublicNode):
 
-    def atach_class(obj):
-        '''Attach class with type obj'''
-        pass
+    _name="marcin"
+    led_freq=ArrayField(base_field=models.IntegerField(default=0),name="frequency",size=16)
+    led_prec=ArrayField(base_field=models.IntegerField(default=0),name="brightness",size=16)
+
+
+class SampleNode(PublicNode):
+    '''
+    A sample node for class entry
+    '''
+    temperature=models.FloatField(name="temperature")
+    humidity=models.FloatField(name="humidity")
+    _name="sample"
+
+class PublicNodes:
 
     def get_nodes_list()->list[Tuple[str,str]]:
 
         output:list[Tuple[str,str]]=[
-            ("","")
         ]
 
-        for o in inspect.getmembers(PublicNodes,lambda a:inspect.isclass(a)):
-            if issubclass(o[1],NodeEntry):
-                #logging.debug(o[1]._name)
-                if o[1]._name is None:
-                    output.append((o[0],o[0]))
-                else:
-                    
-                    output.append((o[0],o[1]._name))
+        childs:list[PublicNode]=PublicNode.__subclasses__()
+
+        for child in childs:
+            if child._name is None:
+                output.append((child.__class__.__name__,child.__class__.__name__))
+            else:
+                output.append((child.__class__.__name__,child._name))
+
+        if len(childs)==0:
+            output.append(("",""))
 
         return output
+
+    def get_node():
+
+        return PublicNode.__subclasses__()
     
     def get_obj(name:str):
-        if hasattr(PublicNodes,name):
-            return getattr(PublicNodes,name)
-        else:
-            return None
+        childs:list[PublicNode]=PublicNode.__subclasses__()
+
+        for child in childs:
+            if child._name is None:
+                if name == child._name:
+                    return child
+            elif child.__class__.__name__==name:
+                return child
+        
+        return None

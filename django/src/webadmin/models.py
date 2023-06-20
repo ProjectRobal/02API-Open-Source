@@ -4,10 +4,23 @@ from django.db import DEFAULT_DB_ALIAS
 from domena.settings import MEDIA_ROOT
 from django.contrib.auth.models import User
 from common.models import common
+import secrets
 
 from uuid import uuid4
 import os
 
+from nodes.models import PublicNode
+
+class CardNode(PublicNode):
+        '''
+        A node that represents each cards,
+        to_flash is set to True when a card has to be written to
+        '''
+        _name="cards"
+        hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32))
+        user_id=models.ForeignKey(User, on_delete=models.CASCADE)
+        is_in_basement=models.BooleanField(default=False)
+        to_flash=models.BooleanField(default=True)
 
 # Create your models here.
 
@@ -42,3 +55,4 @@ class ProfilePicture(common):
         #os.remove(os.path.join(MEDIA_ROOT, self.path))
         
         return super().delete(using,keep_parents)
+    

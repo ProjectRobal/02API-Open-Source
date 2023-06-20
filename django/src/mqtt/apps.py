@@ -17,8 +17,13 @@ class MqttConfig(AppConfig):
         super().__init__(app_name, app_module)
 
     def ready(self) -> None:
+        
+        from nodes.models import PublicNodes
+        from .models import Topic
 
         import mqtt.mqtt as mqtt
+
+        Topic.node.choices=PublicNodes.get_nodes_list()
 
         MqttConfig.client=mqtt.create_client()
 
