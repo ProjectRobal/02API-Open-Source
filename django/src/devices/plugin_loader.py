@@ -20,6 +20,13 @@ import datetime
 import os
 from collections import namedtuple
 import json
+import gzip
+import shutil
+import logging
+
+PLUGIN_TMP_FILE="tmp/plugin.tmp"
+
+PLUGIN_TMP_ARCHIVE="tmp/unpacked"
 
 class PluginInfo:
     name:str
@@ -28,6 +35,19 @@ class PluginInfo:
     creation_date:datetime.datetime
     version:str
     app_name:str
+
+
+def scan_for_plugin()-> list[str]:
+
+    output:list[str]=[]
+
+    for dir in os.listdir('/app/'):
+        if os.path.isdir(dir):
+            if os.path.exists('/app/'+dir+'/meta.json'):
+                output.append(dir)
+    
+    return output
+
 
 def parse_plugin(app_name:str)->PluginInfo or None:
 
@@ -39,3 +59,33 @@ def parse_plugin(app_name:str)->PluginInfo or None:
 
 
     return None
+
+def clean_temporary():
+    os.remove(PLUGIN_TMP_FILE)
+    os.remove(PLUGIN_TMP_ARCHIVE)
+
+
+def add_plugin():
+    '''A file with compressed archive'''
+    
+    try:
+
+        shutil.unpack_archive(
+            filename=PLUGIN_TMP_FILE,
+            extract_dir=PLUGIN_TMP_ARCHIVE
+        )
+
+        # check if meta file exists
+        if not os.path.exists(PLUGIN_TMP_ARCHIVE+'meta.json'):
+            logging.error("No valid meta.json file")
+            clean_temporary()
+            return
+
+    except ValueError:
+        logging.error("Cannot open archive")
+        clean_temporary()
+
+    
+
+
+

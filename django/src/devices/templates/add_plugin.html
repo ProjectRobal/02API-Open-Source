@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'header.html'  %}
+    <title>Devices</title>
+</head>
+<body>
+
+{% include 'nav.html' %}
+
+<div class="rows-space">
+
+<h2>Select a new plugin</h2>
+
+<form method="post" action="/ploader/" class="block overlay" enctype="multipart/form-data">
+    <div class="overlay_content logform" >
+        {% csrf_token %}
+        {{plugin_form}}
+        <input type="submit" value="Add new plugin">
+    </div>
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 from django.http import HttpResponse,HttpResponseBadRequest,HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import Device
 from mqtt.models import Topic
 from nodeacl.models import NodeACL
@@ -9,7 +9,10 @@ from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
 from domena.plugins import PLUGINS
-from .plugin_loader import parse_plugin,PluginInfo
+from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE
+from .forms import PluginFileForm
+
+import logging
 
 # Create your views here.
 
@@ -20,6 +23,36 @@ class TopicInterface:
         self.node=node
 
 
+@login_required(login_url="/login")
+@permission_required("devices.plugin_add",login_url="/permf")
+def plugin_add(request):
+
+    return render(request,"/app/devices/templates/add_plugin.html",context={"plugin_form":PluginFileForm})
+
+@login_required(login_url="/login")
+@permission_required("devices.plugin_add",login_url="/permf")
+def ploader(request):
+    '''A function to load plugins'''
+
+    if request.method != 'POST':
+        return HttpResponseNotFound()
+    
+    form:PluginFileForm=PluginFileForm(request.POST,request.FILES)
+
+    if not form.is_valid():
+        return redirect("/devs")
+
+    file=form.cleaned_data.get('file')
+
+    #save as temporary
+
+    with open(PLUGIN_TMP_FILE,"wb+") as pfile:
+        for chunk in file.chunks():
+            pfile.write(chunk)
+    
+    add_plugin()
+
+    return redirect("/devs")
 
 def home_page(request,name=None):
 
@@ -35,7 +68,7 @@ def rat(request):
 def node_list(request,name):
     
     if request.method != 'GET':
-        return HttpResponseBadRequest()
+        return HttpResponseNotFound()
     
     node=PublicNodes.get_obj(name)
 
@@ -77,7 +110,7 @@ def device_page(request,name):
     '''page to display informations about device'''
 
     if request.method != 'GET':
-        return HttpResponseBadRequest()
+        return HttpResponseNotFound()
     
     try:
     

@@ -39,7 +39,9 @@ class Device(common):
             permissions = [
                 ("device_view", "Can access device page"),
                 ("device_user","Can create other users with device admin"),
-                ("device_admin","Can manage devices, add or delete them")
+                ("device_admin","Can manage devices, add or delete them"),
+                ("plugin_add","Can add plugins"),
+                ("plugin_rm","Can remove plugins")
             ]
  
 

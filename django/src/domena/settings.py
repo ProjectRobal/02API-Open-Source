@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 from .plugins import PLUGINS
+from devices.plugin_loader import scan_for_plugin
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,7 +51,7 @@ INSTALLED_APPS = [
     'nodeacl',
     'nodes',
     'mqtt'
-] + PLUGINS
+] + scan_for_plugin()
 
 MQTT_SERVER="mqtt"
 MQTT_USER=os.environ.get('MQTT_USER')
