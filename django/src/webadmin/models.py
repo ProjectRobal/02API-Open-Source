@@ -10,6 +10,8 @@ import os
 
 from nodes.models import PublicNode
 
+# plugin nodes
+
 class CardNode(PublicNode):
         '''
         A node that represents each cards,
@@ -23,6 +25,11 @@ class CardNode(PublicNode):
             permissions = [
                 ("cards_view", "Can see who is in the basement")
             ]
+
+class BasementStatus(PublicNode):
+    _name="piwnica"
+    _mono=True
+    busy=models.BooleanField()
 
 # Create your models here.
 
