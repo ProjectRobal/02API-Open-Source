@@ -8,7 +8,7 @@ class common(models.Model):
     creation_date - a object creation date
     modification_date
     '''
-    id=models.UUIDField(default=uuid.uuid4,name="id",
+    uuid=models.UUIDField(default=uuid.uuid4,
                                 primary_key=True,
                                editable=False)
     class Meta:

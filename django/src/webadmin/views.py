@@ -1,11 +1,12 @@
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render,redirect
-from django.contrib.auth.models import User
+from auth02.models import O2User
+from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required,permission_required
 from domena.settings import MEDIA_URL
 import logging
 
-from .models import ProfilePicture,ProjectGroup,ProfileUser
+from .models import ProfilePicture,ProjectGroup
 from .forms import Register02Form,ProfileImage02Form,Profile02Form
 from .apps import WebadminConfig
 from django import forms
@@ -22,7 +23,7 @@ def img_set(request):
         logging.error(str(form.errors))
         return redirect("/profile")   
 
-    user:User=request.user
+    user:O2User=request.user
 
     images=ProfilePicture.objects.filter(user=user)
 
@@ -53,7 +54,7 @@ def update_profile(request):
 
     user_form:Profile02Form=Profile02Form(request.POST)
 
-    user:User=request.user
+    user:O2User=request.user
 
     if len(user_form["email"].value())!=0:
         user.email=user_form["email"].value()
@@ -66,18 +67,10 @@ def update_profile(request):
 
     if len(user_form["last_name"].value())!=0:
         user.last_name=user_form["last_name"].value()
-
+    if len(user_form["login"].value())!=0:
+        user.login=user_form["login"].value()
+    
     user.save()
-
-    try:
-
-        if len(user_form["login"].value())!=0:
-            profile:ProfileUser=ProfileUser.objects.get(user=user)
-            profile.login=user_form["login"].value()
-            profile.save()
-
-    except ProfileUser.DoesNotExist:
-        ProfileUser.objects.create(user=user,login=user_form["login"].value())
 
     for group in ProjectGroup.objects.filter(user=user):
         if not group.name in user_form["project"].value():
@@ -98,15 +91,7 @@ def profile(request):
     
     profile_img=""
 
-    user:User=request.user
-
-    try:
-
-        profile:ProfileUser=ProfileUser.objects.get(user=user)
-    
-    except ProfileUser.DoesNotExist:
-
-        profile:ProfileUser=ProfileUser(login="")
+    user:O2User=request.user
 
     groups=ProjectGroup.objects.filter(user=user)
 
@@ -118,7 +103,7 @@ def profile(request):
     #logging.debug("Groups choosed: "+str(groups_choosed))
 
     profile_form:Profile02Form=Profile02Form(initial={
-        "login":profile.login,
+        "login":user.login,
         "username":user.username,
         "email":user.email,
         "first_name":user.first_name,
@@ -149,29 +134,32 @@ def reg(request):
 
     try:
 
-        User.objects.get(username=register["username"].value())
+        O2User.objects.get(username=register["username"].value())
 
         return redirect('/register')
 
-    except User.DoesNotExist:
+    except O2User.DoesNotExist:
 
-        user=User.objects.create_user(
+        user:O2User=O2User.objects.create_user(
             username=register["username"].value(),
             first_name=register["first_name"].value(),
             last_name=register["last_name"].value(),
             email=register["email"].value(),
-            password=register["password"].value()
+            password=register["password"].value(),
+            login=register["login"].value()
         )
 
-        ProfileUser.objects.create(login=register["login"].value(),
-                                           user=user)
+        cards_view=Permission.objects.get(codename="cards_view")
 
+        user.user_permissions.add(cards_view)
+
+        user.save()
 
     for group in ProjectGroup.objects.filter(name__in=register["project"].value()):
         group.user.add(user)
         group.save()
 
-    return redirect("/login?log_success=1")
+    return redirect("/login?login_success=1")
 
 def reg_form(request):
 

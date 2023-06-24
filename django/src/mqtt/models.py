@@ -3,6 +3,7 @@ from typing import Any, Dict, Tuple
 from django.db import models
 from django.db import DEFAULT_DB_ALIAS
 from django.core.validators import RegexValidator 
+import django.forms as forms
 from nodes.models import PublicNodes
 from .apps import MqttConfig
 from common.models import common
@@ -10,6 +11,7 @@ import logging
 
 # It ensures that topic path has a form of /.../
 regex_path=re.compile("^/+[\w /]+/+$")
+
 
 # Create your models here.
 
@@ -24,7 +26,7 @@ class Topic(common):
     '''
 
     path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
-    node=models.CharField(max_length=255,name="node",choices=PublicNodes.get_nodes_list())
+    node=models.CharField(max_length=255,name="node")
 
     def save(self, *args, **kwargs):
 
@@ -54,3 +56,10 @@ class Topic(common):
                 logging.debug(topic)
 
         return super().delete(using, keep_parents)
+    
+
+class TopicForm(forms.ModelForm):
+    node=forms.ChoiceField(choices=PublicNodes.get_nodes_list)
+    class Meta:
+        model=Topic
+        fields = ["path","node"]

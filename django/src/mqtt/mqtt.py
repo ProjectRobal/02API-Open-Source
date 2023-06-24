@@ -60,8 +60,14 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    key=None
 
+   out=None
+
    if "key" in data:
        key=data["key"]
+       out=key
+    
+   if "out" in data:
+       out=data["out"]
 
    if "data" in data:
        data=data["data"]
@@ -74,12 +80,12 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    if key is not None:
     # return data
-    mqtt_client.publish(paths[0]+"/"+str(key),str(result))
+    mqtt_client.publish(paths[0]+"/"+str(out),str(result))
 
     logging.debug("Answer at: "+paths[0]+"/"+str(key))
     logging.debug("With result: "+str(result))
    else:
-       logging.debug("No key provided!")
+       logging.debug("No key or output provided!")
 
    #retrive 
 

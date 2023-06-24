@@ -23,7 +23,11 @@ class MqttConfig(AppConfig):
 
         import mqtt.mqtt as mqtt
 
-        Topic.node.choices=PublicNodes.get_nodes_list()
+        nodes_list=PublicNodes.get_nodes_list()
+
+        Topic.node.choices=nodes_list
+
+        logging.debug("mqtt: "+str(nodes_list))
 
         MqttConfig.client=mqtt.create_client()
 

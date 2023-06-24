@@ -1,8 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.db import DEFAULT_DB_ALIAS
 from domena.settings import MEDIA_ROOT
-from django.contrib.auth.models import User
+from auth02.models import O2User
 from common.models import common
 import secrets
 
@@ -14,13 +13,16 @@ from nodes.models import PublicNode
 class CardNode(PublicNode):
         '''
         A node that represents each cards,
-        to_flash is set to True when a card has to be written to
         '''
         _name="cards"
         hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32))
-        user_id=models.ForeignKey(User, on_delete=models.CASCADE)
+        user_id=models.ForeignKey(O2User, on_delete=models.CASCADE)
         is_in_basement=models.BooleanField(default=False)
-        to_flash=models.BooleanField(default=True)
+
+        class Meta:
+            permissions = [
+                ("cards_view", "Can see who is in the basement")
+            ]
 
 # Create your models here.
 
@@ -28,7 +30,7 @@ class ProjectGroup(common):
     name=models.CharField(verbose_name="Name",max_length=255)
     project_name=models.CharField(verbose_name="Nazwa projektu",max_length=255)
 
-    user=models.ManyToManyField(User)
+    user=models.ManyToManyField(O2User)
 
 def user_directory_path(instance, filename):
     
@@ -39,15 +41,12 @@ def user_directory_path(instance, filename):
     
     return 'profiles/{0}'.format(str(name))
 
-class ProfileUser(common):
-    user=models.OneToOneField(User, on_delete=models.CASCADE)
-    login=models.CharField(max_length=100)
 
 class ProfilePicture(common):
     '''
     A model for storing profile pictures.
     '''
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    user=models.OneToOneField(O2User,on_delete=models.CASCADE)
     image=models.ImageField(upload_to=user_directory_path)
 
     def delete(self, using = DEFAULT_DB_ALIAS, keep_parents: bool = False) -> tuple[int, dict[str, int]]:

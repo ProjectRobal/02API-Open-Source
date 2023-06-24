@@ -37,7 +37,6 @@ def auth(request):
     
     logout(request)
 
-
     loginData=LoginForm(request.POST)
 
     if not loginData.is_valid():

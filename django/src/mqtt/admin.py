@@ -1,6 +1,9 @@
 from django.contrib import admin
-from .models import Topic
+from .models import Topic,TopicForm
 
 # Register your models here.
 
-admin.site.register(Topic)
+class AdminTopic(admin.ModelAdmin):
+    form=TopicForm
+
+admin.site.register(Topic,AdminTopic)

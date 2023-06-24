@@ -13,6 +13,7 @@ from nodeacl.models import NodeACL
 from devices.models import Device
 from .acess_levels import Access
 from mqtt.models import Topic
+from nodes.models import NodeEntry
 
 
 class FetchAuth:
@@ -42,12 +43,13 @@ class FetchAuth:
 
 
 class FetchResult:
-    def __init__(self,code:int,message:str,result=None) -> None:
+    def __init__(self,code:int,message:str,node:str,result=None) -> None:
         self.code=code
         self.message=message
         self.result=result
+        self.node=node
 
-        logging.debug("code: "+str(self.code)+" msg: "+self.message)
+        logging.debug("code: "+str(self.code)+" from node: "+node+" msg: "+self.message)
         
 
     def __bool__(self):
@@ -68,7 +70,8 @@ class FetchResult:
     def __str__(self):
         output:dict={
             "code":self.code,
-            "message":self.message
+            "message":self.message,
+            "node":self.node,
         }
 
         if self.result is not None:
@@ -80,7 +83,7 @@ class FetchResult:
 class Fetch:
 
     
-    def __init__(self,dev_id:str=None,model:models.Model=None,topic:Topic=None) -> None:
+    def __init__(self,dev_id:str=None,model:NodeEntry=None,topic:Topic=None) -> None:
         self.model=model
         self.dev_id=dev_id
         self.topic=topic     
@@ -95,11 +98,11 @@ class Fetch:
     def pop(self,data:dict)->FetchResult:
 
         if not FetchAuth.check(self.dev_id,Access.POP,self.topic):
-            return FetchResult(-11,"Wrong privileges")
+            return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
         if len(data)==0:
             if self.model.objects.count()==0:
-                return FetchResult(-2,"Database is empty")
+                return FetchResult(-2,"Database is empty",self.model.get_name())
 
             result=self.model.objects.all()[0]
 
@@ -107,7 +110,7 @@ class Fetch:
 
             result.delete()
 
-            return FetchResult(0,"Poped first element",copy)
+            return FetchResult(0,"Poped first element",self.model.get_name(),copy)
         
         if 'id' in data.keys():
             try:
@@ -117,9 +120,9 @@ class Fetch:
 
                 result.delete()
 
-                return FetchResult(0,"Got object by id",copy)
+                return FetchResult(0,"Got object by id",self.model.get_name(),copy)
             except:
-                return FetchResult(-2,"Object not found!")
+                return FetchResult(-2,"Object not found!",self.model.get_name())
 
         if 'labels' in data.keys():
 
@@ -142,7 +145,7 @@ class Fetch:
 
                 if not result.exists():
 
-                    return FetchResult(-2,"Objects not found")
+                    return FetchResult(-2,"Objects not found",self.model.get_name())
                     
 
                 if len(mask)!=0:
@@ -167,7 +170,7 @@ class Fetch:
     def mod(self,data:dict)->FetchResult:
 
         if not FetchAuth.check(self.dev_id,Access.MOD,self.topic):
-            return FetchResult(-11,"Wrong privileges")
+            return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
         to_modify=None
         labels={}
@@ -175,30 +178,30 @@ class Fetch:
         if 'labels' in data.keys():
             labels=data["labels"]
         else:
-            return FetchResult(-1,"No labels field provided")
+            return FetchResult(-1,"No labels field provided",self.model.get_name())
 
 
         if 'id' in data.keys():
             try:
                 to_modify=self.model.objects.get(id=data["id"])
             except:
-                return FetchResult(-2,"No object with specified id")
+                return FetchResult(-2,"No object with specified id",self.model.get_name())
 
         else:
-            return FetchResult(-1,"No id provided")
+            return FetchResult(-1,"No id provided",self.model.get_name())
         
         for attr,val in labels.items():
             setattr(to_modify,attr,val)
 
         to_modify.save()
 
-        return FetchResult(0,"Object modified")
+        return FetchResult(0,"Object modified",self.model.get_name())
 
 
     def post(self,data:dict)->FetchResult:
 
         if not FetchAuth.check(self.dev_id,Access.POST,self.topic):
-            return FetchResult(-11,"Wrong privileges")
+            return FetchResult(-11,"Wrong privileges",self.model.get_name())
 
         try:
         
@@ -206,36 +209,36 @@ class Fetch:
 
             record.save()
 
-            return FetchResult(0,"Entry added!")
+            return FetchResult(0,"Entry added!",self.model.get_name())
 
         except Exception as e:
             
-            return FetchResult(-1,"Entry not added: "+str(e))
+            return FetchResult(-1,"Entry not added: "+str(e),self.model.get_name())
 
     def get(self,data:dict)->FetchResult:
         
         if not FetchAuth.check(self.dev_id,Access.GET,self.topic):
-            return FetchResult(-11,"Wrong privileges")
+            return FetchResult(-11,"Wrong privileges",self.model.get_name())
 
         if self.model.objects.count()==0:
-            return FetchResult(-2,"Database is empty")
+            return FetchResult(-2,"Database is empty",self.model.get_name())
 
         result=self.model.objects.all()[0]
 
-        return FetchResult(0,"Object retrived",model_to_dict(result))
+        return FetchResult(0,"Object retrived",self.model.get_name(),model_to_dict(result))
     
     def get_ex(self,data:dict)->FetchResult:
 
         if not FetchAuth.check(self.dev_id,Access.GET,self.topic):
-            return FetchResult(-11,"Wrong privileges")
+            return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
         if 'id' in data.keys():
             try:
                 result=self.model.objects.get(id=data["id"])
 
-                return FetchResult(0,"Got object by id",model_to_dict(result))
+                return FetchResult(0,"Got object by id",self.model.get_name(),model_to_dict(result))
             except:
-                return FetchResult(-2,"Object not found!")
+                return FetchResult(-2,"Object not found!",self.model.get_name())
 
         if 'labels' in data.keys():
 
@@ -257,7 +260,7 @@ class Fetch:
                 result=self.model.objects.filter(**conditions)
 
                 if not result.exists():
-                    return FetchResult(-2,"Objects not found")
+                    return FetchResult(-2,"Objects not found",self.model.get_name())
 
                 if len(mask)!=0:
                     result=result.only(*mask)
@@ -275,7 +278,7 @@ class Fetch:
                         "data":output
                                        })
             
-        return FetchResult(-1,"No labels provided")
+        return FetchResult(-1,"No labels provided",self.model.get_name())
 
               
     requests={

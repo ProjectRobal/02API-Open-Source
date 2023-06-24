@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 import inspect
 from typing import Tuple
 from common.acess_levels import Access
+import logging
 
 # Create your models here.
 
@@ -19,6 +20,13 @@ class NodeEntry(common):
     class Meta:
         abstract = True
         app_label= "nodes"
+
+    @classmethod
+    def get_name(cls)->str:
+        if cls._name is not None:
+            return cls._name
+        
+        return cls.__name__
 
 
 class PublicNode(NodeEntry):
@@ -50,19 +58,17 @@ class PublicNodes:
 
     def get_nodes_list()->list[Tuple[str,str]]:
 
-        output:list[Tuple[str,str]]=[
-        ]
+        output:list[Tuple[str,str]]=[]
 
         childs:list[PublicNode]=PublicNode.__subclasses__()
 
+        logging.debug(str(childs))
+
         for child in childs:
             if child._name is None:
-                output.append((child.__class__.__name__,child.__class__.__name__))
+                output.append((child.__name__,child.__name__))
             else:
-                output.append((child.__class__.__name__,child._name))
-
-        if len(childs)==0:
-            output.append(("",""))
+                output.append((child.__name__,child._name))
 
         return output
 
@@ -77,7 +83,7 @@ class PublicNodes:
             if child._name is None:
                 if name == child._name:
                     return child
-            elif child.__class__.__name__==name:
+            elif child.__name__==name:
                 return child
         
         return None

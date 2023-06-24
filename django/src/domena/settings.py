@@ -38,6 +38,8 @@ CSRF_TRUSTED_ORIGINS=["https://zerotwo.tenere.konar.pwr.edu.pl", "https://stagin
 
 # Application definition
 
+AUTH_USER_MODEL = 'auth02.O2User' 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,9 +51,8 @@ INSTALLED_APPS = [
     'auth02',
     'devices',
     'nodeacl',
-    'nodes',
-    'mqtt'
-] + scan_for_plugin()
+    'nodes'
+] + scan_for_plugin()+['mqtt']
 
 MQTT_SERVER="mqtt"
 MQTT_USER=os.environ.get('MQTT_USER')

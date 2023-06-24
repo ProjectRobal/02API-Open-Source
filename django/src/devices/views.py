@@ -148,7 +148,7 @@ def device_page(request,name):
         device=Device.objects.get(name=name)
         last_login=str(device.last_login_date)
 
-        nodesacl=NodeACL.objects.filter(device=device.id)
+        nodesacl=NodeACL.objects.filter(device=device.uuid)
 
         node_list=[]
         
