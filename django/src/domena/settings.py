@@ -16,6 +16,10 @@ from pathlib import Path
 from .plugins import PLUGINS
 from devices.plugin_loader import scan_for_plugin
 
+
+# a server version
+SERVER_VERSION="0.5"
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

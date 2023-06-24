@@ -15,6 +15,8 @@ from .acess_levels import Access
 from mqtt.models import Topic
 from nodes.models import NodeEntry
 
+# 02 api version
+O2_API_VERSION="1.0"
 
 class FetchAuth:
     '''

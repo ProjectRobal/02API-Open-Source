@@ -28,6 +28,7 @@ PLUGIN_TMP_FILE="tmp/plugin.tmp"
 
 PLUGIN_TMP_ARCHIVE="tmp/unpacked"
 
+# zero two plugin extension
 PLUGIN_ARCHIVE_EXTENSION="ztp"
 
 class PluginInfo:
@@ -64,7 +65,6 @@ def parse_plugin(app_name:str)->PluginInfo or None:
 
 def clean_temporary():
     shutil.rmtree('tmp', ignore_errors=True)
-
 
 def remove_plugin(name:str)->bool:
     if os.path.exists("/app/"+name):
@@ -154,8 +154,3 @@ def add_plugin()->bool:
         logging.error("Cannot open archive: "+str(e))
         clean_temporary()
         return False
-
-    
-
-
-

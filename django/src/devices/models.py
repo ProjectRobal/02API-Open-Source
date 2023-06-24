@@ -31,9 +31,7 @@ class Device(common):
     last_login_date=models.DateTimeField(blank=True,null=True)
     key=models.CharField(max_length=32,unique=True,default=secrets.token_urlsafe(24))
     status=models.IntegerField(choices=_status,default=_status[0])
-    major_version=models.IntegerField(default=0)
-    minor_version=models.IntegerField(default=0)
-    patch_version=models.IntegerField(default=0)
+    version=models.CharField(max_length=5,default="0.0.0")
     
     class Meta:
             permissions = [
