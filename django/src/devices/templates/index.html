@@ -36,6 +36,16 @@
 
 {% endfor %}
 
+    {% if perms.devices.plugin_add %}
+
+    <a href="/device_add">
+
+        <button>Add new plugin</button>
+
+    </a>
+
+    {% endif %}
+
 </div>
 
 <div class="rows-space">

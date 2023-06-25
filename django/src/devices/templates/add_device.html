@@ -3,7 +3,7 @@
 <html>
 <head>
     {% include 'header.html'  %}
-    <title>Plugin loader</title>
+    <title>Device loader</title>
 </head>
 <body>
 
@@ -11,13 +11,13 @@
 
 <div class="rows-space">
 
-<h2>Select a new plugin</h2>
+<h2></h2>
 
-<form method="post" action="/ploader/" class="block overlay" enctype="multipart/form-data">
+<form method="post" action="/devloader/" class="block overlay" enctype="multipart/form-data">
     <div class="overlay_content logform" >
         {% csrf_token %}
         {{plugin_form}}
-        <input type="submit" value="Add new plugin">
+        <input type="submit" value="Add new device">
     </div>
 </form>
 

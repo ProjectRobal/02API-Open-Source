@@ -14,3 +14,16 @@ class PluginFileForm(forms.Form):
         if extension[2] != "ztp":
             logging.error("Not a valid plugin file: "+file.name)
             raise forms.ValidationError("Not a valid plugin file")
+        
+class DeviceFileForm(forms.Form):
+    file = forms.FileField()
+
+    def clean(self) -> Dict[str, Any]:
+        cleaned_data=super(PluginFileForm,self).clean()
+        file=cleaned_data.get("file")
+
+        extension:str=file.name.rpartition('.')
+
+        if extension[2] != "ztd":
+            logging.error("Not a valid plugin file: "+file.name)
+            raise forms.ValidationError("Not a valid plugin file")

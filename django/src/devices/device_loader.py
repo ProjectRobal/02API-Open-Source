@@ -152,7 +152,37 @@ def add_topics(topics:dict)->tuple(list[Topic]|None,list[NodeACL]|None):
         logging.error(str(e))
         return (None,None)
 
-    
+
+def remove_device(name:str)->bool:
+    try:
+
+        dev:Device=Device.objects.get(name=name)
+
+        dev.delete()
+
+        return True
+
+    except Device.DoesNotExist:
+        return False
+
+def purge_device(name:str)->bool:
+    try:
+        dev:Device=Device.objects.get(name=name)
+
+        acls=NodeACL.objects.filter(device=dev)
+
+        for acl in acls:
+            if acl.topic is not None:
+                acl.topic.delete()
+
+            acl.delete()
+
+        dev.delete()
+
+        return True
+
+    except Device.DoesNotExist:
+        return False
 
 def add_device()->bool:
 

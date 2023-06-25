@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
 from domena.plugins import PLUGINS
 from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,scan_for_plugin,remove_plugin
-from .forms import PluginFileForm
+from .device_loader import add_device,remove_device,purge_device
+from .forms import PluginFileForm,DeviceFileForm
 import os
 import json
 
@@ -23,6 +24,44 @@ class TopicInterface:
         self.access=Access(node.access_level).name
         self.topic=node.topic
         self.node=node
+
+@login_required(login_url="/login")
+@permission_required("devices.device_rm",login_url="/permf")
+def device_rm(request):
+
+    if request.method == "POST":   
+        
+        data=json.loads(request.body)
+    
+        logging.debug("Device name: "+data["app"])
+
+        if remove_device(data["app"]):
+            logging.debug("Device "+data["app"]+" has been removed")
+        else:
+            logging.debug("Device has not been found")
+
+        return redirect("/devs")
+    
+    return HttpResponseBadRequest()
+
+@login_required(login_url="/login")
+@permission_required("devices.device_rm",login_url="/permf")
+def device_purge(request):
+
+    if request.method == "POST":   
+        
+        data=json.loads(request.body)
+    
+        logging.debug("Device name: "+data["app"])
+
+        if remove_device(data["app"]):
+            logging.debug("Device "+data["app"]+" and it's topics and acl rules have been removed")
+        else:
+            logging.debug("Device has not been found")
+
+        return redirect("/devs")
+    
+    return HttpResponseBadRequest()
 
 @login_required(login_url="/login")
 @permission_required("devices.plugin_rm",login_url="/permf")
@@ -48,6 +87,12 @@ def plugin_rm(request):
 def plugin_add(request):
 
     return render(request,"/app/devices/templates/add_plugin.html",context={"plugin_form":PluginFileForm})
+
+@login_required(login_url="/login")
+@permission_required("devices.device_add",login_url="/permf")
+def device_add(request):
+
+    return render(request,"/app/devices/templates/add_device.html",context={"plugin_form":DeviceFileForm})
 
 @login_required(login_url="/login")
 def plugin_show(request,name):
@@ -84,6 +129,39 @@ def ploader(request):
         pass
 
     return redirect("/devs")
+
+
+@login_required(login_url="/login")
+@permission_required("devices.device_add",login_url="/permf")
+def devloader(request):
+    '''A function to load plugins'''
+
+    if request.method != 'POST':
+        return HttpResponseNotFound()
+    
+    form:DeviceFileForm=DeviceFileForm(request.POST,request.FILES)
+
+    if not form.is_valid():
+        return redirect("/device_add")
+
+    file=form.cleaned_data.get('file')
+
+    #save as temporary
+
+    if not os.path.exists("tmp"):
+        os.mkdir("tmp")
+
+    with open(PLUGIN_TMP_FILE,"wb+") as pfile:
+        for chunk in file.chunks():
+            pfile.write(chunk)
+    
+    # reset django on success
+    if add_device():
+
+        pass
+
+    return redirect("/devs")
+
 
 def home_page(request,name=None):
 

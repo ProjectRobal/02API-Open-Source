@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from devices.views import devsPage,twingoPage,device_page,node_list,home_page,rat,plugin_add,ploader,plugin_show,plugin_rm
+from devices.views import devsPage,twingoPage,device_page,node_list,home_page,rat,plugin_add,ploader,plugin_show,plugin_rm,device_add,devloader,device_rm,device_purge
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
@@ -30,7 +30,10 @@ urlpatterns = [
     path('plugin_add/',plugin_add),
     path('pshow/<str:name>',plugin_show),
     path('prm/',plugin_rm),
+    path('devrm/',device_rm),
+    path('devpr/',device_purge),
     path('ploader/',ploader),
+    path('devloader/',devloader),
     path('ave_prezes',rat)
 ]
 
