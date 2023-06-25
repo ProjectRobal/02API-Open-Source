@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
 from domena.plugins import PLUGINS
 from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,scan_for_plugin,remove_plugin
-from .device_loader import add_device,remove_device,purge_device
+from .device_loader import add_device,remove_device,purge_device,remove_topic
+from .node_generator import remove_node
 from .forms import PluginFileForm,DeviceFileForm
 import os
 import json
@@ -52,10 +53,10 @@ def device_purge(request):
         
         data=json.loads(request.body)
     
-        logging.debug("Device name: "+data["app"])
+        logging.debug("Device name: "+data["dev"])
 
-        if remove_device(data["app"]):
-            logging.debug("Device "+data["app"]+" and it's topics and acl rules have been removed")
+        if purge_device(data["dev"]):
+            logging.debug("Device "+data["dev"]+" and it's topics and acl rules have been removed")
         else:
             logging.debug("Device has not been found")
 
@@ -77,6 +78,45 @@ def plugin_rm(request):
             logging.debug("Plugin "+data["app"]+" has been removed")
         else:
             logging.debug("Plugin has not been found")
+
+        return redirect("/devs")
+    
+    return HttpResponseBadRequest()
+
+
+@login_required(login_url="/login")
+@permission_required("devices.node_rm",login_url="/permf")
+def node_rm(request):
+
+    if request.method == "POST":   
+        
+        data=json.loads(request.body)
+    
+        logging.debug("Node name: "+data["node"])
+
+        if remove_node(data["node"]):
+            logging.debug("Node "+data["node"]+" has been removed")
+        else:
+            logging.debug("Node has not been found")
+
+        return redirect("/devs")
+    
+    return HttpResponseBadRequest()
+
+@login_required(login_url="/login")
+@permission_required("devices.topic_rm",login_url="/permf")
+def topic_rm(request):
+
+    if request.method == "POST":   
+        
+        data=json.loads(request.body)
+    
+        logging.debug("Node name: "+data["path"])
+
+        if remove_topic(data["path"]):
+            logging.debug("Node "+data["path"]+" has been removed")
+        else:
+            logging.debug("Node has not been found")
 
         return redirect("/devs")
     

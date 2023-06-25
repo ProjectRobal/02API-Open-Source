@@ -99,6 +99,12 @@ def purge_nodes(nodes:list[str]):
     for node in nodes:
         os.remove(OUTPUT_NODE_PATH+"/"+node+".py")
 
+def remove_node(node:str)->bool:
+    if os.path.exists(OUTPUT_NODE_PATH+"/"+node+".py"):
+        os.remove(OUTPUT_NODE_PATH+"/"+node+".py")
+        return True
+    return False
+
 def node_generator(file:str)-> list[str]:
     '''
     A function that initialaite loading process

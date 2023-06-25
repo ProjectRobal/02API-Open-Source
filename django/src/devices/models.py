@@ -39,6 +39,8 @@ class Device(common):
                 ("device_user","Can create other users with device admin"),
                 ("device_add","Can add devices"),
                 ("device_rm","Can remove devices"),
+                ("node_rm","Can remove node"),
+                ("topic_rm","Can remove topic"),
                 ("plugin_add","Can add plugins"),
                 ("plugin_rm","Can remove plugins")
             ]

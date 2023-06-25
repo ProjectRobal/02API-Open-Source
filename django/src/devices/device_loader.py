@@ -183,6 +183,23 @@ def purge_device(name:str)->bool:
 
     except Device.DoesNotExist:
         return False
+    
+def remove_topic(path:str)->bool:
+    try:
+
+        topic=Topic.objects.get(path=path)
+
+        acls=NodeACL.objects.filter(topic=topic)
+
+        for acl in acls:
+            acl.delete()
+
+        topic.delete()
+
+        return True
+    
+    except Topic.DoesNotExist:
+        return False
 
 def add_device()->bool:
 
