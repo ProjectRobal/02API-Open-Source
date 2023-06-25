@@ -22,7 +22,7 @@ Example index.json
 
 “protocols”:[“mqtt”,”http”,”websocket”] - lista wspieranych protokołów,
 
-“mqtt”: - lista tematów mqtt
+“topics”: - lista tematów
 
 {
 
@@ -57,8 +57,12 @@ import shutil
 import logging
 from domena.settings import SERVER_VERSION
 from common.fetch_api import O2_API_VERSION
+from common.acess_levels import Access
 
 from .models import Device
+from mqtt.models import Topic
+from nodeacl.models import NodeACL
+
 import node_generator
 
 DEVICE_TMP_FILE="tmp/device.tmp"
@@ -109,7 +113,50 @@ def load_device(obj)->Device or None:
 
     return dev
 
+def add_topics(topics:dict)->tuple(list[Topic]|None,list[NodeACL]|None):
+    paths:list[Topic]=[]
+    acls:list[NodeACL]=[]
+    try:
+
+        for topic in topics.items():
+            path=Topic()
+            path.path=topic[0]
+
+            args:dict=topic[1]
+
+            path.node=args["node"]
+
+            acl_list:dict=args["acl"]
+
+            for acl in acl_list.items():
+                for access in acl[1]:
+                    _acl=NodeACL()
+                    if not acl[0].isspace():
+                        _acl.device=Device.objects.get(name=acl[0])
+                    else:
+                        _acl.device=None
+                    _acl.topic=path
+
+                    val:int|None=Access.from_str(access.toupper().strip())
+
+                    if val is None:
+                        raise ValueError
+
+                    _acl.access_level=val
+                    acls.append(_acl)
+
+            paths.append(path)
+
+        return (paths,acls)
+    except (ValueError,Device.DoesNotExist) as e:
+        logging.error(str(e))
+        return (None,None)
+
+    
+
 def add_device()->bool:
+
+    added_nodes:list[str]=[]
         
     try:
         logging.info("Unpacking the ZTD archive into temporary")
@@ -170,14 +217,41 @@ def add_device()->bool:
             return False
         
 
-        logging.info("Adding ACL rules")
+        logging.info("Adding ACL and topics rules")
 
-        
+        topics=obj["topics"]
 
+        paths,acls=add_topics(topics)
+
+        if paths is None or acls is None:
+            logging.error("No topics and acls were added")
+            node_generator.purge_nodes(added_nodes)
+            clean_temporary()
+            return False
+
+
+        logging.info("Saving device instance")
+
+        dev.save()
+
+        logging.info("Saving topics instance")
+
+        for topic in topics:
+            topic.save()
+
+        logging.info("Saving nodes instance")
+
+        for acl in acls:
+            if acl.device==None:
+                acl.device=dev
+            acl.save()
+
+        logging.info("Device has been added!")
 
 
 
     except ValueError as e:
         logging.error("Cannot open archive: "+str(e))
+        node_generator.purge_nodes(added_nodes)
         clean_temporary()
         return False

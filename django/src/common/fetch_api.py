@@ -62,6 +62,7 @@ class FetchResult:
         output:dict={
                 "code":self.code,
                 "message":self.message,
+                "node":self.node
                 }
         
         if self.result is not None:
@@ -70,16 +71,8 @@ class FetchResult:
         return output
     
     def __str__(self):
-        output:dict={
-            "code":self.code,
-            "message":self.message,
-            "node":self.node,
-        }
 
-        if self.result is not None:
-            output["result"]=self.result
-
-        return json.dumps(output, cls=DjangoJSONEncoder)
+        return json.dumps(self.__dict__(), cls=DjangoJSONEncoder)
 
 
 class Fetch:

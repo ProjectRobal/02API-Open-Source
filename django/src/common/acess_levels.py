@@ -6,3 +6,11 @@ class Access(models.IntegerChoices):
         POST=1,"POST"
         MOD=2,"MOD"
         POP=3,"POP"
+
+        @classmethod
+        def from_str(cls,the_string:str)->int|None:
+
+                for num, string in cls.choices:
+                        if string == the_string:
+                                return num
+                return None

@@ -45,7 +45,7 @@ class NodeEntry(common):
             return cls._name
         
         return cls.__name__
-
+    
 
 class PublicNode(NodeEntry):
     '''
