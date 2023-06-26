@@ -13,7 +13,7 @@
     <div id="device-block-info">
 
         <h2>{{device.name}}</h2>
-        <p>ver.{{device.major_version}}.{{device.minor_version}}.{{device.match_version}}</p>
+        <p>ver.{{device.version}}</p>
         <p>Last login: {{login_date}}</p>
         <p>Keys: {{device.key}}</p>
     
@@ -27,13 +27,25 @@
 
     {% for acl in nodesacl %}
 
+    {% if perms.nodes.nodes_view %}
     <a href="/nodes/{{acl.topic.node}}">
-        <div class="topic-block">
+    {% endif %}
+    
+        <div class="topic-block" 
+        
+        {% if not perms.nodes.nodes_view %}
+        style="pointer-events: none;"
+        {% endif %}
+
+        >
             <p style="font-weight:bold;">{{acl.access}}:</p> 
             <p>Path: {{acl.topic.path}} </p>
             <p>Node:{{acl.topic.node}}</p>            
         </div>
+    
+    {% if perms.nodes.nodes_view %}
     </a> 
+    {% endif %}
 
     {% empty %}
 

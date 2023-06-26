@@ -23,7 +23,7 @@
 
     <div id="homepage">
 
-        {% if perms.devices.plugin_rm or perms.devices.plugin_add or perms.devices.device_add or perms.devices.device_rm   %}
+        {% if perms.devices.plugin_view or perms.devices.device_view  %}
 
         <a href="/devs"  class="homeblock block">
                 Devices Menu
@@ -37,10 +37,14 @@
         </a>
     
     {% if user.is_authenticated %}
+
+    {% if user.is_staff %}
     
         <a href="/django-admin"  class="homeblock block">
                 Admin
         </a>
+
+    {% endif %}
     
         <a href="/unauth"  class="homeblock block">
                 Logout

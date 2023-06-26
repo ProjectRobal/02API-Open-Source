@@ -201,7 +201,7 @@ def node_list(request,name):
     return render(request,"/app/devices/templates/list_nodes.html",context={"nodes":list_nodes,"name":name})
 
 @login_required(login_url="/login")
-@permission_required("devices.device_view",login_url="/permf")
+@permission_required(["devices.device_view","devices.plugin_view"],login_url="/permf")
 def devsPage(request):
     '''placeholder page'''
 

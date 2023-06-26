@@ -150,8 +150,12 @@ def reg(request):
         )
 
         cards_view=Permission.objects.get(codename="cards_view")
+        device_view=Permission.objects.get(codename="device_view")
+        plugin_view=Permission.objects.get(codename="plugin_view")
 
         user.user_permissions.add(cards_view)
+        user.user_permissions.add(device_view)
+        user.user_permissions.add(plugin_view)
 
         user.save()
 

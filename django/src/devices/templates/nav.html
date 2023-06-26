@@ -8,7 +8,7 @@
         </div>
     </a>
 
-    {% if perms.devices.plugin_rm or perms.devices.plugin_add or perms.devices.device_add or perms.devices.device_rm   %}
+    {% if perms.devices.plugin_view or perms.devices.device_view  %}
 
     <a href="/devs">
         <div class="navblock">
@@ -34,11 +34,15 @@
 
 {% if user.is_authenticated %}
 
+    {% if user.is_staff %}
+
     <a href="/django-admin">
         <div class="navlogout navblock">
             Admin
         </div>
     </a>
+
+    {% endif %}
 
     <a href="/unauth">
         <div class="navlogout navblock">

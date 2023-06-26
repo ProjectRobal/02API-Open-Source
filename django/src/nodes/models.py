@@ -20,6 +20,9 @@ class NodeEntry(common):
     class Meta:
         abstract = True
         app_label= "nodes"
+        permissions = [
+            ("node_view", "Can view nodes data")
+        ]
 
     @classmethod
     def get_name(cls)->str:

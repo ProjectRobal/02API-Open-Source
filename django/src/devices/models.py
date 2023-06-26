@@ -42,7 +42,8 @@ class Device(common):
                 ("node_rm","Can remove node"),
                 ("topic_rm","Can remove topic"),
                 ("plugin_add","Can add plugins"),
-                ("plugin_rm","Can remove plugins")
+                ("plugin_rm","Can remove plugins"),
+                ("plugin_view","Can view plugins")
             ]
  
 
