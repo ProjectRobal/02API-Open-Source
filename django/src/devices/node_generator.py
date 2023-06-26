@@ -54,14 +54,20 @@ def make_node(node:NodeHeader)->bool:
     from django.db import models
     import django.contrib.postgres.fields as postgres
     
-    from nodes.models import PublicNode
+    from nodes.models import PublicNode,MonoNode
 
 
     """
 
     try:
 
-        buff_str+="class {}(PublicNode):\n".format(node.name)
+        if not node.mono:
+            superior="PublicNode"
+        else:
+            superior="MonoNode"
+        
+
+        buff_str+="class {}({}):\n".format(node.name,superior)
 
         buff_str+=" _name={}\n".format(node.verbose)
         buff_str+=" _mono={}\n".format(str(node.mono))

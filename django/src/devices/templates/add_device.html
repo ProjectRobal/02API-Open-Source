@@ -10,13 +10,14 @@
 {% include 'nav.html' %}
 
 <div class="rows-space">
+<h1>Caution untested!<h1>
 
-<h2></h2>
+<h2>Add a new device</h2>
 
 <form method="post" action="/devloader/" class="block overlay" enctype="multipart/form-data">
     <div class="overlay_content logform" >
         {% csrf_token %}
-        {{plugin_form}}
+        {{form}}
         <input type="submit" value="Add new device">
     </div>
 </form>

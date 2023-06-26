@@ -15,29 +15,11 @@ class NodeEntry(common):
     A base class for every node
 
     _name - alternate node name
-    _mono - if set True a table will hold only one entry,
-    if you try to add another record, the previous one will be overwritten instead
     '''
-    _mono=False
     _name=None
     class Meta:
         abstract = True
         app_label= "nodes"
-
-    def save(self, *args, **kwargs):
-
-        if self._mono:
-
-            cls=type(self)
-
-            amount=cls.objects.count()
-
-            if amount>0:
-
-                cls.objects.all().delete()
-
-
-        super(NodeEntry, self).save(*args, **kwargs)
 
     @classmethod
     def get_name(cls)->str:
@@ -55,6 +37,29 @@ class PublicNode(NodeEntry):
     class Meta:
         abstract = True
         app_label= "nodes"
+
+class MonoNode(NodeEntry):
+    '''A table will singular entry
+    if you try to add another record, the previous one will be overwritten instead'''
+    class Meta:
+        abstract = True
+        app_label= "nodes"
+    def save(self, *args, **kwargs):
+
+
+        cls=type(self)
+
+        amount=cls.objects.count()
+
+        if amount>0:
+
+            obj=cls.objects.get()
+
+            for arg in args:
+                field=obj._meta.get_field(arg)
+                field=kwargs[arg]
+
+        super(NodeEntry, self).save(*args, **kwargs)
 
 
 class LedControllerMarcin(PublicNode):

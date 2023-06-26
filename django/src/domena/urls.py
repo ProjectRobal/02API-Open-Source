@@ -28,6 +28,7 @@ urlpatterns = [
     path('device/<str:name>',device_page),
     path('nodes/<str:name>',node_list),
     path('plugin_add/',plugin_add),
+    path('device_add',device_add),
     path('pshow/<str:name>',plugin_show),
     path('prm/',plugin_rm),
     path('devrm/',device_rm),

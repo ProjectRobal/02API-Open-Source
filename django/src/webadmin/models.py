@@ -8,7 +8,7 @@ import secrets
 from uuid import uuid4
 import os
 
-from nodes.models import PublicNode
+from nodes.models import PublicNode,MonoNode
 
 # plugin nodes
 
@@ -17,8 +17,8 @@ class CardNode(PublicNode):
         A node that represents each cards,
         '''
         _name="cards"
-        hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32))
-        user_id=models.ForeignKey(O2User, on_delete=models.CASCADE)
+        hash_key=models.BinaryField(name="key",max_length=32,default=secrets.token_bytes(32),unique=True)
+        user=models.ForeignKey(O2User, on_delete=models.CASCADE)
         is_in_basement=models.BooleanField(default=False)
 
         class Meta:
@@ -26,9 +26,8 @@ class CardNode(PublicNode):
                 ("cards_view", "Can see who is in the basement")
             ]
 
-class BasementStatus(PublicNode):
+class BasementStatus(MonoNode,PublicNode):
     _name="piwnica"
-    _mono=True
     busy=models.BooleanField()
 
 # Create your models here.

@@ -63,7 +63,7 @@ from .models import Device
 from mqtt.models import Topic
 from nodeacl.models import NodeACL
 
-import node_generator
+from . import node_generator
 
 DEVICE_TMP_FILE="tmp/device.tmp"
 
@@ -113,7 +113,7 @@ def load_device(obj)->Device or None:
 
     return dev
 
-def add_topics(topics:dict)->tuple(list[Topic]|None,list[NodeACL]|None):
+def add_topics(topics:dict)->tuple[list[Topic]|None,list[NodeACL]|None]:
     paths:list[Topic]=[]
     acls:list[NodeACL]=[]
     try:

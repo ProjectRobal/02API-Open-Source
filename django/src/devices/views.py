@@ -84,43 +84,6 @@ def plugin_rm(request):
     return HttpResponseBadRequest()
 
 
-@login_required(login_url="/login")
-@permission_required("devices.node_rm",login_url="/permf")
-def node_rm(request):
-
-    if request.method == "POST":   
-        
-        data=json.loads(request.body)
-    
-        logging.debug("Node name: "+data["node"])
-
-        if remove_node(data["node"]):
-            logging.debug("Node "+data["node"]+" has been removed")
-        else:
-            logging.debug("Node has not been found")
-
-        return redirect("/devs")
-    
-    return HttpResponseBadRequest()
-
-@login_required(login_url="/login")
-@permission_required("devices.topic_rm",login_url="/permf")
-def topic_rm(request):
-
-    if request.method == "POST":   
-        
-        data=json.loads(request.body)
-    
-        logging.debug("Node name: "+data["path"])
-
-        if remove_topic(data["path"]):
-            logging.debug("Node "+data["path"]+" has been removed")
-        else:
-            logging.debug("Node has not been found")
-
-        return redirect("/devs")
-    
-    return HttpResponseBadRequest()
     
 @login_required(login_url="/login")
 @permission_required("devices.plugin_add",login_url="/permf")
@@ -132,7 +95,7 @@ def plugin_add(request):
 @permission_required("devices.device_add",login_url="/permf")
 def device_add(request):
 
-    return render(request,"/app/devices/templates/add_device.html",context={"plugin_form":DeviceFileForm})
+    return render(request,"/app/devices/templates/add_device.html",context={"form":DeviceFileForm})
 
 @login_required(login_url="/login")
 def plugin_show(request,name):

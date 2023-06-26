@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from domena.settings import MEDIA_URL
 import logging
 
-from .models import ProfilePicture,ProjectGroup
+from .models import ProfilePicture,ProjectGroup,CardNode
 from .forms import Register02Form,ProfileImage02Form,Profile02Form
 from .apps import WebadminConfig
 from django import forms
@@ -158,6 +158,11 @@ def reg(request):
     for group in ProjectGroup.objects.filter(name__in=register["project"].value()):
         group.user.add(user)
         group.save()
+
+
+    user_card=CardNode(user=user)
+
+    user_card.save()
 
     return redirect("/login?login_success=1")
 

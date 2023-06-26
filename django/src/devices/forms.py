@@ -19,7 +19,7 @@ class DeviceFileForm(forms.Form):
     file = forms.FileField()
 
     def clean(self) -> Dict[str, Any]:
-        cleaned_data=super(PluginFileForm,self).clean()
+        cleaned_data=super(DeviceFileForm,self).clean()
         file=cleaned_data.get("file")
 
         extension:str=file.name.rpartition('.')
