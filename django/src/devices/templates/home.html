@@ -23,10 +23,13 @@
 
     <div id="homepage">
 
+        {% if perms.devices.plugin_rm or perms.devices.plugin_add or perms.devices.device_add or perms.devices.device_rm   %}
 
         <a href="/devs"  class="homeblock block">
                 Devices Menu
         </a>
+
+        {% endif %}
         
     
         <a href="/twingo"  class="homeblock block">

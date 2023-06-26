@@ -8,11 +8,15 @@
         </div>
     </a>
 
+    {% if perms.devices.plugin_rm or perms.devices.plugin_add or perms.devices.device_add or perms.devices.device_rm   %}
+
     <a href="/devs">
         <div class="navblock">
             Devices
         </div>
     </a>
+
+    {% endif %}
 
     <a href="/twingo">
         <div class="navblock">
