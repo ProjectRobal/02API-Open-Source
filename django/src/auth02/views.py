@@ -15,20 +15,22 @@ def login_form(request):
     if request.method != "GET":
         return HttpResponseBadRequest()
     
-    bad_login=False
-    perm_fail=False
-    login_success=False
+
+    msg=None
 
     if "bad_login" in request.GET:
-        bad_login=True
+        msg="Bad login!"
 
     if "perm_fail" in request.GET:
-        perm_fail=True
+        msg="Permision failed!"
     
     if "login_success" in request.GET:
-        login_success=True
+        msg="User created succesfully!"
 
-    return render(request,"/app/auth02/templates/loginform.html",context={"login_success":login_success,"bad_login":bad_login,"perm_fail":perm_fail,"form":LoginForm})
+    if "user_exists" in request.GET:
+        msg="User aleardy exits!"
+
+    return render(request,"/app/auth02/templates/loginform.html",context={"msg":msg,"form":LoginForm})
 
 def auth(request):
 

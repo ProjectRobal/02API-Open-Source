@@ -136,7 +136,7 @@ def reg(request):
 
         O2User.objects.get(username=register["username"].value())
 
-        return redirect('/register')
+        return redirect("/login?user_exists=1")
 
     except O2User.DoesNotExist:
 
