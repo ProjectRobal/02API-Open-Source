@@ -1,9 +1,14 @@
+from collections.abc import Iterable
 from django.db import models
+from django.core.files import File
 from django.db import DEFAULT_DB_ALIAS
 from domena.settings import MEDIA_ROOT
 from auth02.models import O2User
 from common.models import common
 import secrets
+from io import BytesIO
+
+from PIL import Image
 
 from uuid import uuid4
 import os
@@ -11,6 +16,9 @@ import os
 from nodes.models import PublicNode,MonoNode
 
 # plugin nodes
+
+PROFILE_WIDTH=800
+PROFILE_HEIGHT=600
 
 
 def gen_key()->bytes:
@@ -73,3 +81,18 @@ class ProfilePicture(common):
         
         return super().delete(using,keep_parents)
     
+    def save(self,*args, **kwargs):
+        
+        im:Image=Image.open(self.image)
+
+        im.convert('RGB')
+
+        im.thumbnail((PROFILE_WIDTH,PROFILE_HEIGHT))
+
+        thumb_io = BytesIO()
+
+        im.save(thumb_io,'webp')
+
+        self.image=File(thumb_io, name=self.image.name)
+
+        return super(ProfilePicture, self).save(*args, **kwargs)
