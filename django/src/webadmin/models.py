@@ -23,10 +23,10 @@ PROFILE_HEIGHT=600
 
 def gen_key()->bytes:
 
-    key=secrets.token_bytes(32)
+    key=secrets.token_urlsafe(24)
 
     while CardNode.objects.filter(key=key).count()>0:
-        key=secrets.token_bytes(32)
+        key=secrets.token_urlsafe(24)
     
     return key
 
@@ -37,7 +37,7 @@ class CardNode(PublicNode):
         A node that represents each cards,
         '''
         _name="cards"
-        hash_key=models.BinaryField(name="key",max_length=32,default=gen_key,unique=True)
+        hash_key=models.CharField(name="key",max_length=32,default=gen_key,unique=True)
         user=models.ForeignKey(O2User, on_delete=models.CASCADE)
         is_in_basement=models.BooleanField(default=False)
 

@@ -66,6 +66,7 @@ class FetchResult:
                 }
         
         if self.result is not None:
+            logging.debug("Result: "+str(self.result))
             output["result"]=self.result
         
         return output
@@ -151,16 +152,13 @@ class Fetch:
 
                 output:list[dict]=[]
 
-                for res in result:
-                    output.append(model_to_dict(res))
+                for res in result.values():
+                    output.append(res)
 
                 for res in result:
                     res.delete()
 
-                return FetchResult(0,"Objects poped",
-                                       {
-                        "data":output
-                                       })
+                return FetchResult(0,"Objects poped",self.model.get_name(),output)
             
     def mod(self,data:dict)->FetchResult:
 
@@ -218,9 +216,9 @@ class Fetch:
         if self.model.objects.count()==0:
             return FetchResult(-2,"Database is empty",self.model.get_name())
 
-        result=self.model.objects.all()[0]
+        result=self.model.objects.all().values()[0]
 
-        return FetchResult(0,"Object retrived",self.model.get_name(),model_to_dict(result))
+        return FetchResult(0,"Object retrived",self.model.get_name(),result)
     
     def get_ex(self,data:dict)->FetchResult:
 
@@ -231,7 +229,7 @@ class Fetch:
             try:
                 result=self.model.objects.get(id=data["id"])
 
-                return FetchResult(0,"Got object by id",self.model.get_name(),model_to_dict(result))
+                return FetchResult(0,"Got object by id",self.model.get_name(),result)
             except:
                 return FetchResult(-2,"Object not found!",self.model.get_name())
 
@@ -265,15 +263,19 @@ class Fetch:
 
                 output:list[dict]=[]
 
-                for res in result:
-                    output.append(model_to_dict(res))
+                for res in result.values():
+                    output.append(res)
 
-                return FetchResult(0,"Objects retrived",
-                                       {
-                        "data":output
-                                       })
+                return FetchResult(0,"Objects retrived",self.model.get_name(),output)
+
+        output:list[dict]=[]    
+        
+        result=self.model.objects.all()
+
+        for res in result.values():
+            output.append(res)
             
-        return FetchResult(-1,"No labels provided",self.model.get_name())
+        return FetchResult(0,"Objects retrived",self.model.get_name(),output)
 
               
     requests={

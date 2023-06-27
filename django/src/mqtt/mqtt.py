@@ -34,59 +34,64 @@ def on_connect(mqtt_client, userdata, flags, rc):
 
 def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
    
-   logging.debug(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
-   
-   topic:str=msg.topic
-
-   logging.debug("Topic: "+topic)
-
-   paths:list[str]=topic.rpartition("/")
-
    try:
-
-    check=Topic.objects.get(path=paths[0]+"/")
-
-   except Topic.DoesNotExist:
-       logging.debug("Topic not found")
-       return
    
-   mqtt_client.subscribe(topic)
+    logging.debug(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
    
-   cmd:str=paths[2]
+    topic:str=msg.topic
 
-   logging.debug("Found command: "+cmd)
+    logging.debug("Topic: "+topic)
+
+    paths:list[str]=topic.rpartition("/")
+
+    try:
+
+        check=Topic.objects.get(path=paths[0]+"/")
+
+    except Topic.DoesNotExist:
+        logging.debug("Topic not found")
+        return
    
-   data:dict=json.loads(msg.payload.decode('utf-8'))
+    mqtt_client.subscribe(topic)
+   
+    cmd:str=paths[2]
 
-   key=None
+    logging.debug("Found command: "+cmd)
+   
+    data:dict=json.loads(msg.payload.decode('utf-8'))
 
-   out=None
+    key=None
 
-   if "key" in data:
-       key=data["key"]
-       out=key
+    out=None
+
+    if "key" in data:
+           key=data["key"]
+           out=key
     
-   if "out" in data:
-       out=data["out"]
+    if "out" in data:
+           out=data["out"]
 
-   if "data" in data:
-       data=data["data"]
-   else:
-       data={}
+    if "data" in data:
+           data=data["data"]
+    else:
+           data={}
                  
-   fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
+    fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
 
-   result=fetch.match(cmd,data)
+    result=fetch.match(cmd,data)
 
-   if key is not None:
-    # return data
-    mqtt_client.publish(paths[0]+"/"+str(out),str(result))
+    if key is not None:
+        # return data
+        mqtt_client.publish(paths[0]+"/"+str(out),str(result))
 
-    logging.debug("Answer at: "+paths[0]+"/"+str(key))
-    logging.debug("With result: "+str(result))
-   else:
-       logging.debug("No key or output provided!")
+        logging.debug("Answer at: "+paths[0]+"/"+str(key))
+        logging.debug("With result: "+str(result))
+    else:
+           logging.debug("No key or output provided!")
 
+   except Exception as e:
+        logging.error("I się wywalił")
+        logging.error(str(e))
    #retrive 
 
 def on_unsubscribe(client, userdata, mid):
