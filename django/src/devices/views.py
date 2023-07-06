@@ -1,4 +1,4 @@
-from django.http import HttpResponse,HttpResponseBadRequest,HttpResponseNotFound
+from django.http import HttpResponse,HttpResponseBadRequest,HttpResponseNotFound,HttpResponseServerError
 from django.shortcuts import render,redirect
 from .models import Device
 from mqtt.models import Topic
@@ -15,6 +15,7 @@ from .node_generator import remove_node
 from .forms import PluginFileForm,DeviceFileForm
 import os
 import json
+from common.fetch_api import Fetch
 
 import logging
 
@@ -25,6 +26,66 @@ class TopicInterface:
         self.access=Access(node.access_level).name
         self.topic=node.topic
         self.node=node
+
+def api(request,path):
+    if request.method!="GET":
+        return HttpResponseNotFound()
+    
+    try:
+    
+        logging.info("Got API request through HTTP")
+
+        logging.info("Full path: "+path)
+
+        paths:list[str]=path.rpartition("/")
+
+        logging.debug("Topic: "+paths[0])
+
+        try:
+
+            check=Topic.objects.get(path=paths[0]+"/")
+
+        except Topic.DoesNotExist:
+            logging.debug("Topic not found")
+            return HttpResponseNotFound()
+    
+        cmd:str=paths[2]
+
+        logging.debug("Found command: "+cmd)
+
+        body=json.load(request)
+
+        #logging.debug("Body: "+str(json.dumps(body)))
+
+        key=None
+
+        if "key" in body:
+               key=body["key"]
+
+        if "data" in body:
+               body=body["data"]
+        else:
+               body={}
+    
+
+        fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
+
+        result=fetch.match(cmd,body)
+
+        logging.debug("HTTP API result: "+str(result))
+
+        if key is not None:
+
+            return HttpResponse(str(result))
+        else:
+            logging.debug("No key or output provided!")
+
+        return HttpResponseBadRequest()
+    
+    except Exception as e:
+        logging.error("I się wywalił")
+        logging.error(str(e))
+        return HttpResponseServerError()
 
 @login_required(login_url="/login")
 @permission_required("devices.device_rm",login_url="/permf")

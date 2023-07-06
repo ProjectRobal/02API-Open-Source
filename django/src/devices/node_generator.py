@@ -62,12 +62,12 @@ def make_node(node:NodeHeader)->bool:
     try:
 
         if not node.mono:
-            superior="PublicNode"
+            superior=""
         else:
-            superior="MonoNode"
+            superior=",MonoNode"
         
 
-        buff_str+="class {}({}):\n".format(node.name,superior)
+        buff_str+="class {}(PublicNode{}):\n".format(node.name,superior)
 
         buff_str+=" _name={}\n".format(node.verbose)
         buff_str+=" _mono={}\n".format(str(node.mono))
