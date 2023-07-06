@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'auth02',
     'devices',
     'nodeacl',
-    'nodes'
+    'nodes',
+    'importer'
 ] + scan_for_plugin()+['mqtt']
 
 MQTT_SERVER="mqtt"

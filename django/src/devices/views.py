@@ -221,7 +221,8 @@ def devloader(request):
     # reset django on success
     res=add_device()
     if res[0]:
-        pass
+        os.system("python3 app/manage.py makemigration")
+        os.system("python3 app/manage.py migrate")
 
     return redirect("/devs")
 
