@@ -25,3 +25,5 @@ build/stagging/conf1/mqtt/config/password.txt
 build/dev/sql_buckups/
 build/prod/sql_buckups/
 build/stagging/sql_buckups/
+
+django/debug_nodes

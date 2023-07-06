@@ -10,8 +10,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
 from domena.plugins import PLUGINS
 from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,scan_for_plugin,remove_plugin
-from .device_loader import add_device,remove_device,purge_device,remove_topic
-from .node_generator import remove_node
+from .device_loader import add_device,remove_device,purge_device,remove_topic,DEVICE_TMP_FILE
 from .forms import PluginFileForm,DeviceFileForm
 import os
 import json
@@ -215,13 +214,13 @@ def devloader(request):
     if not os.path.exists("tmp"):
         os.mkdir("tmp")
 
-    with open(PLUGIN_TMP_FILE,"wb+") as pfile:
+    with open(DEVICE_TMP_FILE,"wb+") as pfile:
         for chunk in file.chunks():
             pfile.write(chunk)
     
     # reset django on success
-    if add_device():
-
+    res=add_device()
+    if res[0]:
         pass
 
     return redirect("/devs")

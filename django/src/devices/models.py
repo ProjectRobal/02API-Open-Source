@@ -18,7 +18,9 @@ def gen_key()->bytes:
 class Device(common):
     _status=[
         (0,"AVAILABLE"),
-        (1,"BUSY")
+        (1,"BUSY"),
+        (2,"FAULTY"),
+        (3,"SHUTDOWN")
     ]
     '''
     A model that will hold all registered devices in a system.
@@ -37,7 +39,7 @@ class Device(common):
     name= models.CharField(max_length=64)
     last_login_date=models.DateTimeField(blank=True,null=True)
     key=models.CharField(max_length=32,unique=True,default=gen_key)
-    status=models.IntegerField(choices=_status,default=_status[0])
+    status=models.IntegerField(choices=_status,default=_status[0][0])
     version=models.CharField(max_length=5,default="0.0.0")
     
     class Meta:

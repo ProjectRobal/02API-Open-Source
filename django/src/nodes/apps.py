@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 import logging
-import nodes.imported
+import os
+
 
 class NodesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'

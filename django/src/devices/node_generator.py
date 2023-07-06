@@ -7,8 +7,8 @@ example nodes file:
 {
 nodes:[
 {
-    "name":"NazwaObiektu"
-    "verbose":"Nazwa widziana"
+    "name":"NazwaObiektu",
+    "verbose":"Nazwa widziana",
     "mono":false,
     "fields": - lista pól noda
     {
@@ -32,7 +32,7 @@ import shutil
 from common.node_field_type import NODE_FIELDS
 import logging
 
-OUTPUT_NODE_PATH="nodes/imported"
+OUTPUT_NODE_PATH="/app/nodes/imported"
 
 
 
@@ -42,6 +42,9 @@ class NodeHeader:
     mono:bool
     fields:dict
 
+    def __init__(self, **entries):
+        self.__dict__.update(entries)
+
 
 def make_node(node:NodeHeader)->bool:
     '''
@@ -50,14 +53,10 @@ def make_node(node:NodeHeader)->bool:
     '''
 
     # string that will be saved into python instance
-    buff_str:str="""
-    from django.db import models
-    import django.contrib.postgres.fields as postgres
-    
-    from nodes.models import PublicNode,MonoNode
-
-
-    """
+    buff_str:str="""from django.db import models
+import django.contrib.postgres.fields as postgres
+from nodes.models import PublicNode,MonoNode
+"""
 
     try:
 
@@ -69,8 +68,8 @@ def make_node(node:NodeHeader)->bool:
 
         buff_str+="class {}(PublicNode{}):\n".format(node.name,superior)
 
-        buff_str+=" _name={}\n".format(node.verbose)
-        buff_str+=" _mono={}\n".format(str(node.mono))
+        buff_str+="""   _name="{}"\n""".format(node.verbose)
+        buff_str+="""   _mono={}\n""".format(str(node.mono))
 
         #generate model fileds
         for field in node.fields.items():
@@ -81,10 +80,12 @@ def make_node(node:NodeHeader)->bool:
             attrs_str:str=""
             field_type:str=NODE_FIELDS[field_attrs["type"]]
 
-            for attr in field_attrs.items():
-                attrs_str+="{}={},".format(attr[0],attr[1])
+            del field_attrs["type"]
 
-            buff_str+=" {}={}({})\n".format(field_name,field_type,attrs_str)
+            for attr in field_attrs.items():
+                attrs_str+="""{}={},""".format(attr[0],attr[1])
+
+            buff_str+="""   {}={}({})\n""".format(field_name,field_type,attrs_str)
 
         
         #write output into a file
@@ -94,7 +95,8 @@ def make_node(node:NodeHeader)->bool:
 
         file.close()
 
-    except:
+    except Exception as e:
+        logging.error("Nodes: "+str(e))
         return False
 
     return True
@@ -127,7 +129,7 @@ def node_generator(file:str)-> list[str]:
         nodes_list:list[str]=[]
 
         for node in nodes:
-            header:NodeHeader=node
+            header:NodeHeader=NodeHeader(**node)
             if make_node(header):
                 nodes_list.append(header.name)
             else:
@@ -135,7 +137,8 @@ def node_generator(file:str)-> list[str]:
                 
         file.close()
 
-    except:
+    except Exception as e:
+        logging.error("Error when generating node: "+str(e))
         return []
 
     return nodes_list

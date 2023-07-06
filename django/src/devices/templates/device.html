@@ -19,6 +19,80 @@
     
     </div>
 
+    {% if perms.devices.device_rm %}
+<div>
+
+
+<button onclick="show_block()" style="background-color:red;">Remove device</button>
+
+<div class="device-block" id="close_block" style="display:none;">
+    <div class="rows-space">
+<button class="cross" onclick="hide_block()">X</button>
+<h2>Are you sure?</h2>
+
+<button onclick="rm_device()" style="background-color:red;">Remove</button>
+
+    </div>
+</div>
+
+</div>
+
+<script>
+
+    function show_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="flex";
+    }
+    
+    function hide_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="none";
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    function rm_device()
+    {
+        fetch("/devpr/",{
+            method:"post",
+            headers: {
+                'Accept': 'application/json',
+                "Content-Type": "application/json",
+                'X-CSRFToken': csrftoken,
+            },
+            mode: 'cors',
+            body: JSON.stringify({
+                dev:"{{device.name}}"
+            })
+        })
+        .then((res) =>{
+            
+        })
+    }
+    
+    </script>
+
+    {% endif %}
+
     <div class="device-header">
         <h2>MQTT topics with acess level</h2>
     </div>

@@ -20,8 +20,6 @@ Example index.json
 
 “device_key”:”key” - klucz urządzenia,
 
-“protocols”:[“mqtt”,”http”,”websocket”] - lista wspieranych protokołów,
-
 “topics”: - lista tematów
 
 {
@@ -90,11 +88,10 @@ def load_device(obj)->Device or None:
     '''
     try:
 
-
         try:
             dev=Device.objects.get(name=obj["name"])
 
-            if version_to_number(dev.version)<=version_to_number(obj["version"]):
+            if version_to_number(dev.version)<=version_to_number(obj["device_rev"]):
                 logging.error("Cannot overwrite device with lesser version")
                 return None
                         
@@ -102,13 +99,13 @@ def load_device(obj)->Device or None:
             dev=Device()
 
         dev.name=obj["name"]
-        dev.key=obj["device_key"]
-        dev.version=obj["version"]
-
-        # to do protocols
+        if "device_key" in obj.keys():
+            dev.key=obj["device_key"]
+        dev.version=obj["device_rev"]
         
-    except:
+    except Exception as e:
         logging.error("Device json is invalid!")
+        logging.error(str(e))
         return None
 
     return dev
@@ -131,13 +128,13 @@ def add_topics(topics:dict)->tuple[list[Topic]|None,list[NodeACL]|None]:
             for acl in acl_list.items():
                 for access in acl[1]:
                     _acl=NodeACL()
-                    if not acl[0].isspace():
+                    if not acl[0].isspace() and len(acl[0])!=0:
                         _acl.device=Device.objects.get(name=acl[0])
                     else:
                         _acl.device=None
                     _acl.topic=path
 
-                    val:int|None=Access.from_str(access.toupper().strip())
+                    val:int|None=Access.from_str(access.upper().strip())
 
                     if val is None:
                         raise ValueError
@@ -166,6 +163,7 @@ def remove_device(name:str)->bool:
         return False
 
 def purge_device(name:str)->bool:
+    '''it should also remove nodes'''
     try:
         dev:Device=Device.objects.get(name=name)
 
@@ -173,7 +171,16 @@ def purge_device(name:str)->bool:
 
         for acl in acls:
             if acl.topic is not None:
-                acl.topic.delete()
+
+                #check if topic is referenced by another device
+                n_reference:int=NodeACL.objects.filter(topic=acl.topic).exclude(device=dev).count()
+
+                #unless then remove it
+                if n_reference==0:
+                    logging.debug("Found no reference to topic: "+acl.topic.path+" removing...")
+                    acl.topic.delete()
+                else:
+                    logging.debug("Found reference for topic: "+acl.topic.path+" keeping...")
 
             acl.delete()
 
@@ -201,7 +208,7 @@ def remove_topic(path:str)->bool:
     except Topic.DoesNotExist:
         return False
 
-def add_device()->bool:
+def add_device()->tuple[bool,str]:
 
     added_nodes:list[str]=[]
         
@@ -219,7 +226,7 @@ def add_device()->bool:
         if not os.path.exists(DEVICE_TMP_ARCHIVE+'/index.json'):
             logging.error("No valid index.json file")
             clean_temporary()
-            return False
+            return (False,"No valid index.json file")
         
         file=open(DEVICE_TMP_ARCHIVE+'/index.json')
                   
@@ -228,21 +235,25 @@ def add_device()->bool:
         if not obj["service_rev"]==SERVER_VERSION:
             logging.error("Server version mismatch")
             clean_temporary()
-            return False
+            return (False,"Server version mismatch")
         
         if not obj["version"]==O2_API_VERSION:
             logging.error("02API version mismatch")
             clean_temporary()
-            return False
+            return (False,"02API version mismatch")
         
         dev=load_device(obj)
         
         if dev is None:
             logging.error("Invalid index.json file")
             clean_temporary()
-            return False
+            return (False,"Invalid index.json file")
         
-        node_file=obj["node_file"]
+        if "node_file" in obj.keys():
+            node_file=obj["node_file"]
+        else:
+            logging.info("No node_file key switching to default node file")
+            node_file="nodes.json"
 
         logging.info("Search node file ")
 
@@ -250,7 +261,7 @@ def add_device()->bool:
         if not os.path.exists(DEVICE_TMP_ARCHIVE+'/'+node_file):
             logging.error("No valid node file file, cannot find: "+node_file)
             clean_temporary()
-            return False
+            return (False,"No valid node file file, cannot find: "+node_file)
         
 
         logging.info("Generating node files ")
@@ -261,7 +272,7 @@ def add_device()->bool:
         if len(added_nodes)==0:
             logging.error("No nodes were added")
             clean_temporary()
-            return False
+            return (False,"No nodes were added")
         
 
         logging.info("Adding ACL and topics rules")
@@ -274,7 +285,7 @@ def add_device()->bool:
             logging.error("No topics and acls were added")
             node_generator.purge_nodes(added_nodes)
             clean_temporary()
-            return False
+            return (False,"No topics and acls were added")
 
 
         logging.info("Saving device instance")
@@ -283,7 +294,7 @@ def add_device()->bool:
 
         logging.info("Saving topics instance")
 
-        for topic in topics:
+        for topic in paths:
             topic.save()
 
         logging.info("Saving nodes instance")
@@ -295,10 +306,10 @@ def add_device()->bool:
 
         logging.info("Device has been added!")
 
-
+        return (True,"Device has been added")
 
     except ValueError as e:
         logging.error("Cannot open archive: "+str(e))
         node_generator.purge_nodes(added_nodes)
         clean_temporary()
-        return False
+        return (False,"Cannot open archive: "+str(e))

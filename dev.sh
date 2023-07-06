@@ -49,7 +49,7 @@ elif [ $cmd = "purge" ]; then
 
 elif [ $cmd = "debug" ]; then
 
-    docker compose run -i web bash
+    docker compose exec -i web bash
 
 elif [ $cmd = "remigrate" ]; then
 

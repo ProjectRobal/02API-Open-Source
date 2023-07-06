@@ -37,6 +37,9 @@ services:
       - type: bind
         source: ../../django/web/media
         target: /web/media
+      - type: bind
+        source: ../../django/debug_nodes
+        target: /app/nodes/imported
     depends_on:
       db:
         condition: service_healthy
