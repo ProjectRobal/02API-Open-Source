@@ -132,21 +132,27 @@ def reg(request):
     
     register=Register02Form(request.POST)
 
+    if not register.is_valid():
+        request.session["login_error"]=register.errors
+        return redirect("/login")
+
+    register=register.cleaned_data
+
     try:
 
-        O2User.objects.get(username=register["username"].value())
+        O2User.objects.get(username=register["username"])
 
         return redirect("/login?user_exists=1")
 
     except O2User.DoesNotExist:
 
         user:O2User=O2User.objects.create_user(
-            username=register["username"].value(),
-            first_name=register["first_name"].value(),
-            last_name=register["last_name"].value(),
-            email=register["email"].value(),
-            password=register["password"].value(),
-            login=register["login"].value()
+            username=register["username"],
+            first_name=register["first_name"],
+            last_name=register["last_name"],
+            email=register["email"],
+            password=register["password"],
+            login=register["login"]
         )
 
         cards_view=Permission.objects.get(codename="cards_view")
@@ -159,7 +165,7 @@ def reg(request):
 
         user.save()
 
-    for group in ProjectGroup.objects.filter(name__in=register["project"].value()):
+    for group in ProjectGroup.objects.filter(name__in=register["project"]):
         group.user.add(user)
         group.save()
 

@@ -30,6 +30,13 @@ def login_form(request):
     if "user_exists" in request.GET:
         msg="User aleardy exits!"
 
+    if "login_error" in request.session.keys():
+        msg=""
+        for error in request.session["login_error"].values():
+            msg+=str(error[0])+" \n"
+        del request.session["login_error"]
+
+
     return render(request,"/app/auth02/templates/loginform.html",context={"msg":msg,"form":LoginForm})
 
 def auth(request):

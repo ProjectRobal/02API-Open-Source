@@ -2,6 +2,7 @@ from django import forms
 from django.forms.utils import ErrorList
 from .apps import WebadminConfig
 from domena.settings import MEDIA_ROOT
+from . import utils
 
 
 
@@ -45,9 +46,15 @@ class Register02Form(forms.Form):
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
 
+        e_msg=utils.password_check(password)
+
+        if e_msg is not None:
+            raise forms.ValidationError(
+                e_msg
+            )
+
         if password != confirm_password:
             raise forms.ValidationError(
-                "password and confirm_password does not match"
-            )
-    
+                "Password and Confirm password does not match",code="password mismath"
+            )    
     
