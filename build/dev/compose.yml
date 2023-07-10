@@ -47,11 +47,18 @@ services:
         condition: service_started
     expose:
       - 8000
+      - 9000
     labels:
       - traefik.enable=true
       - traefik.http.routers.django_02_dev.rule=Host(`localhost`)
       - traefik.http.routers.django_02_dev.entrypoints=web
-      - traefik.http.services.django_02_dev.loadbalancer.server.port=8000
+      - traefik.http.routers.django_02_dev.service=02_web
+      - traefik.http.services.02_web.loadbalancer.server.port=8000
+
+      - traefik.http.routers.ws_02_dev.rule=Host(`localhost`)&&PathPrefix(`/sock`)
+      - traefik.http.routers.ws_02_dev.entrypoints=web
+      - traefik.http.routers.ws_02_dev.service=02_ws
+      - traefik.http.services.02_ws.loadbalancer.server.port=9000
 
   sheduler:
     container_name: 02_sheduler_dev

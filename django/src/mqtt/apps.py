@@ -3,12 +3,13 @@ from typing import Optional,Any
 from django.apps import apps,AppConfig
 from typing import Iterator
 import logging
-
+import threading
 
 class MqttConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'mqtt'
     client:mqtt.Client|None=None
+    websocket:threading.Thread|None=None
 
     def __init__(self, app_name: str, app_module: Optional[Any]) -> None:
 
@@ -23,6 +24,8 @@ class MqttConfig(AppConfig):
 
         import mqtt.mqtt as mqtt
 
+        from devices.websocket import server,run_websocket
+
         nodes_list=PublicNodes.get_nodes_list()
 
         Topic.node.choices=nodes_list
@@ -32,5 +35,9 @@ class MqttConfig(AppConfig):
         MqttConfig.client=mqtt.create_client()
 
         MqttConfig.client.loop_start()
+
+        MqttConfig.websocket=run_websocket()
+
+        MqttConfig.websocket.start()
 
         return super().ready()
