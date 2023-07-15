@@ -36,7 +36,7 @@ class WebadminConfig(AppConfig):
     def ready(self) -> None:
 
         from domena.urls import urlpatterns
-        from webadmin.views import reg_form,reg,profile,update_profile,img_set
+        from webadmin.views import reg_form,reg,profile,update_profile,img_set,generate_new_card
         from django.urls import path
         from domena.home import entries
         from domena.menu import entries as menu_entries
@@ -47,6 +47,7 @@ class WebadminConfig(AppConfig):
         urlpatterns.append(path('profile/',profile))
         urlpatterns.append(path('userup/',update_profile))
         urlpatterns.append(path('img_set/',img_set))
+        urlpatterns.append(path('n_card/',generate_new_card))
         entries.append(HomeBlock("Profile","/profile/"))
         entries.append(HomeBlock("Card register","/register/"))
         menu_entries.append(MenuBlock("Profile","/profile/"))

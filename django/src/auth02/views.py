@@ -1,6 +1,9 @@
 from django.http import HttpResponse,HttpResponseBadRequest,HttpResponseNotFound
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login,logout
+from domena.settings import DEFAULT_SESSION_TIME
+import time
+import logging
 
 from .forms import LoginForm
 # Create your views here.
@@ -55,6 +58,10 @@ def auth(request):
 
     if user is not None:
         login(request,user)
+        # defines a time after session expired
+        request.session["session_time"]=DEFAULT_SESSION_TIME
+        request.session['last_touch'] = int(time.time())
+        logging.debug("User with username: "+user.get_username()+" logged with session time: "+str(request.session["session_time"]))
         return redirect("/")
     else:
         return redirect("/login?bad_login=1")

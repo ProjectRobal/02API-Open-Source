@@ -64,7 +64,6 @@ MQTT_PASSWORD=os.environ.get('MQTT_PASSWORD')
 MQTT_PORT=int(os.environ.get('MQTT_PORT'))
 MQTT_KEEPALIVE =int(os.environ.get('MQTT_KEEPALIVE'))
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -72,7 +71,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'domena.middleware.SessionChecker'
     ]
 
 PASSWORD_HASHERS = [
@@ -150,6 +150,8 @@ TIME_ZONE = os.environ.get('TIME_ZONE')
 USE_I18N = True
 
 USE_TZ = True
+
+DEFAULT_SESSION_TIME=360
 
 
 # Default primary key field type

@@ -1,4 +1,4 @@
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest,HttpResponse
 from django.shortcuts import render,redirect
 from auth02.models import O2User
 from django.contrib.auth.models import Permission
@@ -10,6 +10,45 @@ from .models import ProfilePicture,ProjectGroup,CardNode
 from .forms import Register02Form,ProfileImage02Form,Profile02Form
 from .apps import WebadminConfig
 from django import forms
+
+@login_required(login_url="/login")
+def generate_new_card(request):
+    if request.method != "GET":
+        return HttpResponseBadRequest()
+    
+    user:O2User=request.user
+
+    try:
+
+        try:
+
+            card:CardNode=CardNode.objects.filter(user=user)
+
+            if len(card)!=0:
+                card=card[0]
+            else:
+                raise CardNode.DoesNotExist
+            
+            was_in_basement:bool=card.is_in_basement
+
+            card.delete()
+
+            card=CardNode(user=user,is_in_basement=was_in_basement)
+
+            card.save()
+    
+        except CardNode.DoesNotExist:
+        
+            card:CardNode=CardNode(user=user)
+
+            card.save()
+        
+        request.session["profile_msg"]="Cards succesfully regenerated!"
+
+    except Exception as e:
+        request.session["profile_msg"]=str(e)
+
+    return redirect("/profile")
 
 
 @login_required(login_url="/login")
@@ -120,10 +159,17 @@ def profile(request):
     except ProfilePicture.DoesNotExist:
         profile_img="/static/dummy.png"
 
+    msg=None
+
+    if "profile_msg" in request.session.keys():
+        msg=request.session["profile_msg"]
+        del request.session["profile_msg"]
+
 
     return render(request,"/app/webadmin/templates/profile02.html",context={"img_form":ProfileImage02Form,
                                                                             "profile_form":profile_form,
-                                                                            "profile_img":profile_img})
+                                                                            "profile_img":profile_img,
+                                                                            "msg":msg})
 
 def reg(request):
     
