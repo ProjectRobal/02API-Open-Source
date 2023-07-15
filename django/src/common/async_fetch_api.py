@@ -1,9 +1,11 @@
 '''
 API set for interface between mqtt and sql through django. 
+Version for asyncio.
 
 '''
 import logging
 import json
+from asgiref.sync import sync_to_async
 from copy import deepcopy
 from datetime import datetime
 from django.db import models
@@ -14,26 +16,24 @@ from devices.models import Device
 from .acess_levels import Access
 from mqtt.models import Topic
 from nodes.models import NodeEntry
+from .fetch_api import FetchResult
 
-# 02 api version
-O2_API_VERSION="1.0"
-
-class FetchAuth:
+class AFetchAuth:
     '''
     A class that will handle authentication of a device.
     '''
 
-    def check(dev_key:str or None,access:Access.choices,topic:Topic)->bool:
+    async def check(dev_key:str or None,access:Access.choices,topic:Topic)->bool:
 
         try:
         
-            device=Device.objects.get(key=dev_key)
+            device=await Device.objects.aget(key=dev_key)
 
             device.last_login_date=datetime.today()
 
-            device.save()
+            await sync_to_async(device.save)()
 
-            query=NodeACL.objects.get(device=device,topic=topic,access_level=access)
+            query=await NodeACL.objects.aget(device=device,topic=topic,access_level=access)
 
             return True
                 
@@ -44,62 +44,31 @@ class FetchAuth:
         return False
 
 
-class FetchResult:
-    def __init__(self,code:int,message:str,node:str,result=None) -> None:
-        self.code=code
-        self.message=message
-        self.result=result
-        self.node=node
 
-        logging.debug("code: "+str(self.code)+" from node: "+node+" msg: "+self.message)
-        
-
-    def __bool__(self):
-        return self.result!=None
-    
-    def __dict__(self):
-
-        output:dict={
-                "code":self.code,
-                "message":self.message,
-                "node":self.node
-                }
-        
-        if self.result is not None:
-            logging.debug("Result: "+str(self.result))
-            output["result"]=self.result
-        
-        return output
-    
-    def __str__(self):
-
-        return json.dumps(self.__dict__(), cls=DjangoJSONEncoder)
-
-
-class Fetch:
+class AFetch:
     
     def __init__(self,dev_id:str=None,model:NodeEntry=None,topic:Topic=None) -> None:
         self.model=model
         self.dev_id=dev_id
         self.topic=topic     
     
-    def match(self,request:str,data:dict|None)->FetchResult:
+    async def match(self,request:str,data:dict|None)->FetchResult:
 
         if request in self.requests:
-            return self.requests[request](self,data)
+            return await self.requests[request](self,data)
         else:
-            return self.get(data)
+            return await self.get(data)
                 
-    def pop(self,data:dict)->FetchResult:
+    async def pop(self,data:dict)->FetchResult:
 
-        if not FetchAuth.check(self.dev_id,Access.POP,self.topic):
+        if not await AFetchAuth.check(self.dev_id,Access.POP,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
         if len(data)==0:
             if self.model.objects.count()==0:
                 return FetchResult(-2,"Database is empty",self.model.get_name())
 
-            result=self.model.objects.all()[0]
+            result=await self.model.objects.all()[0]
 
             copy=model_to_dict(result)
 
@@ -109,11 +78,11 @@ class Fetch:
         
         if 'id' in data.keys():
             try:
-                result:models.Model=self.model.objects.get(id=data["id"])
+                result:models.Model=await self.model.objects.aget(uuid=data["id"])
 
                 copy=model_to_dict(result)
 
-                result.delete()
+                await result.adelete()
 
                 return FetchResult(0,"Got object by id",self.model.get_name(),copy)
             except:
@@ -121,7 +90,7 @@ class Fetch:
 
         if 'labels' in data.keys():
 
-            if type(data["labels"])==dict:
+            if type(data["labels"]) is dict:
 
                 conditions:dict=data["labels"]
 
@@ -136,7 +105,7 @@ class Fetch:
                     if type(data["mask"])==list:
                         mask=data["mask"]
 
-                result:models.QuerySet=self.model.objects.filter(**conditions)
+                result:models.QuerySet=await self.model.objects.afilter(**conditions)
 
                 if not result.exists():
 
@@ -159,9 +128,9 @@ class Fetch:
 
                 return FetchResult(0,"Objects poped",self.model.get_name(),output)
             
-    def mod(self,data:dict)->FetchResult:
+    async def mod(self,data:dict)->FetchResult:
 
-        if not FetchAuth.check(self.dev_id,Access.MOD,self.topic):
+        if not await AFetchAuth.check(self.dev_id,Access.MOD,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
         to_modify=None
@@ -175,7 +144,7 @@ class Fetch:
 
         if 'id' in data.keys():
             try:
-                to_modify=self.model.objects.get(id=data["id"])
+                to_modify=await self.model.objects.aget(uuid=data["id"])
             except:
                 return FetchResult(-2,"No object with specified id",self.model.get_name())
 
@@ -185,21 +154,21 @@ class Fetch:
         for attr,val in labels.items():
             setattr(to_modify,attr,val)
 
-        to_modify.save()
+        await sync_to_async(to_modify.save)()
 
         return FetchResult(0,"Object modified",self.model.get_name())
 
 
-    def post(self,data:dict)->FetchResult:
+    async def post(self,data:dict)->FetchResult:
 
-        if not FetchAuth.check(self.dev_id,Access.POST,self.topic):
+        if not await AFetchAuth.check(self.dev_id,Access.POST,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
 
         try:
         
             record=self.model(**data)
 
-            record.save()
+            await sync_to_async(record.save)()
 
             return FetchResult(0,"Entry added!",self.model.get_name())
 
@@ -207,29 +176,48 @@ class Fetch:
             
             return FetchResult(-1,"Entry not added: "+str(e),self.model.get_name())
 
-    def get(self,data:dict)->FetchResult:
+    async def get(self,data:dict)->FetchResult:
         
-        if not FetchAuth.check(self.dev_id,Access.GET,self.topic):
+        if not await AFetchAuth.check(self.dev_id,Access.GET,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
 
-        if self.model.objects.count()==0:
+        if await self.model.objects.acount()==0:
             return FetchResult(-2,"Database is empty",self.model.get_name())
 
-        result=self.model.objects.all().values()[0]
+        result=(await sync_to_async(list)(self.model.objects.values()))[0]
+
+        #result=(await self.model.objects.aget()).values()
 
         return FetchResult(0,"Object retrived",self.model.get_name(),result)
     
-    def get_ex(self,data:dict)->FetchResult:
+    async def get_ex(self,data:dict)->FetchResult:
 
-        if not FetchAuth.check(self.dev_id,Access.GET,self.topic):
+        if not await AFetchAuth.check(self.dev_id,Access.GET,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
+        
+        max:int=0
+
+        mask:list[str]=[]
+
+        if "max" in data.keys():
+            max=int(data["max"])
+
+        if "mask" in data.keys():
+            if type(data["mask"]) is list:
+                mask=data["mask"]
         
         if 'id' in data.keys():
             try:
-                result=self.model.objects.get(id=data["id"])
+                result=await sync_to_async(self.model.objects.filter)(uuid=data["id"])
 
-                return FetchResult(0,"Got object by id",self.model.get_name(),result)
-            except:
+                output:list[dict]=[]
+
+                async for res in result.values(*mask):
+                    output.append(res)
+
+                return FetchResult(0,"Got object by id",self.model.get_name(),output)
+            except (self.model.DoesNotExist,Exception) as e:
+                logging.error("Error: "+str(e))
                 return FetchResult(-2,"Object not found!",self.model.get_name())
 
         if 'labels' in data.keys():
@@ -238,40 +226,29 @@ class Fetch:
 
                 conditions:dict=data["labels"]
 
-                max:int=0
+                result=await sync_to_async(self.model.objects.filter)(**conditions)
 
-                mask:list[str]=[]
-
-                if "max" in data.keys():
-                    max=int(data["max"])
-
-                if "mask" in data.keys():
-                    if type(data["mask"])==list:
-                        mask=data["mask"]
-
-                result=self.model.objects.filter(**conditions)
-
-                if not result.exists():
+                if not await result.aexists():
                     return FetchResult(-2,"Objects not found",self.model.get_name())
 
-                if len(mask)!=0:
-                    result=result.only(*mask)
+
+                logging.debug("Mask: "+str(mask))
                 
                 if max>0:
                     result=result[:max]
 
                 output:list[dict]=[]
 
-                for res in result.values():
+                async for res in result.values(*mask):
                     output.append(res)
 
                 return FetchResult(0,"Objects retrived",self.model.get_name(),output)
 
         output:list[dict]=[]    
         
-        result=self.model.objects.all()
+        #result=await sync_to_async(list)(self.model.objects.all())
 
-        for res in result.values():
+        async for res in self.model.objects.all().values(*mask)[:max]:
             output.append(res)
             
         return FetchResult(0,"Objects retrived",self.model.get_name(),output)
@@ -284,18 +261,3 @@ class Fetch:
         "pop":pop,
         "":get 
         }
-                    
-
-
-
-
-            
-
-        
-        
-
-
-
-        
-
-
