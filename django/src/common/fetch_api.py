@@ -95,27 +95,39 @@ class Fetch:
         if not FetchAuth.check(self.dev_id,Access.POP,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
+        mask:list[str]=[]
+
+        if "mask" in data.keys():
+            if type(data["mask"])==list:
+                mask=data["mask"]
+        
         if len(data)==0:
             if self.model.objects.count()==0:
                 return FetchResult(-2,"Database is empty",self.model.get_name())
 
             result=self.model.objects.all()[0]
 
-            copy=model_to_dict(result)
+            output:list[dict]=[]
+
+            for res in result.values(*mask):
+                output.append(res)
 
             result.delete()
 
-            return FetchResult(0,"Poped first element",self.model.get_name(),copy)
+            return FetchResult(0,"Poped first element",self.model.get_name(),output)
         
         if 'id' in data.keys():
             try:
-                result:models.Model=self.model.objects.get(id=data["id"])
+                result:models.Model=self.model.objects.filter(uuid=data["id"])
 
-                copy=model_to_dict(result)
+                output:list[dict]=[]
+
+                for res in result.values(*mask):
+                    output.append(res)
 
                 result.delete()
 
-                return FetchResult(0,"Got object by id",self.model.get_name(),copy)
+                return FetchResult(0,"Got object by id",self.model.get_name(),output)
             except:
                 return FetchResult(-2,"Object not found!",self.model.get_name())
 
@@ -125,37 +137,18 @@ class Fetch:
 
                 conditions:dict=data["labels"]
 
-                max:int=0
-
-                mask:list[str]=[]
-
-                if "max" in data.keys():
-                    max=int(data["max"])
-
-                if "mask" in data.keys():
-                    if type(data["mask"])==list:
-                        mask=data["mask"]
-
                 result:models.QuerySet=self.model.objects.filter(**conditions)
 
                 if not result.exists():
 
                     return FetchResult(-2,"Objects not found",self.model.get_name())
-                    
-
-                if len(mask)!=0:
-                    result=result.only(*mask)
-                
-                if max>0:
-                    result=result[:max]
 
                 output:list[dict]=[]
 
-                for res in result.values():
+                for res in result.values(*mask):
                     output.append(res)
 
-                for res in result:
-                    res.delete()
+                result.delete()
 
                 return FetchResult(0,"Objects poped",self.model.get_name(),output)
             
@@ -175,7 +168,7 @@ class Fetch:
 
         if 'id' in data.keys():
             try:
-                to_modify=self.model.objects.get(id=data["id"])
+                to_modify=self.model.objects.get(uuid=data["id"])
             except:
                 return FetchResult(-2,"No object with specified id",self.model.get_name())
 
@@ -224,11 +217,27 @@ class Fetch:
         if not FetchAuth.check(self.dev_id,Access.GET,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
+        max:int=0
+
+        mask:list[str]=[]
+
+        if "max" in data.keys():
+            max=int(data["max"])
+
+        if "mask" in data.keys():
+            if type(data["mask"])==list:
+                mask=data["mask"]
+        
         if 'id' in data.keys():
             try:
-                result=self.model.objects.get(id=data["id"])
+                result=self.model.objects.filter(uuid=data["id"]).values(*mask)
 
-                return FetchResult(0,"Got object by id",self.model.get_name(),result)
+                output:list[dict]=[]
+
+                for res in result:
+                    output.append(res)
+
+                return FetchResult(0,"Got object by id",self.model.get_name(),output)
             except:
                 return FetchResult(-2,"Object not found!",self.model.get_name())
 
@@ -238,31 +247,17 @@ class Fetch:
 
                 conditions:dict=data["labels"]
 
-                max:int=0
-
-                mask:list[str]=[]
-
-                if "max" in data.keys():
-                    max=int(data["max"])
-
-                if "mask" in data.keys():
-                    if type(data["mask"])==list:
-                        mask=data["mask"]
-
                 result=self.model.objects.filter(**conditions)
 
                 if not result.exists():
                     return FetchResult(-2,"Objects not found",self.model.get_name())
-
-                if len(mask)!=0:
-                    result=result.only(*mask)
                 
                 if max>0:
                     result=result[:max]
 
                 output:list[dict]=[]
 
-                for res in result.values():
+                for res in result.values(*mask):
                     output.append(res)
 
                 return FetchResult(0,"Objects retrived",self.model.get_name(),output)
@@ -271,7 +266,7 @@ class Fetch:
         
         result=self.model.objects.all()
 
-        for res in result.values():
+        for res in result.values(*mask)[:max]:
             output.append(res)
             
         return FetchResult(0,"Objects retrived",self.model.get_name(),output)

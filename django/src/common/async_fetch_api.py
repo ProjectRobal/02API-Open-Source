@@ -64,27 +64,39 @@ class AFetch:
         if not await AFetchAuth.check(self.dev_id,Access.POP,self.topic):
             return FetchResult(-11,"Wrong privileges",self.model.get_name())
         
+        mask:list[str]=[]
+
+        if "mask" in data.keys():
+            if type(data["mask"]) is list:
+                mask=data["mask"]
+        
         if len(data)==0:
-            if self.model.objects.count()==0:
+            if await self.model.objects.acount() ==0:
                 return FetchResult(-2,"Database is empty",self.model.get_name())
 
             result=await self.model.objects.all()[0]
 
-            copy=model_to_dict(result)
+            output:list[dict]=[]
 
-            result.delete()
+            async for res in result.values(*mask):
+                    output.append(res)
 
-            return FetchResult(0,"Poped first element",self.model.get_name(),copy)
+            await result.adelete()
+
+            return FetchResult(0,"Poped first element",self.model.get_name(),output)
         
         if 'id' in data.keys():
             try:
-                result:models.Model=await self.model.objects.aget(uuid=data["id"])
+                result:models.QuerySet=await sync_to_async(self.model.objects.filter)(uuid=data["id"])
 
-                copy=model_to_dict(result)
+                output:list[dict]=[]
+
+                async for res in result.values(*mask):
+                    output.append(res)
 
                 await result.adelete()
 
-                return FetchResult(0,"Got object by id",self.model.get_name(),copy)
+                return FetchResult(0,"Got object by id",self.model.get_name(),output)
             except:
                 return FetchResult(-2,"Object not found!",self.model.get_name())
 
@@ -94,37 +106,18 @@ class AFetch:
 
                 conditions:dict=data["labels"]
 
-                max:int=0
+                result:models.QuerySet=await sync_to_async(self.model.objects.filter)(**conditions)
 
-                mask:list[str]=[]
-
-                if "max" in data.keys():
-                    max=int(data["max"])
-
-                if "mask" in data.keys():
-                    if type(data["mask"])==list:
-                        mask=data["mask"]
-
-                result:models.QuerySet=await self.model.objects.afilter(**conditions)
-
-                if not result.exists():
+                if not await result.aexists():
 
                     return FetchResult(-2,"Objects not found",self.model.get_name())
-                    
-
-                if len(mask)!=0:
-                    result=result.only(*mask)
                 
-                if max>0:
-                    result=result[:max]
-
                 output:list[dict]=[]
 
-                for res in result.values():
+                async for res in result.values(*mask):
                     output.append(res)
 
-                for res in result:
-                    res.delete()
+                await result.adelete()
 
                 return FetchResult(0,"Objects poped",self.model.get_name(),output)
             
@@ -230,9 +223,6 @@ class AFetch:
 
                 if not await result.aexists():
                     return FetchResult(-2,"Objects not found",self.model.get_name())
-
-
-                logging.debug("Mask: "+str(mask))
                 
                 if max>0:
                     result=result[:max]
