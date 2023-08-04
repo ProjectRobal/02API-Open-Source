@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from typing import Iterable, Optional
 from django.db import models
 from django.core.files import File
 from django.db import DEFAULT_DB_ALIAS
@@ -7,6 +8,7 @@ from auth02.models import O2User
 from common.models import common
 import secrets
 from io import BytesIO
+import datetime
 
 from PIL import Image
 
@@ -14,6 +16,19 @@ from uuid import uuid4
 import os
 
 from nodes.models import PublicNode,MonoNode
+
+import logging
+
+class CardVisitRecord(common):
+    '''
+        A model that holds record in who entered/left basement on specific date
+    '''
+
+    user=models.ForeignKey(O2User,on_delete=models.SET_NULL,null=True)
+    data=models.DateTimeField(default=datetime.datetime.now())
+    has_entered=models.BooleanField()
+
+
 
 # plugin nodes
 
@@ -45,6 +60,21 @@ class CardNode(PublicNode):
             permissions = [
                 ("cards_view", "Can see who is in the basement")
             ]
+
+        def save(self,*args, **kwargs) -> None:
+
+            past=CardNode.objects.get(uuid=self.uuid)
+                
+            visit=CardVisitRecord()
+            visit.user=self.user
+            if not past.is_in_basement and self.is_in_basement:
+                visit.has_entered=True
+                visit.save()
+            elif past.is_in_basement and not self.is_in_basement:
+                visit.has_entered=False
+                visit.save()
+
+            return super(CardNode,self).save(*args,**kwargs)
 
 class BasementStatus(MonoNode,PublicNode):
     _name="piwnica"

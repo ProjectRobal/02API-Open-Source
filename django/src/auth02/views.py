@@ -2,8 +2,10 @@ from django.http import HttpResponse,HttpResponseBadRequest,HttpResponseNotFound
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate, login,logout
 from domena.settings import DEFAULT_SESSION_TIME
+from .models import O2User
 import time
 import logging
+import json
 
 from .forms import LoginForm
 # Create your views here.
@@ -54,7 +56,7 @@ def auth(request):
     if not loginData.is_valid():
         return redirect("/login?bad_login=1")
 
-    user=authenticate(request,username=loginData["user"].value(),password=loginData["pwd"].value())
+    user:O2User=authenticate(request,username=loginData["user"].value(),password=loginData["pwd"].value())
 
     if user is not None:
         login(request,user)

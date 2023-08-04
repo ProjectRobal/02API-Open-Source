@@ -36,16 +36,16 @@ services:
         condition: service_started
     labels:
       - traefik.enable=true
-      - traefik.http.routers.django_02_dev.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`)
-      - traefik.http.routers.django_02_dev.entrypoints=websecure
-      - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
-      - traefik.http.routers.django_02_dev.service=02_web
+      - traefik.http.routers.02_django_stagging.rule=Host(`staging.zerotwo.tenere.konar.pwr.edu.pl`)
+      - traefik.http.routers.02_django_stagging.entrypoints=websecure
+      - traefik.http.routers.02_django_stagging.tls.certresolver=leresolver
+      - traefik.http.routers.02_django_stagging.service=02_web
       - traefik.http.services.02_web.loadbalancer.server.port=8000
 
-      - traefik.http.routers.ws_02_dev.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`)&&PathPrefix(`/sock`)
-      - traefik.http.routers.ws_02_dev.entrypoints=websecure
-      - traefik.http.routers.ws_02_dev.service=02_ws
-      - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
+      - traefik.http.routers.ws_02_stagging.rule=Host(`staging.zerotwo.tenere.konar.pwr.edu.pl`)&&PathPrefix(`/sock`)
+      - traefik.http.routers.ws_02_stagging.entrypoints=websecure
+      - traefik.http.routers.ws_02_stagging.service=02_ws
+      - traefik.http.routers.ws_02_stagging.tls.certresolver=leresolver
       - traefik.http.services.02_ws.loadbalancer.server.port=9000
 
   sheduler:

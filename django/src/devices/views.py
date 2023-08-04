@@ -75,7 +75,7 @@ def api(request,path):
 
         if key is not None:
 
-            return HttpResponse(str(result))
+            return HttpResponse(str(result),content_type="application/json")
         else:
             logging.debug("No key or output provided!")
 

@@ -1,8 +1,10 @@
-from django.http import HttpResponseBadRequest,HttpResponse
+from django.http import HttpResponseBadRequest,HttpResponse,HttpResponseNotFound
 from django.shortcuts import render,redirect
 from auth02.models import O2User
 from django.contrib.auth.models import Permission
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required,permission_required
+from django.contrib.auth import authenticate
 from domena.settings import MEDIA_URL
 import logging
 
@@ -10,6 +12,8 @@ from .models import ProfilePicture,ProjectGroup,CardNode
 from .forms import Register02Form,ProfileImage02Form,Profile02Form
 from .apps import WebadminConfig
 from django import forms
+
+import json
 
 @login_required(login_url="/login")
 def generate_new_card(request):
@@ -228,3 +232,32 @@ def reg_form(request):
         return HttpResponseBadRequest()
 
     return render(request,"/app/webadmin/templates/register02form.html",context={"form":Register02Form})
+
+
+def get_id(request):
+    if request.method != "GET":
+        return HttpResponseNotFound()
+    
+    #logging.debug("Body: "+str(request.read()))
+    
+    body=json.load(request)
+ 
+    if not "username" in body.keys() or not "password" in body.keys():
+        logging.debug("No username or password filds")
+        return HttpResponseBadRequest()
+    
+    user:O2User=authenticate(username=body["username"],password=body["password"])
+
+    if user is None:
+        logging.debug("No specified user has been found")
+        return HttpResponseBadRequest("User creditentials are wrong")
+    
+    cards=CardNode.objects.filter(user=user).all()
+
+    output=[]
+
+    if cards.exists():
+        for card in cards.values("key","is_in_basement"):
+            output.append(card)
+
+    return HttpResponse(json.dumps(output,cls=DjangoJSONEncoder),content_type="application/json")
