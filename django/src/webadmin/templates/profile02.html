@@ -26,6 +26,8 @@
         padding:10px;
         width:100%;
         height:100%;
+        opacity:1.0;
+        z-index:0;
         background-color:white;
     }
 
@@ -98,12 +100,13 @@
         bottom: 0;
         left: 0;
         right: 0;
+        background-color:rgba(0,255,255,0.1);
     }
 
     .img_profile:hover .overlay
     {
         height:100%;
-    }
+    } 
 
     .overlay_content
     {
@@ -111,6 +114,7 @@
         height:100%;
         shadow:none;
         border:none;
+        background-color:rgba(0,0,0,0);
     }
 
     }
@@ -137,8 +141,6 @@
 
     <div class="img_profile block">
 
-    <img src="{{profile_img}}" width="800px" height="600px">
-
     <form method="post" action="/img_set/" class="block overlay" enctype="multipart/form-data">
         <div class="overlay_content logform" >
             {% csrf_token %}
@@ -146,6 +148,8 @@
             <input type="submit" value="Change Picture">
         </div>
     </form>
+
+    <img src="{{profile_img}}" width="800px" height="600px">
 
     </div>
 

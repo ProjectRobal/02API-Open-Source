@@ -184,14 +184,14 @@ def reg(request):
 
     if not register.is_valid():
         request.session["login_error"]=register.errors
-        return redirect("/login")
+        return redirect("/register")
 
     register=register.cleaned_data
 
     try:
 
         O2User.objects.get(username=register["username"])
-
+        request.session["login_error"]=register.errors
         return redirect("/login?user_exists=1")
 
     except O2User.DoesNotExist:
@@ -230,8 +230,16 @@ def reg_form(request):
 
     if request.method != "GET":
         return HttpResponseBadRequest()
+    
+    msg=None
 
-    return render(request,"/app/webadmin/templates/register02form.html",context={"form":Register02Form})
+    if "login_error" in request.session.keys():
+        msg=""
+        for error in request.session["login_error"].values():
+            msg+=str(error[0])+" \n"
+        del request.session["login_error"]
+
+    return render(request,"/app/webadmin/templates/register02form.html",context={"form":Register02Form,"msg":msg})
 
 
 def get_id(request):
