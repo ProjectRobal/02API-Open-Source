@@ -122,6 +122,9 @@ services:
       - type: bind
         source: ./sql_buckups/monthly
         target: /backup/monthly
+      - type: bind
+        source: ./sql_buckups
+        target: /backup
     networks:
       - internal
     env_file:

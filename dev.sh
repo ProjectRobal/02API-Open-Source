@@ -81,6 +81,14 @@ elif [ $cmd = "restore" ]; then
 
     docker compose exec -T db pg_restore -v --if-exists -c -U devs -d domena_db /backup/$2/db
 
+elif [ $cmd = "restore_copy" ]; then
+
+    docker compose exec -T db pg_restore -v --if-exists -c -U devs -d domena_db /backup/$2
+
+elif [ $cmd = "copy_db" ]; then
+
+    docker compose exec -T db pg_dump -Fc -U devs -Z 9 -f /backup/$2 domena_db
+
 elif [ $cmd = "help" ]; then
 
 echo "build - zbuduj kontenery"
@@ -99,6 +107,8 @@ echo "restore - załaduj buckup bazy danych, do wyboru: "
 echo "  -daily - codzienny"
 echo "  -weekly - tygodniowy"
 echo "  -monthly - miesieczny"
+echo "restore_copy - załaduj kopię bazy danych z folderu buckup"
+echo "copy_db - stwórz kopię bazy danych do folderu buckup"
 echo "help - komenda pomoc"
 
 fi

@@ -79,6 +79,19 @@ services:
           retries: 120
     networks:
       - internal
+    volumes:
+      - type: bind
+        source: ./sql_buckups/daily
+        target: /backup/daily
+      - type: bind
+        source: ./sql_buckups/weekly
+        target: /backup/weekly
+      - type: bind
+        source: ./sql_buckups/monthly
+        target: /backup/monthly
+      - type: bind
+        source: ./sql_buckups
+        target: /backup
     env_file:
       - ./conf1/sql.env
     expose:
