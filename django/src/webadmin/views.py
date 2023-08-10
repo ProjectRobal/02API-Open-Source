@@ -191,7 +191,7 @@ def reg(request):
     try:
 
         O2User.objects.get(username=register["username"])
-        request.session["login_error"]=register.errors
+        #request.session["login_error"]=register.errors
         return redirect("/login?user_exists=1")
 
     except O2User.DoesNotExist:

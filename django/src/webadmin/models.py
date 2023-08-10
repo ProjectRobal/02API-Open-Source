@@ -63,16 +63,20 @@ class CardNode(PublicNode):
 
         def save(self,*args, **kwargs) -> None:
 
-            past=CardNode.objects.get(uuid=self.uuid)
+            try:
+
+                past=CardNode.objects.get(uuid=self.uuid)
                 
-            visit=CardVisitRecord()
-            visit.user=self.user
-            if not past.is_in_basement and self.is_in_basement:
-                visit.has_entered=True
-                visit.save()
-            elif past.is_in_basement and not self.is_in_basement:
-                visit.has_entered=False
-                visit.save()
+                visit=CardVisitRecord()
+                visit.user=self.user
+                if not past.is_in_basement and self.is_in_basement:
+                    visit.has_entered=True
+                    visit.save()
+                elif past.is_in_basement and not self.is_in_basement:
+                    visit.has_entered=False
+                    visit.save()
+            except CardNode.DoesNotExist:
+                pass
 
             return super(CardNode,self).save(*args,**kwargs)
 
