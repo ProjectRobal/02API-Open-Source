@@ -50,12 +50,12 @@ services:
       - 9000
     labels:
       - traefik.enable=true
-      - traefik.http.routers.django_02_dev.rule=Host(`localhost`)
+      - traefik.http.routers.django_02_dev.rule=Host(`$IP_ADDR`,`localhost`)
       - traefik.http.routers.django_02_dev.entrypoints=web
       - traefik.http.routers.django_02_dev.service=02_web
       - traefik.http.services.02_web.loadbalancer.server.port=8000
 
-      - traefik.http.routers.ws_02_dev.rule=Host(`localhost`)&&PathPrefix(`/sock`)
+      - traefik.http.routers.ws_02_dev.rule=Host(`$IP_ADDR`,`localhost`)&&PathPrefix(`/sock`)
       - traefik.http.routers.ws_02_dev.entrypoints=web
       - traefik.http.routers.ws_02_dev.service=02_ws
       - traefik.http.services.02_ws.loadbalancer.server.port=9000
@@ -98,7 +98,7 @@ services:
       - 80
     labels:
       - traefik.enable=true
-      - traefik.http.routers.02_media_dev.rule=Host(`localhost`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
+      - traefik.http.routers.02_media_dev.rule=Host(`$IP_ADDR`,`localhost`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
       - traefik.http.routers.02_media_dev.entrypoints=web
       - traefik.http.services.02_media_dev.loadbalancer.server.port=80
 
@@ -151,6 +151,6 @@ services:
       - 9001
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mqtt_02_dev.rule=Host(`localhost`)&&PathPrefix(`/broker`)
+      - traefik.http.routers.mqtt_02_dev.rule=Host(`$IP_ADDR`,`localhost`)&&PathPrefix(`/broker`)
       - traefik.http.routers.mqtt_02_dev.entrypoints=web
       - traefik.http.services.mqtt_02_dev.loadbalancer.server.port=9001

@@ -36,9 +36,14 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["zerotwo.tenere.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl","localhost"]
-CORS_ALLOWED_ORIGINS = ["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl","http://localhost"]
-CSRF_TRUSTED_ORIGINS=["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl","http://localhost"]
+ALLOWED_HOSTS = ["zerotwo.tenere.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl"]
+CORS_ALLOWED_ORIGINS = ["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+CSRF_TRUSTED_ORIGINS=["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+
+if os.environ.get("DJANGO_MODE")=='DEBUG':
+    ALLOWED_HOSTS.extend([os.environ.get('IP_ADDR'),"localhost"])
+    CORS_ALLOWED_ORIGINS.extend(["http://"+os.environ.get('IP_ADDR') ,"http://localhost"])
+    CSRF_TRUSTED_ORIGINS.extend(["http://"+os.environ.get('IP_ADDR'),"http://localhost"])
 
 # Application definition
 

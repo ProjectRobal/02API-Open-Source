@@ -22,8 +22,8 @@ build/stagging/conf1/django.env
 build/stagging/conf1/sql.env
 build/stagging/conf1/mqtt/config/password.txt
 
-build/dev/sql_buckups/
-build/prod/sql_buckups/
-build/stagging/sql_buckups/
+build/dev/sql_buckups/*
+build/prod/sql_buckups/*
+build/stagging/sql_buckups/*
 
-django/debug_nodes
+django/debug_nodes/*

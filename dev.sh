@@ -1,5 +1,9 @@
 #!/bin/bash
 
+export IP_ADDR="$(./get_ip.sh)"
+
+echo Current IP Addr $IP_ADDR
+
 cd build/dev
 
 cmd="help"
