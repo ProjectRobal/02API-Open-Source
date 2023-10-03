@@ -40,7 +40,6 @@
 </p>
 
 </div>
-</div>
 
 {% else %}
 
@@ -62,6 +61,17 @@
 <p class="text">
     W piwnicy można spotkać:
 </p>
+
+{% for user in users %}
+
+{% if user.0.first_name %}
+            <div>{{user.0.first_name}} {{user.0.last_name}} aka {{user.0.username}}</div>
+    {% else %}
+            <div>{{user.0.username}}</div>
+{% endif %}
+    
+{% endfor %}
+
 </div>
 </div>
 
@@ -75,6 +85,26 @@
 <h4 class="title">
     Informacje o użytkownikach
 </h4>
+
+<div class="profiles">
+
+    {% for user in users %}
+    <div class="profile">
+        <img src="{{user.1}}">
+        <div>
+            {% if user.0.first_name %}
+            <p>{{user.0.first_name}} {{user.0.last_name}} aka {{user.0.username}}</p>
+            {% else %}
+            <p>{{user.0.username}}</p>
+            {% endif %}
+            <div>Członek projektów:</div>
+        </div>
+    </div>
+    
+    {% endfor %}
+
+</div>
+    
 </div>
 
 {% endif %}
