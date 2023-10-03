@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href={% static "rat_style.css" %}>
+</head>
+<body class="background">
+
+
+<img class="main_image" src={% static "KoNaR_UOS_logo.png" %} alt="we are rats">
+
+
+<div>
+<h1 class="main_title">
+    Znajdź konarowicza w piwnicy
+</h1>
+</div>
+
+<div class="rat_container">
+<img class="rat_image1" src={% static  "ratback.png" %} alt="rad">
+<img class="rat_image2" src={% static  "ratback.png" %} alt="rad">
+<img class="rat_image3" src={% static  "ratback.png" %} alt="rad">
+</div>
+
+{% if users|length > 0 %}
+
+<div class="block_one">
+<h2 class="title">
+    Ilość ludzi w piwnicy
+</h2>
+
+<div class="box1">
+<p class="text" >
+    W piwnicy jest w chuj ludzi, conajmniej {{users|length}}
+</p>
+
+</div>
+</div>
+
+{% else %}
+
+<div class="block_one">
+  <h2 class="title">
+      Nikogo tu nie ma!!
+  </h2>
+
+{% endif %}
+
+{% if users|length > 0 %}
+
+<div class="block_one">
+<h3 class="title">
+    Lista użytkowników, którzy są w piwnicy
+</h3>
+<div class="box1">
+<p class="text">
+    W piwnicy można spotkać:
+</p>
+</div>
+</div>
+
+{% endif %}
+
+<img class="rat_bottom"src={% static  "ratback.png" %} alt="we are rats">
+
+{% if users|length > 0 %}
+
+<div class="block_one">    
+<h4 class="title">
+    Informacje o użytkownikach
+</h4>
+</div>
+
+{% endif %}
+
+<div class="rat_box_container">
+ <div id="da_box">
+  <img class="face rat_front" src={% static  "ratback.png" %} alt="we are rats">
+
+  <img class="face rat_back" src={% static  "ratback.png" %} alt="we are rats">  
+
+  <img class="face rat_left" src={% static  "ratback.png" %} alt="we are rats">
+  
+  <img class="face rat_right" src={% static  "ratback.png" %} alt="we are rats">
+  
+  <img class="face rat_top" src={% static  "ratback.png" %} alt="we are rats">
+    
+  <img class="face rat_down" src={% static  "ratback.png" %} alt="we are rats">
+ </div>
+</div>
+
+
+</body>
+</html>

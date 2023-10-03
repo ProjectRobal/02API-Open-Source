@@ -141,7 +141,7 @@
 
     <div class="img_profile block">
 
-    <form method="post" action="/img_set/" class="block overlay" enctype="multipart/form-data">
+    <form method="post" action="/webadmin/img_set/" class="block overlay" enctype="multipart/form-data">
         <div class="overlay_content logform" >
             {% csrf_token %}
             {{img_form}}
@@ -158,7 +158,7 @@
     <div class="profile_form">
 
        
-    <form method="post" action="/userup/" class="login_space">
+    <form method="post" action="/webadmin/userup/" class="login_space">
         <div class="logform">
                 {% csrf_token %}
                 {{profile_form}}

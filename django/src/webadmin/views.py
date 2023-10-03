@@ -16,6 +16,29 @@ from django import forms
 import json
 
 @login_required(login_url="/login")
+def cards_view(request):
+    if request.method != "GET":
+        return HttpResponseBadRequest()
+    
+    in_piwnica:list[CardNode]=CardNode.objects.filter(is_in_basement=True)
+
+    logging.debug("Found "+str(len(in_piwnica))+" people in basement")
+
+    users:list[tuple[O2User,ProfilePicture]]=[]
+
+    for piwniczak in in_piwnica:
+        try:
+            picture=ProfilePicture.objects.get(user=piwniczak.user).image
+            picture='{0}/{1}'.format(MEDIA_URL,picture)
+        except ProfilePicture.DoesNotExist:
+            logging.debug("User "+piwniczak.user.username+" doesn't have profile picture!")
+            picture='/static/dummy.png'
+
+        users.append((piwniczak.user,picture))
+    
+    return render(request,"/app/webadmin/templates/index.html",context={"users":users})
+
+@login_required(login_url="/login")
 def generate_new_card(request):
     if request.method != "GET":
         return HttpResponseBadRequest()
@@ -52,7 +75,7 @@ def generate_new_card(request):
     except Exception as e:
         request.session["profile_msg"]=str(e)
 
-    return redirect("/profile")
+    return redirect("/webadmin/profile")
 
 
 @login_required(login_url="/login")
@@ -64,7 +87,7 @@ def img_set(request):
 
     if not form.is_valid():
         logging.error(str(form.errors))
-        return redirect("/profile")   
+        return redirect("/webadmin/profile")   
 
     user:O2User=request.user
 
@@ -85,7 +108,7 @@ def img_set(request):
 
     logging.debug("Picture has been set!")
 
-    return redirect("/profile")
+    return redirect("/webadmin/profile")
 
 
 @login_required(login_url="/login")
@@ -124,7 +147,7 @@ def update_profile(request):
         group.user.add(user)
         group.save()
 
-    return redirect("/profile")
+    return redirect("/webadmin/profile")
 
 @login_required(login_url="/login")
 def profile(request):
@@ -184,7 +207,7 @@ def reg(request):
 
     if not register.is_valid():
         request.session["login_error"]=register.errors
-        return redirect("/register")
+        return redirect("/webadmin/register")
 
     register=register.cleaned_data
 

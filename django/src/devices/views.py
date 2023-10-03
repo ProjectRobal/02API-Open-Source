@@ -54,7 +54,7 @@ def api(request,path):
 
         body=json.load(request)
 
-        #logging.debug("Body: "+str(json.dumps(body)))
+        logging.debug("Body: "+str(json.dumps(body)))
 
         key=None
 
