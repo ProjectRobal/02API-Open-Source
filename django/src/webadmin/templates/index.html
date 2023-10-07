@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>W piwnicy jest dzisiaj, {{users|length}} człowieków </title>
     <link rel="stylesheet" href={% static "rat_style.css" %}>
 </head>
 <body>
@@ -36,7 +36,8 @@
 
 <div class="box1">
 <p class="text" >
-    W piwnicy jest w chuj ludzi, conajmniej {{users|length}}
+    W piwnicy jest w mnóstwo ludzi, conajmniej:
+    <p style="font-size:xxx-large;">{{users|length}}</p>
 </p>
 
 </div>
@@ -63,13 +64,15 @@
 </p>
 
 {% for user in users %}
-
+<a href="#{{user.0.username}}">
 {% if user.0.first_name %}
-            <div>{{user.0.first_name}} {{user.0.last_name}} aka {{user.0.username}}</div>
+            <div class="username">{{user.0.first_name}} {{user.0.last_name}}
+                <div style="font-size:medium; text-align:center;">aka {{user.0.username}}</div>
+            </div>
     {% else %}
-            <div>{{user.0.username}}</div>
+            <div class="username">{{user.0.username}}</div>
 {% endif %}
-    
+</a>
 {% endfor %}
 
 </div>
@@ -86,18 +89,33 @@
     Informacje o użytkownikach
 </h4>
 
-<div class="profiles">
+<div class="profiles" id="users_info">
 
     {% for user in users %}
-    <div class="profile">
+    <div class="profile" id="{{user.0.username}}">
+        <img class="rat_icon" style="width:96px;" src={% static  "ratback.png" %} alt="rad">
         <img src="{{user.1}}">
         <div>
             {% if user.0.first_name %}
-            <p>{{user.0.first_name}} {{user.0.last_name}} aka {{user.0.username}}</p>
+            <p style="margin-bottom:0;">{{user.0.first_name}} {{user.0.last_name}}</p>
+            <p style="font-size:medium; margin-top:0;">aka {{user.0.username}}</p>
             {% else %}
             <p>{{user.0.username}}</p>
             {% endif %}
-            <div>Członek projektów:</div>
+            {% if user.2|length > 0%}
+            <div>Członek projektów:
+                    <ul>
+                {% for project in user.2 %}
+                        <li>{{project}}</li>
+                {% endfor %}
+                    </ul>
+            </div>
+            {% else %}
+                        
+                <div>Do wynajęcia</div>
+
+            {% endif %}
+            
         </div>
     </div>
     

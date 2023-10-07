@@ -24,7 +24,7 @@ def cards_view(request):
 
     logging.debug("Found "+str(len(in_piwnica))+" people in basement")
 
-    users:list[tuple[O2User,ProfilePicture]]=[]
+    users:list[tuple[O2User,ProfilePicture,list[str]]]=[]
 
     for piwniczak in in_piwnica:
         try:
@@ -34,7 +34,9 @@ def cards_view(request):
             logging.debug("User "+piwniczak.user.username+" doesn't have profile picture!")
             picture='/static/dummy.png'
 
-        users.append((piwniczak.user,picture))
+        users_groups:list[str]=[group.project_name for group in ProjectGroup.objects.filter(user=piwniczak.user)]
+
+        users.append((piwniczak.user,picture,users_groups))
     
     return render(request,"/app/webadmin/templates/index.html",context={"users":users})
 

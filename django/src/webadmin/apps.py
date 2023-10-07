@@ -47,12 +47,14 @@ class WebadminConfig(AppConfig):
         urlpatterns.append(path('webadmin/img_set/',img_set))
         urlpatterns.append(path('webadmin/n_card/',generate_new_card))
         urlpatterns.append(path('webadmin/uid/',get_id))
-        urlpatterns.append(path('webadmin/lscards',cards_view))
+        urlpatterns.append(path('webadmin/lscards/',cards_view))
 
         entries.append(HomeBlock("Profile","/webadmin/profile/"))
         entries.append(HomeBlock("Card register","/webadmin/register/"))
+        entries.append(HomeBlock("Basement status","/webadmin/lscards/"))
         menu_entries.append(MenuBlock("Profile","/webadmin/profile/"))
         menu_entries.append(MenuBlock("Card register","/webadmin/register/"))
+        menu_entries.append(MenuBlock("Basement status","/webadmin/lscards/"))
 
         WebadminConfig.APP_READY=True
 

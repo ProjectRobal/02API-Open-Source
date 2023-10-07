@@ -4,19 +4,36 @@
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
+a
+{
+  all:unset;
+}
+
+a:hover
+{
+  cursor: pointer;
+}
+
 body
 {
-    background-color: black;
+  background-color: black;
+}
+
+ul
+{
+  list-style: none;
+  padding-inline-start:10px;
 }
 
 .block_one { 
     display: flex;
+    align-items: center;
     flex-direction: column;
     position: relative;
-    margin-left: auto;
-    margin-right: auto;
+    align-items: center;
     margin-top: 50px;
     border: 3px solid snow;
+    border-radius: 10px;
     padding-left: 2px;
     padding-right: 2px;
 }
@@ -24,23 +41,23 @@ body
 .box1 {
     display: flex;
     flex-direction: column;
+    align-items: center;
     position: relative;
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 50px;
     margin-bottom: 50px;
-    border: 3px solid snow;
-    padding: 25px;
+    /*border: 3px solid snow;*/
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     padding-left: 2px;
     padding-right: 2px;
-    
 }
 
 .title {
 
     text-align: center;
     color:orange;
-    font-size: large;
+    font-size: x-large;
     padding-left: 2px;
     padding-right: 2px;
     
@@ -56,8 +73,16 @@ body
     
 }
 
-.text{
+.username
+{
+  margin-top: 3px;
+  margin-bottom: 3px;
+  font-size: medium;
+}
 
+.text{
+    margin-top: 2px;
+    margin-bottom: 2px;
     text-align: center;
     color: violet;
     font-size:  large;
@@ -89,9 +114,12 @@ body
   flex-direction: column;
   width: 100%;
   border: 3px solid snow;
+  border-radius: 10px;
   overflow-y: auto;
   overflow-x: hidden;
   height: 800px;
+  gap:15px;
+  align-items: center;
 }
 
 .profile
@@ -101,8 +129,10 @@ body
   width: 100%;
   height: fit-content;
   border: 3px solid snow;
+  border-radius: 10px;
   margin-bottom: 10px;
   padding: 10px;
+  align-items:center;
 }
 
 .profile img
@@ -111,6 +141,7 @@ body
   width: 25%;
   height: fit-content;
   background-color: white;
+  margin-right: 10px;
 }
 
 .profile p
@@ -121,20 +152,30 @@ body
 .profile > div
 {
   width: 50%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   overflow-x: auto;
 }
 
+.rat_icon
+{
+    animation-name: spin1;
+    animation-duration: 5000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear; 
+
+}
+
 .rat_image1{
 
-    
     animation-name: spin1;
     animation-duration: 5000ms;
     animation-iteration-count: infinite;
     animation-timing-function: linear; 
     width: 33%;
+
   }
 
   .rat_image2{
@@ -236,6 +277,43 @@ body
     transform:  translateY( -200px ) rotateX( 90deg ); 
   }
 
+@media screen and (max-width:600px){
+
+  body
+  {
+    overflow-x: hidden;
+  }
+
+  .profile
+  {
+    flex-direction: column;
+    width: fit-content;
+    align-items: center;
+  }
+
+  .username
+  {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: x-large;
+  }
+
+  .rat_icon
+  {
+    display: none;
+  }
+
+  .profile
+  {
+    font-size: larger;
+  }
+
+  .profile img
+  {
+    width: 45%;
+  }
+  
+}
 
 @keyframes spin1 {
 	from {transform: rotateY(0deg);}
