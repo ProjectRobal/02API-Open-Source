@@ -1,4 +1,11 @@
 {% load static %}
+<!--     ______
+      _\/      \         /
+     < *_   _   \_______/
+        \_/  \_/
+
+    I am a rat!
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,19 +19,59 @@
 
 
 
-<img class="main_image" src={% static "KoNaR_UOS_logo.png" %} alt="we are rats">
+<a href="https://konar.pwr.edu.pl/"><img class="main_image" src={% static "KoNaR_UOS_logo.png" %} alt="we are rats"></a>
 
 
 <div>
-<h1 class="main_title">
+<h1 class="main_title" id="We appreciate you Kamil.W">
     Znajdź konarowicza w piwnicy
 </h1>
+
+{% if users|length > 0 %}
+
+<div style="display:none;">
+
+    Wyroby betonowe i żelbetonowe.
+    Betoniarnia Śmiegiel!
+    
+    Bloczki M6 oraz kostki brukowe.
+    Betoniarnia Śmiegiel!
+
+    Nawproża kraweżniki, obrzeża trawnikowe,
+    oraz zwężki, płyty i słupki parkanowe.
+    Cement, wapno i kręgi u nas kupisz od ręki.
+    W Betoniarni Śmiegiel!
+
+    Śmigiel ulica południowa.
+
+    Betoniarnia Śmiegiel
+
+    Telefon 655 180 250
+
+    U nas kupisz, tanio buduj!
+
 </div>
 
-<div class="rat_container">
-<img class="rat_image1" src={% static  "ratback.png" %} alt="rad">
-<img class="rat_image2" src={% static  "ratback.png" %} alt="rad">
-<img class="rat_image3" src={% static  "ratback.png" %} alt="rad">
+{% else %}
+
+<div style="display:none;">
+
+    Never gonna give you up 
+    Never gonna let you down 
+    Never gonna run around and desert you 
+    Never gonna make you cry 
+    Never gonna say goodbye 
+    Never gonna tell a lie and hurt you
+
+</div>
+
+{% endif %}
+</div>
+
+<div class="rat_container" id="https://www.youtube.com/playlist?list=PLv4bw3VMicyezEbDBCj00qwo6YPa_7LJt">
+<img class="rat_image1" id="K.Mirek" src={% static  "ratback.png" %} alt="rad">
+<img class="rat_image2" id="J.Kolasa" src={% static  "ratback.png" %} alt="rad">
+<img class="rat_image3" id="W.Bohdan" src={% static  "ratback.png" %} alt="rad">
 </div>
 
 {% if users|length > 0 %}
@@ -80,16 +127,53 @@
 
 {% endif %}
 
-<img class="rat_bottom"src={% static  "ratback.png" %} alt="we are rats">
+<img class="rat_bottom"src={% static  "ratback.png" %} alt="we are rats" id="Renault Twingo">
+<!-- 
+
+&&@&&&@@@@@@@&@@@@@@@@@@@@@@@@@@@@@@&&@@&&&&&&@&&&@@@@@@@@@&&&@@@&&&&@@&@&&&@@&&&&&&@@@@&&@&###&&@&&
+GGGP5PPGG#@@@@@@@&@&&&&&&&##&&#########B#BB###&##G@&&&&@@@@&&&&@&&&&&&&&&&&B#&&&&&&&&&#5#&&G5Y5GG5?7
+~~~~~~~!!!?J??7~^:::^^~^^^^^^^::.......::::^^^^^^^~~~!7JY5PP55555Y5YYYYYYYYJJYYYY55YYJY7YY55Y5P?!~!!
+~^^^:^!!!~:.......7!:::^^^^:^.JY^77???JJJJ???JJJY5YJJJJ??7^^^~!7777777777?777!!!!!!!77!~!!!7?YBPYP55
+^!77!~!!^^..   ..J7    . .:~^^~~  :^^^~!!~~~!??JYYYYY5555Y7!^...~7?7777777?7777!!7!!!!5G##&#&###&&&&
+^~!7777!~.....:^Y?..........~^~!Y~.::^^~^^^^~!!!7JY55Y5YY?7777!~:.^!!~~~~~~!~~~~^~~~~^Y&5J#@&&&&&&&&
+^^^^^^?GY.....^J5::::.:::::::!~!!Y!^~777!^^^^^^~~!JYY?J?7777777!7!~::~7!~^~!~~:^!!777??Y55#&#&&&@@@@
+~~~!!YJGGPP?!?JB!~^~^^^^^^^^^^7~!~5Y77!77!~!!~~777JYYYY555Y77777777!~::~77!~!~~~!777??777?7???JJJYY5
+YJY5Y5Y^~7?JJ5#&#&####BGP57~~~!?~!~5?~:....:~7???JJJYYYYYY55JJ?7777777!~~~!7?J77!~~~~!!!!7777???777!
+!!?GGYJ7!^~!7?GPPG#&&@@&&&#P?77J?!~!Y7.      ^7?JYYY55555P55YYPJ?77777!7?J7~~?P##5~~!!!~~!!~~~~~!!!!
+&###GPP555YJ~!~~~!?JYPBP5PPGG##PPY~!!J:.^~7JYYGG#&#BB###BBBBBBBGGGGPP55PPP5YJ7!?Y~~~!!!!!!!!!!!!!!!!
+@@@@PPBBBBGPYYJ?77!~~~J#@@@@@&&&&#J777J??JYY5YYY5YJYY5GBBGGPPP5555PPGPP55Y?77!~^^^^^~!!!!!!!!!!!!!!!
+@@@@GBBBB#BG#BGP55555J!^~7J5GGB@@&P!~~~!!!~^~?GGJ7GGJJGP7!!!?7777777777777?777777!!~~^~!!!7!7!!!!!!!
+@@@@@@&BBGB#####BGPPPGGPJ7!^^~75PYY!!!!~~!!!~~7Y5JJY5YJYY?7777777777????7777??????777!~^^~77777777!7
+@@@@@@&#GPPGGGBB####BBBGGGGPYJJ????777777!!!!~^^~!!!!7!!!77777777????????????????????77!~^^~!7777777
+BBBBB#JJBGGGGPPPGGBBBBBBBBGGGGPPPPP5Y?77777777!~!!!!!!!777777????????????????????????????77!!?777777
+7777?B?J#GPPGBBBGGGGBBBBBBBGBBBBGGGGPP5?????????!!!!~!!!!7777????????????JJJJ?????JJJJJJYJY~^7P??77?
+?????BJ?#@&BGGBB##BBBBBBBBBBBGBBBGGGGGGGY???????J?7!!!!~!!7??77?JJJJJJJJJJJYYYYYYYYYYJJJY5? .!YY7?77
+?????GP5&@@@&BGGBB#####BBBBBBGGGBGPPPGGGGGP5JJJJJYYJ????J?77JY5YJYYYYYY5555555Y!Y5555555PGY~?YP57??7
+YYY555##@@@@@&&&#BBBB######BBB#B&&&#GPPPGGG5P5Y5G5Y5YYYP?~....~YG5555555P5PPPPPY5GGGGGGBBBP##BG5Y???
+5555PPG#&@@@@@@@@@&#BBB######BB@@@@@@&BPYY55P5YPGPYP55G?:::..^~~PBPPPPPPPPPGGBBB###&&&&&#GY5PPGBG???
+55PPPPPPGGGBB##&&&@@@&#BBB###B&@@@@&&@@&#BGGGGGGBBGPBB#5???JJY55B&PPG######&&&&&##BBGGGGPGB#####5??J
+5P5P5PPP5PPGGBBBB#&&&@@@&&BB#B#@@@@@&&&@@&#BPPPPPPPPPPPB########BG55PBBGGBGBGGGGPP55YJ7!^B#&&&&GJJJJ
+5P5P5PPP5GPGPGGBGBB##&&&@@@&&##@@@&B?7Y#@@&###BBGPPPPPPPGGGGGGGGGBBBBBB#&5YYJ77!~^^::^^~J&&@&B?7JYYJ
+5YY555YPGPPGGGGGGGGGB###&&&&@@@@@&PYYJ5!#@@@#&&&&&&##########&&&&&&&&&&&B::::^^~!7J5G##&&&##B?~^~~~!
+5YP55YPPPPPG5GGGPPGGGPB####&&&@@@@YYYJ5J7@@@@##&&&&&&&&&&&&&&&&&&&&&&&@@PJ5GB#&@@@@@&&##BGPP5Y5YJJ?!
+P5YY55555P5P5PY5PGPPPGGGGBB##B&&&@B5YYJ?Y#@@@&#&&&&&&&&&@@@@@@@@@@@&@@@@@@@@@@&&&&&&&&&&#BPP55Y5YY5Y
+755YYY5Y55PP5P5P55PGP55GGGGPGB###@#YY55PB&@@@@&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&##BGGGP5YYYYY
+7JY55Y55PY555PYYPPPYY5PGP5PPGGPBB&@BPPY5G@@@@@@@@@@&&&&&&####&&&&&&&&&@@@@@@@@&&&&##BBBBBBGGPPP55YYY
+J77JY5YY5P55Y5PP5Y5PPPYYGPPP5PPGGG&@#B#&&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&&&&&&###BBBGGGP5555555555YY
+?~?~!5PP5Y55555YPPPPY55PP5Y55PG5P55B&@&@@@@@@@@@@@@@@@@@@@@@@@@@@&@&&&&&&&##BBGGGPPPPPP55YYYYJJY5YYY
+Y!?5PJ^J5PPY?Y5Y5YY5YY555JJ5PPPYYGPGGB&@@@@@@@@@@&&&&@@&&&&&&&&#&&&##BB###BGBBBGGP55YYYYYYYYYYJJ????
+BGJ.~Y!7JYYJJ55Y5JJ5PP5JYGP55YY5PP5555PPGBBB###&&#B#&&&#GB####BB#BBBGBGBBBGPPPGPGP55YYJ???JJJJ??????
+
+-->
 
 {% if users|length > 0 %}
 
-<div class="block_one">    
+<div class="block_one" id="N.K.M was here!">    
 <h4 class="title">
     Informacje o użytkownikach
 </h4>
 
-<div class="profiles" id="users_info">
+<div class="profiles" id="Mirek">
 
     {% for user in users %}
     <div class="profile" id="{{user.0.username}}">
@@ -127,7 +211,7 @@
 
 {% endif %}
 
-<div class="rat_box_container">
+<div class="rat_box_container" id="AVE">
  <div id="da_box">
   <img class="face rat_front" src={% static  "ratback.png" %} alt="we are rats">
 
@@ -142,7 +226,10 @@
   <img class="face rat_down" src={% static  "ratback.png" %} alt="we are rats">
  </div>
 </div>
-
+</div>
+<footer id="PREZES">
+    <p style="font-size:smaller;">Made by Jakub Frąckowiak,Patryk Peroński</p>
+</footer>
 
 </body>
 </html>
