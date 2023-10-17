@@ -6,17 +6,24 @@ networks:
 services:
 
   proxy:
-    image: "traefik:v2.10"
+    image: caddy:2.7.5-alpine
     container_name: 02_proxy_dev
+    restart: unless-stopped
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    command:
-    - --api.insecure=true
-    - --providers.docker=true
-    - --providers.docker.exposedbydefault=true
-    - --entrypoints.web.address=:80
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: ../../django/compose/dev/Caddyfile
+        target: /etc/caddy/Caddyfile 
+      - type: bind
+        source: ../../django/web/static
+        target: /data/static
+      - type: bind
+        source: ../../django/web/media
+        target: /data/media
     ports:
     - 80:80
+    - 443:443
+    - 443:443/udp
     networks:
       - internal
 
@@ -45,20 +52,11 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
+      proxy:
+        condition: service_started
     expose:
       - 8000
       - 9000
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.django_02_dev.rule=Host(`$IP_ADDR`,`localhost`)
-      - traefik.http.routers.django_02_dev.entrypoints=web
-      - traefik.http.routers.django_02_dev.service=02_web
-      - traefik.http.services.02_web.loadbalancer.server.port=8000
-
-      - traefik.http.routers.ws_02_dev.rule=Host(`$IP_ADDR`,`localhost`)&&PathPrefix(`/sock`)
-      - traefik.http.routers.ws_02_dev.entrypoints=web
-      - traefik.http.routers.ws_02_dev.service=02_ws
-      - traefik.http.services.02_ws.loadbalancer.server.port=9000
 
   sheduler:
     container_name: 02_sheduler_dev
@@ -67,7 +65,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      media:
+      proxy:
         condition: service_started
       web:
         condition: service_started
@@ -79,29 +77,6 @@ services:
         source: ./tasks.ini
         target: /etc/ofelia/config.ini
         read_only: true
-
-  media:
-    container_name: 02_media_dev
-    build: 
-      context: ../../django/web
-      dockerfile: ../../django/web/Dockerfile
-    volumes:
-      - type: bind
-        source: ../../django/web/static
-        target: /usr/share/nginx/static
-      - type: bind
-        source: ../../django/web/media
-        target: /usr/share/nginx/media
-    networks:
-      - internal
-    expose:
-      - 80
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.02_media_dev.rule=Host(`$IP_ADDR`,`localhost`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
-      - traefik.http.routers.02_media_dev.entrypoints=web
-      - traefik.http.services.02_media_dev.loadbalancer.server.port=80
-
       
   db:
     image: postgres
@@ -149,8 +124,3 @@ services:
       - internal
     expose:
       - 9001
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.mqtt_02_dev.rule=Host(`$IP_ADDR`,`localhost`)&&PathPrefix(`/broker`)
-      - traefik.http.routers.mqtt_02_dev.entrypoints=web
-      - traefik.http.services.mqtt_02_dev.loadbalancer.server.port=9001

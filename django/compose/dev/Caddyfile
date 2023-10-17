@@ -1,0 +1,27 @@
+:80
+{
+    encode zstd gzip
+
+    @statics {
+        path /static/*
+        path /media/*
+    }
+
+    handle @statics {
+        root * /data/
+        file_server
+    }
+
+    handle /broker/* {
+        reverse_proxy  mqtt_02_dev
+    }
+
+    handle /sock/* {
+        reverse_proxy django_02_dev:9000
+    }
+
+    handle {
+        reverse_proxy  django_02_dev:8000
+    }
+
+}
