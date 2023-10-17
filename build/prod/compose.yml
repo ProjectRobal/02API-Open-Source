@@ -1,12 +1,32 @@
 version: '3.9'
 
 networks:
-  proxy:
+  proxynet:
     external: true
   internal:
     name: "zerotwo_prod_internal"
 
 services:
+
+  proxy:
+    image: caddy:2.7.5-alpine
+    container_name: 02_proxy_prod
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: ../../django/compose/prod/Caddyfile
+        target: /etc/caddy/Caddyfile 
+      - type: bind
+        source: ../../django/web/static
+        target: /data/static
+      - type: bind
+        source: ../../django/web/media
+        target: /data/media
+    networks:
+      - proxynet
+      - internal
+  
   web:
     container_name: 02_django_prod
     restart: unless-stopped
@@ -22,7 +42,6 @@ services:
         target: /web/media
     networks:
       - internal
-      - proxy
     env_file:
       - ./conf/django.env
       - ./conf/sql.env
@@ -34,20 +53,6 @@ services:
         condition: service_healthy
       mqtt:
         condition: service_started
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.django_02_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`)
-      - traefik.http.routers.django_02_prod.entrypoints=websecure
-      - traefik.http.routers.django_02_prod.tls.certresolver=leresolver
-      - traefik.http.routers.django_02_prod.service=02_web
-      - traefik.http.services.02_web.loadbalancer.server.port=8000
-
-      - traefik.http.routers.ws_02_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`)&&PathPrefix(`/sock`)
-      - traefik.http.routers.ws_02_prod.entrypoints=websecure
-      - traefik.http.routers.ws_02_prod.service=02_ws
-      - traefik.http.routers.ws_02_prod.tls.certresolver=leresolver
-      - traefik.http.services.02_ws.loadbalancer.server.port=9000
-
 
   sheduler:
     container_name: 02_sheduler_prod
@@ -56,7 +61,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      media:
+      proxy:
         condition: service_started
       web:
         condition: service_started
@@ -68,30 +73,6 @@ services:
         source: ./tasks.ini
         target: /etc/ofelia/config.ini
         read_only: true
-
-  media:
-    container_name: 02_media_prod
-    build: 
-      context: ../../django/web
-      dockerfile: ./Dockerfile
-    volumes:
-      - type: bind
-        source: ../../django/web/static
-        target: /usr/share/nginx/static
-      - type: bind
-        source: ../../django/web/media
-        target: /usr/share/nginx/media
-    networks:
-      - internal
-      - proxy
-    expose:
-      - 80
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.02_media_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`)&&(PathPrefix(`/static`)||PathPrefix(`/media`))
-      - traefik.http.routers.02_media_prod.entrypoints=websecure
-      - traefik.http.routers.02_media_prod.tls.certresolver=leresolver
-      - traefik.http.services.02_media_prod.loadbalancer.server.port=80
 
   db:
     image: postgres
@@ -127,7 +108,6 @@ services:
     container_name: 02_mqtt_prod
     restart: always
     networks:
-      - proxy
       - internal
     volumes:
       - type: bind 
@@ -140,10 +120,3 @@ services:
         read_only: true
     expose:
       - 9001
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.mqtt_02_prod.rule=Host(`zerotwo.tenere.konar.pwr.edu.pl`) && PathPrefix(`/broker`)
-      - traefik.http.routers.mqtt_02_prod.entrypoints=websecure
-      - traefik.http.routers.mqtt_02_prod.tls.certresolver=leresolver
-      - traefik.http.services.mqtt_02_prod.loadbalancer.server.port=9001
-      - traefik.http.services.mqtt_02_prod.loadBalancer.sticky.cookie=true

@@ -22,8 +22,6 @@ services:
         target: /data/media
     ports:
     - 80:80
-    - 443:443
-    - 443:443/udp
     networks:
       - internal
 

@@ -14,15 +14,15 @@
     }
 
     handle /broker {
-        reverse_proxy  mqtt_02_dev:9001
+        reverse_proxy  mqtt_02_prod:9001
     }
 
     handle /sock/* {
-        reverse_proxy django_02_dev:9000
+        reverse_proxy django_02_prod:9000
     }
 
     handle {
-        reverse_proxy  django_02_dev:8000
+        reverse_proxy  django_02_prod:8000
     }
 
 }
