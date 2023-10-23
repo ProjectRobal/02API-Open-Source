@@ -1,5 +1,10 @@
 #!/bin/bash
 
+mkdir -p django/web/media
+mkdir -p django/build/prod/sql_buckups/daily
+mkdir -p django/build/prod/sql_buckups/weekly
+mkdir -p django/build/prod/sql_buckups/monthly
+
 cd build/prod
 
 cmd="help"
