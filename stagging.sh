@@ -11,73 +11,73 @@ fi
 
 if [ $cmd = "build" ]; then
 
-    docker-compose -f compose.yml build
+    docker compose -f compose.yml build
 
 elif [ $cmd = "rebuild" ]; then
 
-    docker-compose -f compose.yml rm -f -s -v
+    docker compose -f compose.yml rm -f -s -v
     rm -R  sql/data
     rm -R mqtt/data
-    docker-compose -f compose.yml build
+    docker compose -f compose.yml build
 
 elif [ $cmd = "up" ]; then
 
-    docker-compose -f compose.yml up -d
+    docker compose -f compose.yml up -d
 
 elif [ $cmd = "down" ]; then
 
-    docker-compose -f compose.yml stop
+    docker compose -f compose.yml stop
 
 elif [ $cmd = "start" ]; then
 
-    docker-compose -f compose.yml start
+    docker compose -f compose.yml start
 
 elif [ $cmd = "stop" ]; then
 
-    docker-compose -f compose.yml down
+    docker compose -f compose.yml down
 
 elif [ $cmd = "run" ]; then
 
-    docker-compose -f compose.yml build
-    docker-compose -f compose.yml  up -d
+    docker compose -f compose.yml build
+    docker compose -f compose.yml  up -d
 
 elif [ $cmd = "purge" ]; then
 
-    docker-compose -f compose.yml rm  -s -v
+    docker compose -f compose.yml rm  -s -v
     rm -R  sql/data
     rm -R mqtt/data
 
 elif [ $cmd = "debug" ]; then
 
-    docker-compose -f compose.yml exec -i web bash
+    docker compose -f compose.yml exec -i web bash
 
 elif [ $cmd = "logs" ]; then
 
-    docker-compose -f compose.yml logs
+    docker compose -f compose.yml logs
 
 
 elif [ $cmd = "init_root" ]; then
 
-    docker-compose -f compose.yml exec  web python3 manage.py createsuperuser --noinput
+    docker compose -f compose.yml exec  web python3 manage.py createsuperuser --noinput
 
 elif [ $cmd = "migrate" ]; then
 
-    docker-compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
-    docker-compose -f compose.yml exec -T web python3 manage.py migrate --noinput
+    docker compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
+    docker compose -f compose.yml exec -T web python3 manage.py migrate --noinput
 
 elif [ $cmd = "remigrate" ]; then
 
-    docker-compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
-    docker-compose -f compose.yml exec -T web python3 manage.py migrate --noinput
+    docker compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
+    docker compose -f compose.yml exec -T web python3 manage.py migrate --noinput
 
 
 elif [ $cmd = "init_mqtt" ]; then
 
-    docker-compose -f compose.yml exec -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt
+    docker compose -f compose.yml exec -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt
 
 elif [ $cmd = "restore" ]; then
 
-    docker-compose -f compose.yml exec -T db pg_restore -v --if-exists -c -U prod -d domena_db /backup/$2/db
+    docker compose -f compose.yml exec -T db pg_restore -v --if-exists -c -U prod -d domena_db /backup/$2/db
 
 elif [ $cmd = "restore_copy" ]; then
 
