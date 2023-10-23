@@ -26,18 +26,28 @@ class MqttConfig(AppConfig):
 
         from devices.websocket import server,run_websocket
 
-        nodes_list=PublicNodes.get_nodes_list()
+        try:
 
-        Topic.node.choices=nodes_list
+            nodes_list=PublicNodes.get_nodes_list()
 
-        logging.debug("mqtt: "+str(nodes_list))
+            Topic.node.choices=nodes_list
 
-        MqttConfig.client=mqtt.create_client()
+            logging.debug("mqtt: "+str(nodes_list))
 
-        MqttConfig.client.loop_start()
+            MqttConfig.client=mqtt.create_client()
 
-        MqttConfig.websocket=run_websocket()
+            MqttConfig.client.loop_start()
+        except Exception as e:
+            logging.error("Cannot run mqtt!")
+            logging.debug("MQTT exception: "+str(e))
 
-        MqttConfig.websocket.start()
+        try:
+
+            MqttConfig.websocket=run_websocket()
+
+            MqttConfig.websocket.start()
+        except Exception as e:
+            logging.error("Cannot run websocket!")
+            logging.debug("Websocket exception: "+str(e))
 
         return super().ready()

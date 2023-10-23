@@ -10,6 +10,7 @@ cd build/prod
 
 cmd="help"
 
+
 if [ $# -ge 1 ]
   then
     cmd=$1
@@ -28,7 +29,7 @@ elif [ $cmd = "rebuild" ]; then
 
 elif [ $cmd = "up" ]; then
 
-    docker compose -f compose.yml -d up
+    docker compose -f compose.yml up -d
 
 elif [ $cmd = "down" ]; then
 
@@ -93,6 +94,7 @@ echo "stop - zatrzymaj kontenery"
 echo "run - zbuduj i uruchom kontenery"
 echo "purge - usuń kontenery wraz z ich danymi"
 echo "debug - uruchom terminal bash na kontenerze django"
+echo "migrate - przeprowadzi migrację"
 echo "init_root - utwórz użytkownika roota w django"
 echo "init_mqtt - ustaw użytkownika dla serwera mqtt"
 echo "restore - załaduj buckup bazy danych, do wyboru: "

@@ -84,8 +84,13 @@ async def handler(ws:WebSocketServerProtocol):
             '''
 
 async def server():
-    async with serve(handler, "0.0.0.0",9000) as server:
-        await asyncio.Future()
+    try:
+        async with serve(handler, "0.0.0.0",9000) as server:
+            await asyncio.Future()
+    except Exception as e:
+         logging.error("Websocket error!")
+         logging.debug("Websocket: "+str(e))
+         
 
 def run_websocket()->threading.Thread:
     logging.debug("Websocket server starting...")

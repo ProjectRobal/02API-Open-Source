@@ -1,5 +1,4 @@
-:80
-{
+:80 {
 
     encode zstd gzip
 
@@ -14,15 +13,15 @@
     }
 
     handle /broker {
-        reverse_proxy  mqtt_02_prod:9001
+        reverse_proxy  02_mqtt_prod:9001
     }
 
     handle /sock/* {
-        reverse_proxy django_02_prod:9000
+        reverse_proxy 02_django_prod:9000
     }
 
     handle {
-        reverse_proxy  django_02_prod:8000
+        reverse_proxy  02_django_prod:8000
     }
 
 }

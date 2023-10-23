@@ -1,16 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
-if [$1 == "migrate"]
-then;
+echo "Collecing static files"
+python3  manage.py collectstatic --noinput
 
-python3 -u manage.py makemigrations
+python3  manage.py makemigrations auth02
 
-python3 -u manage.py migrate
+echo "Database migration"
+python3 manage.py migrate
 
-else
-
-python3 -u manage.py collectstatic --noinput
-
-python3 -u manage.py runserver --noreload 0.0.0.0:8000
-
-fi
+echo "Run server"
+python3  manage.py runserver --noreload 0.0.0.0:8000

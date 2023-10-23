@@ -47,8 +47,6 @@ if os.environ.get("DJANGO_MODE")=='DEBUG':
 
 # Application definition
 
-AUTH_USER_MODEL = 'auth02.O2User' 
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -68,6 +66,8 @@ MQTT_USER=os.environ.get('MQTT_USER')
 MQTT_PASSWORD=os.environ.get('MQTT_PASSWORD')
 MQTT_PORT=int(os.environ.get('MQTT_PORT'))
 MQTT_KEEPALIVE =int(os.environ.get('MQTT_KEEPALIVE'))
+
+AUTH_USER_MODEL = 'auth02.O2User' 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

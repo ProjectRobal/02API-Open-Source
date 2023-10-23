@@ -5,11 +5,13 @@ ENV PYTHONUNBUFFERED=1 \
     PORT=8000
 
 WORKDIR /app
-COPY requirements.txt /app
-COPY ./compose/dev/entrypoint.sh /app/entrypoint.sh
 
+COPY requirements.txt /app
 RUN apt-get update && apt-get upgrade -y
 RUN pip3 install -r requirements.txt --no-cache-dir
+
+COPY ./compose/dev/entrypoint.sh /app/entrypoint.sh
+
 COPY ./src /app
 COPY ./debug /app
 

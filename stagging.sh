@@ -28,7 +28,7 @@ elif [ $cmd = "rebuild" ]; then
 
 elif [ $cmd = "up" ]; then
 
-    docker compose -f compose.yml up -d --no-start
+    docker compose -f compose.yml up
 
 elif [ $cmd = "down" ]; then
 
@@ -61,27 +61,14 @@ elif [ $cmd = "logs" ]; then
 
     docker compose -f compose.yml logs
 
-
 elif [ $cmd = "init_root" ]; then
 
     docker compose -f compose.yml exec  web python3 manage.py createsuperuser --noinput
 
 elif [ $cmd = "migrate" ]; then
 
-    export CMD_ARGS="migrate"
-
-    docker compose -f compose.yml up
-
-    #docker compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
-    #docker compose -f compose.yml exec -T web python3 manage.py migrate --noinput
-
-    unset CMD_ARGS
-
-elif [ $cmd = "remigrate" ]; then
-
     docker compose -f compose.yml exec -T web python3 manage.py makemigrations --noinput
     docker compose -f compose.yml exec -T web python3 manage.py migrate --noinput
-
 
 elif [ $cmd = "init_mqtt" ]; then
 
@@ -110,6 +97,7 @@ echo "stop - zatrzymaj kontenery"
 echo "run - zbuduj i uruchom kontenery"
 echo "purge - usuń kontenery wraz z ich danymi"
 echo "debug - uruchom terminal bash na kontenerze django"
+echo "migrate - przeprowadzi migrację"
 echo "init_root - utwórz użytkownika roota w django"
 echo "init_mqtt - ustaw użytkownika dla serwera mqtt"
 echo "restore - załaduj buckup bazy danych, do wyboru: "

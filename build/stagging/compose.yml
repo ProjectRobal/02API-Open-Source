@@ -2,7 +2,7 @@ version: '3.9'
 
 networks:
   proxynet:
-    external: true
+    external: false
   internal:
     name: "zerotwo_staging_internal"
 
@@ -29,7 +29,6 @@ services:
   web:
     container_name: 02_django_stagging
     restart: unless-stopped
-    command: "${CMD_ARGS}"
     build:
       context: ../../django
       dockerfile: ./compose/prod/Dockerfile
