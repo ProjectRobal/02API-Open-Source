@@ -1,10 +1,10 @@
 #!/bin/bash
 
 mkdir -p django/web/media
-mkdir -p django/build/stagging/sql_buckups
-mkdir -p django/build/stagging/sql_buckups/daily
-mkdir -p django/build/stagging/sql_buckups/weekly
-mkdir -p django/build/stagging/sql_buckups/monthly
+mkdir -p build/stagging/sql_buckups/daily
+mkdir -p build/stagging/sql_buckups/weekly
+mkdir -p build/stagging/sql_buckups/monthly
+mkdir -p build/stagging/conf1/mqtt/log/
 
 cd build/stagging
 
