@@ -14,7 +14,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - type: bind
-        source: ../../django/compose/prod/Caddyfile.stagging
+        source: ../../django/compose/prod/Caddyfile_stagging
         target: /etc/caddy/Caddyfile 
       - type: bind
         source: ../../django/web/static
