@@ -66,7 +66,7 @@ elif [ $cmd = "init_root" ]; then
 
     docker compose -f compose.yml exec  web python3 manage.py createsuperuser --noinput
 
-elif [ $cmd = "migrate" ]; 
+elif [ $cmd = "migrate" ]; then
 
     export CMD_ARGS="migrate"
 
