@@ -29,6 +29,7 @@ services:
   web:
     container_name: 02_django_stagging
     restart: unless-stopped
+    command: "${CMD_ARGS}"
     build:
       context: ../../django
       dockerfile: ./compose/prod/Dockerfile
