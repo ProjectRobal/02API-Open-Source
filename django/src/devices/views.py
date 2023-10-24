@@ -26,7 +26,7 @@ class TopicInterface:
         self.topic=node.topic
         self.node=node
 
-def api(request,path):
+def api(request,path,cmd):
     if request.method!="GET":
         return HttpResponseNotFound()
     
@@ -34,22 +34,16 @@ def api(request,path):
     
         logging.info("Got API request through HTTP")
 
-        logging.info("Full path: "+path)
-
-        paths:list[str]=path.rpartition("/")
-
-        logging.debug("Topic: "+paths[0])
+        logging.debug("Topic: "+path)
 
         try:
 
-            check=Topic.objects.get(path=paths[0]+"/")
+            check=Topic.objects.get(path="/"+path+"/")
 
         except Topic.DoesNotExist:
             logging.debug("Topic not found")
             return HttpResponseNotFound()
     
-        cmd:str=paths[2]
-
         logging.debug("Found command: "+cmd)
 
         body=json.load(request)

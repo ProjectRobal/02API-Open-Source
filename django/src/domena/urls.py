@@ -22,7 +22,7 @@ urlpatterns = [
 
     path('',home_page),
     #handle path in format api/<path> like api/samples/
-    re_path('^(api)+(?P<path>((\/+[A-Za-z0-9]+)+)+\/$)',api),
+    path('api/<str:path>/<str:cmd>',api),
     path('devs/',devsPage),
     path('django-admin/', admin.site.urls),
     path('hello/<str:name>',home_page),

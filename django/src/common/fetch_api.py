@@ -266,6 +266,9 @@ class Fetch:
         
         result=self.model.objects.all()
 
+        if max<=0:
+            max=len(result)
+
         for res in result.values(*mask)[:max]:
             output.append(res)
             
