@@ -6,7 +6,10 @@ from devices.models import Device
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User
 from typing import Tuple
+from django.core.serializers.json import DjangoJSONEncoder
 
+
+import json
 
 # Create your models here.
 
@@ -65,7 +68,54 @@ class MonoNode(NodeEntry):
         super(NodeEntry, self).save(*args, **kwargs)
 
 
-class LedControllerMarcin(PublicNode):
+class BeamerNode(NodeEntry):
+    '''
+        A node that will post message on mqtt topic,
+        when you post something on that node it will send message on specific topic
+    '''
+    class Meta:
+        abstract = True
+        app_label= "nodes"
+
+    def save(self,*args, **kwargs):
+
+        from mqtt.apps import MqttConfig
+        from mqtt.models import TopicBeamer
+
+        if self._name is not None:
+            node_name:str=self._name
+        else:
+            node_name:str=self.__name__
+
+        try:
+            topic:str=TopicBeamer.objects.get(node=node_name).path
+            logging.debug("Found beamer topic: "+topic+" for node: "+node_name)
+        except TopicBeamer.DoesNotExist:
+            return super(BeamerNode,self).save(*args,**kwargs)
+
+        logging.debug(str(self._meta.get_fields()))
+
+        fields:dict={}
+
+        for field in self._meta.get_fields(include_parents=False):
+            fields[field.name]=field.value_from_object(self)
+
+        if "uuid" in fields.keys():
+            del fields["uuid"]
+
+        data:str=json.dumps(fields, cls=DjangoJSONEncoder)
+
+        logging.debug("Data to publish: "+data)
+
+        if MqttConfig.client is not None:
+            MqttConfig.client.publish(topic,data)
+
+        logging.debug("Publish data on topic: "+topic)
+
+
+        return super(BeamerNode,self).save(*args,**kwargs)
+
+class LedControllerMarcin(BeamerNode,PublicNode):
 
     _name="marcin"
     led_freq=ArrayField(base_field=models.IntegerField(default=0),name="frequency",size=16)
@@ -102,7 +152,7 @@ class PublicNodes:
 
         return PublicNode.__subclasses__()
     
-    def get_obj(name:str):
+    def get_obj(name:str)->PublicNode|None:
         childs:list[PublicNode]=PublicNode.__subclasses__()
 
         for child in childs:

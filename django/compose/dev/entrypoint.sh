@@ -1,4 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+
+function on_close() {
+
+    python3  manage.py migrate
+
+}
+
+trap 'on_close' SIGTERM
 
 python3  manage.py collectstatic --noinput
 

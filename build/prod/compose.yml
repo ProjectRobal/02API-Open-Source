@@ -33,6 +33,7 @@ services:
     build:
       context: ../../django
       dockerfile: ./compose/prod/Dockerfile
+    image: 02_web_prod
     volumes:
       - type: bind
         source: ../../django/web/static

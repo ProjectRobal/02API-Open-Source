@@ -1,7 +1,7 @@
 import json
 import paho.mqtt.client as mqtt
 from domena import settings
-from .models import Topic
+from .models import Topic,TopicCatcher
 from common.fetch_api import Fetch
 import logging
 from .models import PublicNodes
@@ -20,9 +20,19 @@ def subscribe_to_topics(mqtt_client:mqtt.Client):
                 topic:str=node.path+req
                 mqtt_client.subscribe(topic)
                 logging.debug(topic)
-    
+
+        # there is no need to further
+        return
     else:
         logging.error("No valid topics has been found!")
+
+    catcher=Topic.objects.all()
+
+    if catcher.exists():
+        logging.debug("Topics to catch: ")
+        for node in catcher:
+            mqtt_client.subscribe(node.path)
+            logging.debug("Listenning to: "+node.path)
 
 
 def on_connect(mqtt_client, userdata, flags, rc):
@@ -37,12 +47,34 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
    try:
    
     logging.debug(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
+
+    # mqtt catcher:
+
+    try:
+
+        catcher=TopicCatcher.objects.get(path=msg.topic)
+
+        node:PublicNodes=PublicNodes.get_obj(catcher.node)
+
+        if node is not None:
+            model=node(**json.loads(msg.payload.decode('utf-8')))
+
+            model.save()
+
+            logging.info("Data saved from topic: "+msg.topic+" to node "+catcher.node)
+            mqtt_client.subscribe(catcher.path)
+         
+    except TopicCatcher.DoesNotExist:
+        logging.debug("Cannot find topic in topic catcher, trying with fetch api")
+        pass
    
     topic:str=msg.topic
 
     logging.debug("Topic: "+topic)
 
     paths:list[str]=topic.rpartition("/")
+
+    # fetch api:
 
     try:
 
@@ -91,7 +123,7 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
    except Exception as e:
         logging.error("I się wywalił")
-        logging.error(str(e))
+        logging.debug(str(e))
    #retrive 
 
 def on_unsubscribe(client, userdata, mid):

@@ -55,7 +55,7 @@ class Topic(common):
                 MqttConfig.client.unsubscribe(topic)
                 logging.debug(topic)
 
-        return super().delete(using, keep_parents)
+        return super(Topic,self).delete(using, keep_parents)
     
 
 class TopicForm(forms.ModelForm):
@@ -63,3 +63,37 @@ class TopicForm(forms.ModelForm):
     class Meta:
         model=Topic
         fields = ["path","node"]
+
+class TopicCatcher(common):
+
+    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
+    node=models.CharField(max_length=255,name="node")
+
+    def save(self, *args, **kwargs):
+
+        logging.debug("Catcher subscribed to topics: ")
+
+        if MqttConfig.client is not None:
+            MqttConfig.client.subscribe(self.path)
+            logging.debug(self.path)
+                
+
+        super(TopicCatcher, self).save(*args, **kwargs)
+
+    def delete(self, using: Any = DEFAULT_DB_ALIAS, keep_parents: bool = False) -> tuple[int, dict[str, int]]:
+
+        logging.debug("Unsubscribed to topics: ")
+
+        if MqttConfig.client is not None:
+            MqttConfig.client.unsubscribe(self.path)
+            logging.debug(self.path)
+
+        return super(TopicCatcher,self).delete(using, keep_parents)
+    
+
+class TopicBeamer(common):
+    '''
+        A topic that will be asigned to nodes that will publish data into it.
+    '''
+    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
+    node=models.CharField(max_length=255,name="node")

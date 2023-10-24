@@ -2,7 +2,7 @@ version: '3.9'
 
 networks:
   proxynet:
-    external: false
+    external: true
   internal:
     name: "zerotwo_staging_internal"
 
@@ -32,6 +32,7 @@ services:
     build:
       context: ../../django
       dockerfile: ./compose/prod/Dockerfile
+    image: 02_web_stagging
     volumes:
       - type: bind
         source: ../../django/web/static

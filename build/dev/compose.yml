@@ -30,6 +30,7 @@ services:
     build:
       context: ../../django
       dockerfile: ./compose/dev/Dockerfile
+    image: 02_web_dev
     env_file:
       - ./conf/django.env
       - ./conf/sql.env
