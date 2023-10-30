@@ -96,14 +96,9 @@ class BeamerNode(NodeEntry):
         from mqtt.models import TopicBeamer
         from mqtt.apps import MqttConfig
 
-        if self._name is not None:
-            node:str=self._name
-        else:
-            node:str=type(self).__name__
+        logging.debug("Node name: "+type(self).__name__)
 
-        logging.debug("Node name: "+node)
-
-        topics=TopicBeamer.objects.filter(node=node)
+        topics=TopicBeamer.objects.filter(node=type(self).__name__)
 
         if topics.exists():
             fields:dict={}
@@ -121,9 +116,9 @@ class BeamerNode(NodeEntry):
         for topic in topics:
 
             if MqttConfig.client is not None:
-                MqttConfig.client.publish(topic,data)
+                MqttConfig.client.publish(topic.path,data)
 
-            logging.debug("Publish data on topic: "+topic)
+            logging.debug("Publish data on topic: "+topic.path)
 
         return super().save(*args,**kwargs)
 
