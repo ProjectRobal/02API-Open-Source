@@ -22,6 +22,7 @@ urlpatterns = [
 
     path('',home_page),
     #handle path in format api/<path> like api/samples/
+    path('api/<str:path>/',api),
     path('api/<str:path>/<str:cmd>',api),
     path('devs/',devsPage),
     path('django-admin/', admin.site.urls),

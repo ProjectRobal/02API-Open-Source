@@ -26,7 +26,7 @@ class TopicInterface:
         self.topic=node.topic
         self.node=node
 
-def api(request,path,cmd):
+def api(request,path,cmd=""):
     if request.method!="GET":
         return HttpResponseNotFound()
     

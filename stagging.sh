@@ -28,7 +28,7 @@ elif [ $cmd = "rebuild" ]; then
 
 elif [ $cmd = "up" ]; then
 
-    docker compose -f compose.yml up
+    docker compose -f compose.yml up -d
 
 elif [ $cmd = "down" ]; then
 

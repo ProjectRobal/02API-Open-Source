@@ -2,9 +2,7 @@ import logging
 
 from django.db import models
 from common.models import common
-from devices.models import Device
 from django.contrib.postgres.fields import ArrayField
-from django.contrib.auth.models import User
 from typing import Tuple
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -44,14 +42,27 @@ class PublicNode(NodeEntry):
         abstract = True
         app_label= "nodes"
 
+class NullNode(NodeEntry):
+    '''
+    A table that will save no data to database
+    It represents the same function as /dev/null in linux 
+    '''
+    class Meta:
+        abstract = True
+        managed = False
+        app_label= "nodes"
+    
+    def save(self, *args, **kwargs):
+        return
+
 class MonoNode(NodeEntry):
     '''A table will singular entry
     if you try to add another record, the previous one will be overwritten instead'''
     class Meta:
         abstract = True
         app_label= "nodes"
+    
     def save(self, *args, **kwargs):
-
 
         cls=type(self)
 
@@ -59,13 +70,16 @@ class MonoNode(NodeEntry):
 
         if amount>0:
 
-            obj=cls.objects.get()
+            fields:dict={}
 
-            for arg in args:
-                field=obj._meta.get_field(arg)
-                field=kwargs[arg]
+            for field in self._meta.get_fields(include_parents=False):
+                fields[field.name]=field.value_from_object(self)
 
-        super(NodeEntry, self).save(*args, **kwargs)
+            cls.objects.filter(uuid=cls.objects.get().uuid).update(**fields)
+
+            return
+
+        super().save(*args, **kwargs)
 
 
 class BeamerNode(NodeEntry):
@@ -79,50 +93,48 @@ class BeamerNode(NodeEntry):
 
     def save(self,*args, **kwargs):
 
-        from mqtt.apps import MqttConfig
         from mqtt.models import TopicBeamer
+        from mqtt.apps import MqttConfig
 
         if self._name is not None:
-            node_name:str=self._name
+            node:str=self._name
         else:
-            node_name:str=self.__name__
+            node:str=type(self).__name__
 
-        try:
-            topic:str=TopicBeamer.objects.get(node=node_name).path
-            logging.debug("Found beamer topic: "+topic+" for node: "+node_name)
-        except TopicBeamer.DoesNotExist:
-            return super(BeamerNode,self).save(*args,**kwargs)
+        logging.debug("Node name: "+node)
 
-        logging.debug(str(self._meta.get_fields()))
+        topics=TopicBeamer.objects.filter(node=node)
 
-        fields:dict={}
+        if topics.exists():
+            fields:dict={}
 
-        for field in self._meta.get_fields(include_parents=False):
-            fields[field.name]=field.value_from_object(self)
+            for field in self._meta.get_fields(include_parents=False):
+                fields[field.name]=field.value_from_object(self)
 
-        if "uuid" in fields.keys():
-            del fields["uuid"]
+            if "uuid" in fields.keys():
+                del fields["uuid"]
 
-        data:str=json.dumps(fields, cls=DjangoJSONEncoder)
+            data:str=json.dumps(fields, cls=DjangoJSONEncoder)
 
-        logging.debug("Data to publish: "+data)
+            logging.debug("Data to publish: "+data)
 
-        if MqttConfig.client is not None:
-            MqttConfig.client.publish(topic,data)
+        for topic in topics:
 
-        logging.debug("Publish data on topic: "+topic)
+            if MqttConfig.client is not None:
+                MqttConfig.client.publish(topic,data)
 
+            logging.debug("Publish data on topic: "+topic)
 
-        return super(BeamerNode,self).save(*args,**kwargs)
+        return super().save(*args,**kwargs)
 
-class LedControllerMarcin(BeamerNode,PublicNode):
+class LedControllerMarcin(BeamerNode,MonoNode,PublicNode):
 
     _name="marcin"
     led_freq=ArrayField(base_field=models.IntegerField(default=0),name="frequency",size=16)
     led_prec=ArrayField(base_field=models.IntegerField(default=0),name="brightness",size=16)
 
 
-class SampleNode(PublicNode):
+class SampleNode(BeamerNode,PublicNode):
     '''
     A sample node for class entry
     '''

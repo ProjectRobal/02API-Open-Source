@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'devices',
     'nodeacl',
     'nodes',
-    'importer'
+    'importer',
+    'rest_framework'
 ] + scan_for_plugin()+['mqtt']
 
 MQTT_SERVER="mqtt"

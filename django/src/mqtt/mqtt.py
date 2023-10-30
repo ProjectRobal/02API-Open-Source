@@ -26,7 +26,7 @@ def subscribe_to_topics(mqtt_client:mqtt.Client):
     else:
         logging.error("No valid topics has been found!")
 
-    catcher=Topic.objects.all()
+    catcher=TopicCatcher.objects.all()
 
     if catcher.exists():
         logging.debug("Topics to catch: ")
@@ -63,6 +63,7 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
             logging.info("Data saved from topic: "+msg.topic+" to node "+catcher.node)
             mqtt_client.subscribe(catcher.path)
+            return
          
     except TopicCatcher.DoesNotExist:
         logging.debug("Cannot find topic in topic catcher, trying with fetch api")
@@ -78,7 +79,7 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
     try:
 
-        check=Topic.objects.get(path=paths[0]+"/")
+        check=Topic.objects.get(path=paths[0])
 
     except Topic.DoesNotExist:
         logging.debug("Topic not found")

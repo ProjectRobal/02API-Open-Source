@@ -10,7 +10,7 @@ from common.models import common
 import logging
 
 # It ensures that topic path has a form of /.../
-regex_path=re.compile("^/+[\w /]+/+$")
+regex_path=re.compile("^/+[\w /]+$")
 
 
 # Create your models here.
@@ -22,7 +22,6 @@ class Topic(common):
     
     path - a path to a node aka. (<path>)
     node - a name of a node,topic is referring to
-    access - a global access level to topic
     '''
 
     path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
@@ -41,7 +40,7 @@ class Topic(common):
                 logging.debug(topic)
                 
 
-        super(Topic, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def delete(self, using: Any = DEFAULT_DB_ALIAS, keep_parents: bool = False) -> tuple[int, dict[str, int]]:
 
@@ -55,7 +54,7 @@ class Topic(common):
                 MqttConfig.client.unsubscribe(topic)
                 logging.debug(topic)
 
-        return super(Topic,self).delete(using, keep_parents)
+        return super().delete(using, keep_parents)
     
 
 class TopicForm(forms.ModelForm):
@@ -78,7 +77,7 @@ class TopicCatcher(common):
             logging.debug(self.path)
                 
 
-        super(TopicCatcher, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def delete(self, using: Any = DEFAULT_DB_ALIAS, keep_parents: bool = False) -> tuple[int, dict[str, int]]:
 
@@ -88,7 +87,7 @@ class TopicCatcher(common):
             MqttConfig.client.unsubscribe(self.path)
             logging.debug(self.path)
 
-        return super(TopicCatcher,self).delete(using, keep_parents)
+        return super().delete(using, keep_parents)
     
 
 class TopicBeamer(common):
