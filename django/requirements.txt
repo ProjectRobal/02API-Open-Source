@@ -10,6 +10,7 @@ Pillow==9.5.0
 websockets==11.0.3
 argon2-cffi==21.3.0
 djangorestframework==3.14.0
+djangorestframework-jwt==1.11.0
 markdown
 django-filter==23.3
 django-rest-knox==4.2.0

@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 
 from pathlib import Path
+from datetime import timedelta
+from rest_framework.settings import api_settings
 
 from .plugins import PLUGINS
 from devices.plugin_loader import scan_for_plugin
@@ -59,7 +61,8 @@ INSTALLED_APPS = [
     'nodeacl',
     'nodes',
     'importer',
-    'rest_framework'
+    'rest_framework',
+    'knox'
 ] + scan_for_plugin()+['mqtt']
 
 MQTT_SERVER="mqtt"
@@ -69,6 +72,7 @@ MQTT_PORT=int(os.environ.get('MQTT_PORT'))
 MQTT_KEEPALIVE =int(os.environ.get('MQTT_KEEPALIVE'))
 
 AUTH_USER_MODEL = 'auth02.O2User' 
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -158,6 +162,22 @@ USE_I18N = True
 USE_TZ = True
 
 DEFAULT_SESSION_TIME=360
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+}
+
+REST_KNOX = {
+  'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+  'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+  'TOKEN_TTL': timedelta(hours=10),
+  'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+  'TOKEN_LIMIT_PER_USER': None,
+  'AUTO_REFRESH': False,
+  'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
+}
+
 
 
 # Default primary key field type

@@ -14,13 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,re_path
+from django.urls import path,re_path,include
 from devices.views import devsPage,twingoPage,device_page,node_list,home_page,rat,plugin_add,ploader,plugin_show,plugin_rm,device_add,devloader,device_rm,device_purge,api
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+from .rest import ExampleView,LoginView
+from knox import views as knox_views
 
 urlpatterns = [
 
     path('',home_page),
+    path('rest-test',ExampleView.as_view()),
+    path('ext/auth/login', LoginView.as_view()),
+    path('ext/auth/logout', knox_views.LogoutView.as_view()),
+    path('ext/auth/logoutall',  knox_views.LogoutAllView.as_view()),
     #handle path in format api/<path> like api/samples/
     path('api/<str:path>/',api),
     path('api/<str:path>/<str:cmd>',api),
