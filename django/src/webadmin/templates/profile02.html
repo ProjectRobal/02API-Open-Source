@@ -10,6 +10,11 @@
 
 <style>
 
+    #open_block button
+    {
+        margin:5px;
+    }
+
     img
     {
         width: 100%;
@@ -28,7 +33,7 @@
         height:100%;
         opacity:1.0;
         z-index:0;
-        background-color:white;
+        background-color:var(--quaternary-color);
     }
 
     .profile_block
@@ -65,6 +70,13 @@
         height:fit-content;
     }
 
+    .logform
+    {
+        padding-left:20px; 
+        padding-right:10px; 
+        padding-top:10px;
+    }
+
     @media only screen and (min-width:768px) {
 
     .profile_form
@@ -85,9 +97,10 @@
     .profile_page
     {
         display:flex;
-        width:100%;
+        width:90%;
         flex-direction:row;
         gap:20px;
+        margin:5px;
     }
 
     .overlay
@@ -141,7 +154,7 @@
 
     <div class="img_profile block">
 
-    <form method="post" action="/webadmin/img_set/" class="block overlay" enctype="multipart/form-data">
+    <form method="post" action="/webadmin/img_set/" style="padding:5px;" class="block overlay" enctype="multipart/form-data">
         <div class="overlay_content logform" >
             {% csrf_token %}
             {{img_form}}
@@ -167,10 +180,12 @@
         </div>
             
     </form>
+    <div id="open_block">
+    <button class="shadow" onclick="show_popup('Generate new card','/webadmin/n_card')">Regenerate card</button>
+    <button class="shadow" onclick="show_popup('Logout from basement','/webadmin/l_base')">Leave basement</button>
+    </div>
 
-    <button onclick="show_popup()" id="open_block">Regenerate card</button>
-
-    <div class="block" id="close_block" style="display:none; padding: 5px; width:100%;">
+    <div class="block shadow" id="close_block" style="display:none; padding: 5px; width:100%;">
     
         <div class="block">
             <div class="rows-space" style="width:100%;">
@@ -178,11 +193,10 @@
         <div class="rows-space" style="align-items: center; margin-bottom:5px; width:100%;">
         <h2>Are you sure?</h2>
 
-        <a href="/n_card">
-        <button style="background-color:red;">Generate new card</button>
+        <a href="" id="block_link">
+        <button style="background-color:red;" id="block_button"></button>
         </a>
-            </div>
-        
+                </div>
             </div>
     </div>
 
@@ -197,16 +211,20 @@
 </body>
 <script>
 
-    function show_popup()
+    function show_popup(name,href)
     {
         document.getElementById("close_block").style.display="flex";
         document.getElementById("open_block").style.display="none";
+        document.getElementById("block_button").innerHTML=name;
+        document.getElementById("block_link").href=href;
     }
 
     function close_popup()
     {
         document.getElementById("close_block").style.display="none";
         document.getElementById("open_block").style.display="flex";
+        document.getElementById("block_button").innerHTML="";
+        document.getElementById("block_link").href="";
     }
 
 </script>

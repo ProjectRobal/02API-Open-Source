@@ -27,3 +27,4 @@ build/prod/sql_buckups/*
 build/stagging/sql_buckups/*
 
 django/debug_nodes/*
+django/debug_src

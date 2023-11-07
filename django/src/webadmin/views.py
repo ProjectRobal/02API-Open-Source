@@ -79,6 +79,26 @@ def generate_new_card(request):
 
     return redirect("/webadmin/profile")
 
+@login_required(login_url="/login")
+def logout_from_basement(request):
+    if request.method != "GET":
+        return HttpResponseBadRequest()
+    
+    user:O2User=request.user
+
+    cards=CardNode.objects.all()
+
+    if not cards.exists():
+        request.session["profile_msg"]="No cards defined for a user!"
+
+    for card in cards:
+        card.is_in_basement=False
+
+        card.save()
+
+    request.session["profile_msg"]="User succesfuly loged out from basement!"
+
+    return redirect("/webadmin/profile")
 
 @login_required(login_url="/login")
 def img_set(request):
@@ -136,7 +156,11 @@ def update_profile(request):
     if len(user_form["last_name"].value())!=0:
         user.last_name=user_form["last_name"].value()
     if len(user_form["login"].value())!=0:
-        user.login=user_form["login"].value()
+
+        if not O2User.objects.filter(login=user_form["login"].value()).exists():
+            user.login=user_form["login"].value()
+        else:
+            request.session["profile_msg"]="User with specific login exits!"
     
     user.save()
 

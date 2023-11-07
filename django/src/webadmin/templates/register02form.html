@@ -12,13 +12,13 @@
 
     {% include 'nav.html' %}
 
-    <div class="device-header" style="margin-left:auto; margin-right:auto;">
+    <div class="device-header" style="margin-left:auto; margin-right:auto; margin-top:5px; padding-left:10px; padding-right:10px; padding-top:3px; padding-bottom:5px;">
         <h2 style="width:fit-content;margin-left:auto; margin-right:auto;">Register page</h2>
     </div>
 
        
         <form method="post" action="/webadmin/reg/" class="login_space">
-            <div class="logform">
+            <div class="logform" style="padding:20px">
                 {% csrf_token %}
                 {{form}}
             
