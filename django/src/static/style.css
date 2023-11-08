@@ -1,8 +1,8 @@
 :root
 {
-    --primary-color:aquamarine;
-    --secondary-color:azure;
-    --teritary-color:darkcyan;
+    --primary-color:rgb(255, 128, 0);
+    --secondary-color:rgb(110, 50, 24);
+    --teritary-color:rgb(166, 86, 35);
     --quaternary-color:white;
 }
 
@@ -11,7 +11,7 @@
 {
     from{
         width: fit-content;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
         background-color: var(--primary-color);
     }
     to {
@@ -39,7 +39,7 @@
     from{
         background-color:var(--primary-color);
         color: black;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
     }
     to
     {
@@ -108,8 +108,7 @@ button:hover
 
 .shadow
 {
-    box-shadow: 12px 12px 2px 1px gray;
-    
+    box-shadow: 6px 4px 2px 1px black; 
 }
 
 .block-space
@@ -404,7 +403,7 @@ button:hover
         width: 500px;
         height: 500px;
         font-size: x-large;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
     }
 
     .navlogout
@@ -450,7 +449,7 @@ button:hover
         background-color: var(--primary-color);
         padding-left: 5px;
         padding-right: 5px;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
         border-radius: 20px;
         gap:0;
 
@@ -471,7 +470,7 @@ button:hover
     {
         margin-left: 10px;
         margin-right: 10px;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
     }
 
     .device-block:hover
@@ -490,7 +489,7 @@ button:hover
     height: fit-content;
     margin-left: 10px;
     margin-right: 10px;
-    box-shadow: 12px 12px 2px 1px gray;
+    box-shadow: 6px 4px 2px 1px black;
     }  
 
     .block-space
@@ -534,7 +533,7 @@ button:hover
     .device-header
     {
         width: fit-content;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
         margin-left: 10px;
         margin-right: 10px;
     }
@@ -545,13 +544,13 @@ button:hover
         padding: 5px;
         margin-left: 10px;
         margin-right: 10px;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
     }
 
     .node-block
     {
         width: fit-content;
-        box-shadow: 12px 12px 2px 1px gray;
+        box-shadow: 6px 4px 2px 1px black;
     }
 
     .login_space

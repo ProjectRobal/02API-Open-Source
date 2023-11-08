@@ -32,7 +32,7 @@ elif [ $cmd = "up" ]; then
 
 elif [ $cmd = "down" ]; then
 
-    docker compose -f compose.yml stop
+    docker compose -f compose.yml down
 
 elif [ $cmd = "start" ]; then
 
@@ -40,11 +40,11 @@ elif [ $cmd = "start" ]; then
 
 elif [ $cmd = "stop" ]; then
 
-    docker compose -f compose.yml down
+    docker compose -f compose.yml stop
 
 elif [ $cmd = "run" ]; then
 
-    docker compose -f compose.yml cp django/src web:/app
+    docker compose -f compose.yml cp ../../django/src/. web:/app
     docker compose -f compose.yml  up -d
 
 elif [ $cmd = "purge" ]; then
