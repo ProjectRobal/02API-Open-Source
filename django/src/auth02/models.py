@@ -11,5 +11,4 @@ class O2User(AbstractUser):
     uuid=models.UUIDField(default=uuid.uuid4,
                                 primary_key=True,
                                editable=False)
-    login=models.CharField(max_length=100)
 

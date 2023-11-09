@@ -147,20 +147,17 @@ def update_profile(request):
     if len(user_form["email"].value())!=0:
         user.email=user_form["email"].value()
 
-    if len(user_form["username"].value())!=0:
-        user.username=user_form["username"].value()
-
     if len(user_form["first_name"].value())!=0:
         user.first_name=user_form["first_name"].value()
 
     if len(user_form["last_name"].value())!=0:
         user.last_name=user_form["last_name"].value()
-    if len(user_form["login"].value())!=0:
+    if len(user_form["username"].value())!=0:
 
-        if not O2User.objects.filter(login=user_form["login"].value()).exists():
-            user.login=user_form["login"].value()
+        if not O2User.objects.filter(username=user_form["username"].value()).exists():
+            user.username=user_form["username"].value()
         else:
-            request.session["profile_msg"]="User with specific login exits!"
+            request.session["profile_msg"]="User with specific username exits!"
     
     user.save()
 
@@ -195,7 +192,6 @@ def profile(request):
     #logging.debug("Groups choosed: "+str(groups_choosed))
 
     profile_form:Profile02Form=Profile02Form(initial={
-        "login":user.login,
         "username":user.username,
         "email":user.email,
         "first_name":user.first_name,
@@ -250,9 +246,8 @@ def reg(request):
             first_name=register["first_name"],
             last_name=register["last_name"],
             email=register["email"],
-            password=register["password"],
-            login=register["login"]
-        )
+            password=register["password"]
+            )
 
         cards_view=Permission.objects.get(codename="cards_view")
         device_view=Permission.objects.get(codename="device_view")
@@ -283,9 +278,7 @@ def reg_form(request):
     msg=None
 
     if "login_error" in request.session.keys():
-        msg=""
-        for error in request.session["login_error"].values():
-            msg+=str(error[0])+" \n"
+        msg=str(request.session["login_error"].values()[-1])+" \n"
         del request.session["login_error"]
 
     return render(request,"/app/webadmin/templates/register02form.html",context={"form":Register02Form,"msg":msg})

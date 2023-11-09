@@ -12,15 +12,10 @@ from . import utils
 
 class Profile02Form(forms.Form):
 
-    username= forms.CharField(label="Login:",max_length=255,required=True,validators=[RegexValidator(login_regex,"Illegal characters in username"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
-    login= forms.CharField(label="User name:",max_length=100,required=False,validators=[RegexValidator(login_regex,"Illegal characters in login"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+    username= forms.CharField(label="Login:",max_length=255,required=True,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
 
-    first_name=forms.CharField(label="First name:",max_length=255,required=False,validators=[RegexValidator(login_regex,"Illegal characters in first name"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
-    last_name=forms.CharField(label="Last name:",max_length=255,required=False,validators=[RegexValidator(login_regex,"Illegal characters in last name"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+    first_name=forms.CharField(label="First name:",max_length=255,required=False,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+    last_name=forms.CharField(label="Last name:",max_length=255,required=False,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
 
     email=forms.CharField(label="E-mail:",max_length=255,widget=forms.EmailInput,required=False)
 
@@ -34,21 +29,14 @@ class ProfileImage02Form(forms.Form):
     
 class Register02Form(forms.Form):
 
-    username= forms.CharField(label="Login:",max_length=255,required=True,validators=[RegexValidator(login_regex,"Illegal characters in login"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
-    login= forms.CharField(label="User name:",max_length=100,required=True,validators=[RegexValidator(login_regex,"Illegal characters in user name"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+    username= forms.CharField(label="Login:",max_length=255,required=True,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
     password= forms.CharField(label="Password:",max_length=255,
-                              widget=forms.PasswordInput,required=True,validators=[RegexValidator(login_regex,"Illegal characters in password"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+                              widget=forms.PasswordInput,required=True,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
     confirm_password=forms.CharField(label="Confirm Password:",max_length=255,
-                              widget=forms.PasswordInput,required=True,validators=[RegexValidator(login_regex,"Illegal characters in password"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+                              widget=forms.PasswordInput,required=True,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
 
-    first_name=forms.CharField(label="First name:",max_length=255,required=False,validators=[RegexValidator(login_regex,"Illegal characters in first name"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
-    last_name=forms.CharField(label="Last name:",max_length=255,required=False,validators=[RegexValidator(login_regex,"Illegal characters in last name"),
-                                                                                        RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+    first_name=forms.CharField(label="First name:",max_length=255,required=False,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
+    last_name=forms.CharField(label="Last name:",max_length=255,required=False,validators=[RegexValidator(html_regex,"You shall not pass!",inverse_match=True)])
 
     email=forms.CharField(label="E-mail:",max_length=255,widget=forms.EmailInput,required=False)
     

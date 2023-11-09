@@ -36,9 +36,7 @@ def login_form(request):
         msg="User aleardy exits!"
 
     if "login_error" in request.session.keys():
-        msg=""
-        for error in request.session["login_error"].values():
-            msg+=str(error[0])+" \n"
+        msg=str(request.session["login_error"].values()[-1])
         del request.session["login_error"]
 
 
