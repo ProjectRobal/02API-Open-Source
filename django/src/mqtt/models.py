@@ -1,4 +1,3 @@
-import re
 from typing import Any, Dict, Tuple
 from django.db import models
 from django.db import DEFAULT_DB_ALIAS
@@ -9,8 +8,7 @@ from .apps import MqttConfig
 from common.models import common
 import logging
 
-# It ensures that topic path has a form of /.../
-regex_path=re.compile("^/+[\w /]+$")
+from common.regexs import topic_regex
 
 
 # Create your models here.
@@ -24,7 +22,7 @@ class Topic(common):
     node - a name of a node,topic is referring to
     '''
 
-    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
+    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(topic_regex,"String is not a valid path, must be path /.../ ")])
     node=models.CharField(max_length=255,name="node")
 
     def save(self, *args, **kwargs):
@@ -65,7 +63,7 @@ class TopicForm(forms.ModelForm):
 
 class TopicCatcher(common):
 
-    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
+    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(topic_regex,"String is not a valid path, must be path /.../ ")])
     node=models.CharField(max_length=255,name="node")
 
     def save(self, *args, **kwargs):
@@ -94,5 +92,5 @@ class TopicBeamer(common):
     '''
         A topic that will be asigned to nodes that will publish data into it.
     '''
-    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(regex_path,"String is not a valid path, must be path /.../ ")])
+    path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(topic_regex,"String is not a valid path, must be path /.../ ")])
     node=models.CharField(max_length=255,name="node")

@@ -1,6 +1,6 @@
 *
 {
-  color:var(--quaternary-color);
+  color:white;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
@@ -140,7 +140,7 @@ ul
   object-fit: contain;
   width: 25%;
   height: fit-content;
-  background-color: var(--quaternary-color);
+  background-color: white;
   margin-right: 10px;
 }
 
