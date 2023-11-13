@@ -1,4 +1,4 @@
-<button id="navbutton" onclick="toggle()">Menu</button>
+<button id="navbutton" class="shadow" onclick="toggle()">Menu</button>
 
 <div id="navbar">
 
@@ -17,12 +17,6 @@
     </a>
 
     {% endif %}
-
-    <a href="/twingo">
-        <div class="navblock">
-            Twingo
-        </div>
-    </a>
 
 {% autoescape off %}
     {%for item in menu_items %}

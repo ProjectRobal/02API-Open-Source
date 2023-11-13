@@ -55,19 +55,33 @@ elif [ $cmd = "debug" ]; then
 
     docker compose exec -i web bash
 
-elif [ $cmd = "remigrate" ]; then
-
-    #docker compose exec -i db pg_dump --data-only -Fc  -U devs -Z 9 -f /backup/db domena_db
-
-    docker compose exec -i web ./remigrate.sh
-
-    #docker compose exec -T db pg_restore -v -U devs -d domena_db /backup/db
-
-    #docker compose exec -T db rm /backup/db
-
 elif [ $cmd = "makemigration" ]; then
 
     docker compose exec -i web python3 -u manage.py makemigrations -v 3
+
+elif [ $cmd = "clear_migration" ]; then
+
+    docker exec -it sql_02_dev psql -U devs -d domena_db -c 'DELETE FROM django_migrations'
+
+    dirs=$(docker compose exec -i web find /app -name "migrations")
+
+    for dir in $dirs ;
+    do
+        files=$(docker compose exec -i web find ${dir}  -type f \( -iname "*.py" -or -iname "*.pyc" \) ! -name __init__.py )
+        for file in $files;
+        do
+            docker compose exec -i web rm ${file}
+        done
+    done
+
+    docker compose exec -i web python3 -u manage.py migrate --fake
+
+    for app in $(docker compose exec -i web) ;
+    do
+        docker compose exec -i web python3 -u manage.py makemigrations ${app::-1}
+    done
+
+    docker compose exec -i web python3 -u manage.py migrate --fake-initial
 
 elif [ $cmd = "migrate" ]; then
     

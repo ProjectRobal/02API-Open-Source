@@ -15,7 +15,7 @@
         background-color: var(--primary-color);
     }
     to {
-        width: 100%;
+        width: 75%;
         box-shadow: 0 0 0 0 gray;
         background-color: var(--teritary-color);
     }
@@ -123,7 +123,7 @@ button:hover
 
 .device-block
 {
-    width: 100%;
+    width: fit-content;
     height: fit-content;
     margin: 0;
     background-color: var(--primary-color);
@@ -201,7 +201,7 @@ button:hover
 
 .device-header
 {
-    width: 100%;
+    width: 75%;
     height: fit-content;
     margin: 0;
     background-color: var(--quaternary-color);
@@ -245,16 +245,19 @@ button:hover
 
 #navbar
 {
+
         display: none;
         flex-direction: column;
         width: 100%;
         height: 100%;
         background-color:var(--teritary-color);
-        gap: 10px;
+        gap: 15px;
         margin:0;
         padding: 5px;
-        position: absolute;
+        position: fixed;
         z-index: 10;
+        top: 0;
+        left: 0;
         
 }
 
@@ -326,26 +329,28 @@ button:hover
     flex-direction: column;
     padding: 0;
     gap:25px;
-    width: 100%;
+    width: 75%;
 }
 
 #homepage
 {
-    width: 100%;
+    width: 80%;
     height: fit-content;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap:40px;
+    margin:auto;
 }
 
 .homeblock
 {
     display: flex;
-    width: 100%;
+    width: 50%;
     flex-shrink: 0;
-    height: fit-content;
+    max-height: 50%;
+    aspect-ratio: 4/3;
     text-align: center;   
     justify-content: center;
     align-items: center;
@@ -374,6 +379,33 @@ button:hover
     text-align: center;
 }
 
+.rows-space
+{
+    display: flex;
+    gap:20px;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+.columns-space
+{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap:5px;
+}
+
+.columns-space > *
+{
+    flex:1;
+}
+
 @media only screen and (min-width:768px) {
 
     button
@@ -381,6 +413,7 @@ button:hover
         all:unset;
         background-color:var(--primary-color);
         width: fit-content;
+        font-weight: bold;
         height: fit-content;
         border-radius: 10px;
         padding: 10px;
@@ -499,18 +532,6 @@ button:hover
         height: 100%;
         margin-left: 10px;
         margin-right: auto;
-    }
-
-    .rows-space
-    {
-        display: flex;
-        gap:20px;
-        width: 100%;
-        height: 100%;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        align-content: flex-start;
-        align-items: flex-start;
     }
 
     .columns-space
