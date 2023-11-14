@@ -145,7 +145,11 @@ def update_profile(request):
     user:O2User=request.user
 
     if len(user_form["email"].value())!=0:
-        user.email=user_form["email"].value()
+        
+        if not O2User.objects.filter(email=user_form["email"].value()).exists() or user_form["email"].value()==user.email:
+            user.email=user_form["email"].value()
+        else:
+            request.session["profile_msg"]="User with specific email exits!"
 
     if len(user_form["first_name"].value())!=0:
         user.first_name=user_form["first_name"].value()
@@ -154,7 +158,7 @@ def update_profile(request):
         user.last_name=user_form["last_name"].value()
     if len(user_form["username"].value())!=0:
 
-        if not O2User.objects.filter(username=user_form["username"].value()).exists():
+        if not O2User.objects.filter(username=user_form["username"].value()).exists() or user_form["username"].value()==user.username:
             user.username=user_form["username"].value()
         else:
             request.session["profile_msg"]="User with specific username exits!"
@@ -233,31 +237,27 @@ def reg(request):
 
     register=register.cleaned_data
 
-    try:
-
-        O2User.objects.get(username=register["username"])
-        #request.session["login_error"]=register.errors
+    if O2User.objects.filter(email=register["email"]).exists() or O2User.objects.filter(email=register["username"]).exists():
         return redirect("/login?user_exists=1")
+    
 
-    except O2User.DoesNotExist:
+    user:O2User=O2User.objects.create_user(
+        username=register["username"],
+        first_name=register["first_name"],
+        last_name=register["last_name"],
+        email=register["email"],
+        password=register["password"]
+        )
 
-        user:O2User=O2User.objects.create_user(
-            username=register["username"],
-            first_name=register["first_name"],
-            last_name=register["last_name"],
-            email=register["email"],
-            password=register["password"]
-            )
+    cards_view=Permission.objects.get(codename="cards_view")
+    device_view=Permission.objects.get(codename="device_view")
+    plugin_view=Permission.objects.get(codename="plugin_view")
 
-        cards_view=Permission.objects.get(codename="cards_view")
-        device_view=Permission.objects.get(codename="device_view")
-        plugin_view=Permission.objects.get(codename="plugin_view")
+    user.user_permissions.add(cards_view)
+    user.user_permissions.add(device_view)
+    user.user_permissions.add(plugin_view)
 
-        user.user_permissions.add(cards_view)
-        user.user_permissions.add(device_view)
-        user.user_permissions.add(plugin_view)
-
-        user.save()
+    user.save()
 
     for group in ProjectGroup.objects.filter(name__in=register["project"]):
         group.user.add(user)
@@ -278,7 +278,7 @@ def reg_form(request):
     msg=None
 
     if "login_error" in request.session.keys():
-        msg=str(request.session["login_error"].values()[-1])+" \n"
+        msg=str(list(request.session["login_error"].values())[-1][0])+" \n"
         del request.session["login_error"]
 
     return render(request,"/app/webadmin/templates/register02form.html",context={"form":Register02Form,"msg":msg})
