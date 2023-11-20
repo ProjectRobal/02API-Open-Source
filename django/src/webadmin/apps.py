@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+from domena.signals import onLogin,onLogout
 import logging
 
 class WebadminConfig(AppConfig):
@@ -28,7 +29,23 @@ class WebadminConfig(AppConfig):
 
         except:
             return [("","")]
+    
+    @staticmethod
+    def on_user_login(sender,user,request,**kwargs):
         
+        from webadmin.models import CardNode
+
+        try:
+
+            CardNode.objects.get(user=user)
+
+        except CardNode.DoesNotExist:
+
+            logging.info("No card for specified user: "+str(user.username)+" generating new card!")
+            card:CardNode=CardNode(user=user)
+
+            card.save()
+
 
 
     def ready(self) -> None:
@@ -56,6 +73,8 @@ class WebadminConfig(AppConfig):
         menu_entries.append(MenuBlock("Profile","/webadmin/profile/"))
         menu_entries.append(MenuBlock("Card register","/webadmin/register/"))
         menu_entries.append(MenuBlock("Basement status","/webadmin/lscards/"))
+
+        onLogin(WebadminConfig.on_user_login)
 
         WebadminConfig.APP_READY=True
 
