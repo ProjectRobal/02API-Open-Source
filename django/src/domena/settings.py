@@ -18,6 +18,9 @@ from rest_framework.settings import api_settings
 from .plugins import PLUGINS
 from devices.plugin_loader import scan_for_plugin
 
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+
 
 # a server version
 SERVER_VERSION="0.5"
@@ -92,6 +95,29 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
+
+
+if os.getenv("USE_LDAP"):
+    AUTHENTICATION_BACKENDS = ["django_auth_ldap.backend.LDAPBackend"]
+    if os.getenv("LDAP_SERVER_ADDR") is not None:
+        AUTH_LDAP_SERVER_URI = os.getenv("LDAP_SERVER_ADDR")
+        
+    AUTH_LDAP_BIND_DN = ""
+    AUTH_LDAP_BIND_PASSWORD = ""
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    os.getenv("LDAP_BASE_DN"), ldap.SCOPE_SUBTREE, os.getenv("LDAP_FILTERSTR")
+    )
+
+    AUTH_LDAP_CACHE_TIMEOUT = 3600
+
+    AUTH_LDAP_USER_ATTR_MAP = {
+    "username":os.getenv("LDAP_MAP_USERNAME"),
+    "first_name": os.getenv("LDAP_MAP_FIRSTNAME"),
+    "last_name": os.getenv("LDAP_MAP_LASTNAME"),
+    "email": os.getenv("LDAP_MAP_EMAIL")
+    }
+
+AUTHENTICATION_BACKENDS.append("django.contrib.auth.backends.ModelBackend")
 
 ROOT_URLCONF = 'domena.urls'
 
