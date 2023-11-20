@@ -21,6 +21,9 @@ from devices.plugin_loader import scan_for_plugin
 import ldap
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
+import saml2
+
+from django.urls import reverse_lazy
 
 # a server version
 SERVER_VERSION="0.5"
@@ -96,9 +99,40 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
+AUTHENTICATION_BACKENDS=["django.contrib.auth.backends.ModelBackend"]
+
+if os.getenv("USE_SAML"):
+    INSTALLED_APPS.append('djangosaml2')
+    MIDDLEWARE.append('djangosaml2.middleware.SamlSessionMiddleware')
+    AUTHENTICATION_BACKENDS.append('djangosaml2.backends.Saml2Backend')
+
+    SAML_SESSION_COOKIE_NAME = os.getenv("SAML_COOKIE_NAME")
+    SAML_SESSION_COOKIE_SAMSITE = os.getenv("SAML_COOKIE_SAMSITE")
+
+    LOGIN_URL = os.getenv("SAML_LOGIN_URL")
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+    SAML_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
+    SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_POST
+
+    SAML_IGNORE_LOGOUT_ERRORS = True
+    SAML_DJANGO_USER_MAIN_ATTRIBUTE = os.getenv("SAML_DJANGO_USER_MAIN_ATTR")
+    ACS_DEFAULT_REDIRECT_URL = reverse_lazy(os.getenv("SAML_REDIRECT_URL"))
+
+    SAML_ATTRIBUTE_MAPPING = {
+        'uid': (os.getenv("SAML_ATTR_MAP_USERNAME")),
+        'mail': (os.getenv("SAML_ATTR_MAP_MAIL")),
+        'cn': (os.getenv("SAML_ATTR_MAP_CN")),
+        'sn': (os.getenv("SAML_ATTR_MAP_SN")),
+    }
+
+    import saml_config
+    
+
+
 
 if os.getenv("USE_LDAP"):
-    AUTHENTICATION_BACKENDS = ["django_auth_ldap.backend.LDAPBackend"]
+    AUTHENTICATION_BACKENDS.append["django_auth_ldap.backend.LDAPBackend"]
     if os.getenv("LDAP_SERVER_ADDR") is not None:
         AUTH_LDAP_SERVER_URI = os.getenv("LDAP_SERVER_ADDR")
         
@@ -116,8 +150,6 @@ if os.getenv("USE_LDAP"):
     "last_name": os.getenv("LDAP_MAP_LASTNAME"),
     "email": os.getenv("LDAP_MAP_EMAIL")
     }
-
-AUTHENTICATION_BACKENDS.append("django.contrib.auth.backends.ModelBackend")
 
 ROOT_URLCONF = 'domena.urls'
 
