@@ -1,0 +1,30 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+    <head>
+        {% include 'header.html'  %}
+        <title>
+            {% block head_title %}
+            {% endblock head_title %}
+        </title>
+        {% block extra_head %}
+        {% endblock extra_head %}
+    </head>
+    <body>
+        {% block body %}
+        <div>
+            {% include 'nav.html'  %}
+        </div>
+            {% if messages %}
+                <div class="message_list">
+                    <strong>{% trans "Messages:" %}</strong>
+                    {% for message in messages %}{{ message }}{% endfor %}
+                </div>
+            {% endif %}
+            {% block content %}
+            {% endblock content %}
+        {% endblock body %}
+        {% block extra_body %}
+        {% endblock extra_body %}
+    </body>
+</html>

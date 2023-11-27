@@ -210,6 +210,57 @@ button:hover
     border-radius: 10px;
 }
 
+.message_list
+{
+    display: flex;
+    flex-direction: row;
+}
+
+form p
+{
+    margin-bottom: 1px;
+    font-size: large;
+}
+
+form input
+{
+    margin-top: 0;
+}
+
+form input[type=submit]
+{
+    border: none;
+    margin-top: 30px;
+    background-color: var(--primary-color);
+    color: black;
+    padding: 5px;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+form input[type=submit]:hover
+{
+    background-color: black;
+    color: var(--quaternary-color);
+    padding: 5px;
+}
+
+form
+{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    padding-top: 10px;
+    padding-bottom: 25px;
+    background-color: var(--primary-color);
+    padding-left: 10px;
+    padding-right: 15px;
+    border-radius: 0;
+    gap:0;
+    box-shadow: 6px 4px 2px 1px black;
+}
 
 
 .logform p

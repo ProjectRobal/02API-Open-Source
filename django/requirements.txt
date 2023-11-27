@@ -18,3 +18,4 @@ django-auth-ldap==4.6.0
 pysaml2==7.4.2
 djangosaml2==1.8.0
 django-allauth==0.58.2
+django-allauth[saml]
