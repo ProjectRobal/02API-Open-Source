@@ -18,12 +18,8 @@ from rest_framework.settings import api_settings
 from .plugins import PLUGINS
 from devices.plugin_loader import scan_for_plugin
 
-import ldap
-from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
-
-import saml2
-
-from django.urls import reverse_lazy
+import logging
+import json
 
 # a server version
 SERVER_VERSION="0.5"
@@ -68,7 +64,9 @@ INSTALLED_APPS = [
     'nodes',
     'importer',
     'rest_framework',
-    'knox'
+    'knox',
+    'allauth',
+    'allauth.account'
 ] + scan_for_plugin()+['mqtt']
 
 MQTT_SERVER="mqtt"
@@ -88,7 +86,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'domena.middleware.SessionChecker'
+    'domena.middleware.SessionChecker',
+    'allauth.account.middleware.AccountMiddleware'
     ]
 
 PASSWORD_HASHERS = [
@@ -99,64 +98,35 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
-AUTHENTICATION_BACKENDS=["django.contrib.auth.backends.ModelBackend"]
+AUTHENTICATION_BACKENDS=["allauth.account.auth_backends.AuthenticationBackend"
+                         ,"django.contrib.auth.backends.ModelBackend"]
 
-if os.getenv("USE_SAML"):
-    INSTALLED_APPS.append('djangosaml2')
-    MIDDLEWARE.append('djangosaml2.middleware.SamlSessionMiddleware')
-    AUTHENTICATION_BACKENDS.append('djangosaml2.backends.Saml2Backend')
+if bool(os.getenv("USE_EAUTH")):
+    INSTALLED_APPS.append('allauth.socialaccount')
 
-    SAML_SESSION_COOKIE_NAME = os.getenv("SAML_COOKIE_NAME")
-    SAML_SESSION_COOKIE_SAMSITE = os.getenv("SAML_COOKIE_SAMSITE")
+    try:
+        with open("/app/auth.json","r") as data:
+            auths=json.load(data)
+            for serv in auths.keys():
+                INSTALLED_APPS.append('allauth.socialaccount.providers.'+str(serv))
 
-    LOGIN_URL = os.getenv("SAML_LOGIN_URL")
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+            SOCIALACCOUNT_PROVIDERS=auths
+    except OSError:
+        logging.error("Cannot open auth.json file!")
 
-    SAML_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
-    SAML_LOGOUT_REQUEST_PREFERRED_BINDING = saml2.BINDING_HTTP_POST
+ACCOUNT_AUTHENTICATION_METHOD="username"
+ACCOUNT_CHANGE_EMAIL=True
+ACCOUNT_EMAIL_VERIFICATION='none'
 
-    SAML_IGNORE_LOGOUT_ERRORS = True
-    SAML_DJANGO_USER_MAIN_ATTRIBUTE = os.getenv("SAML_DJANGO_USER_MAIN_ATTR")
-    ACS_DEFAULT_REDIRECT_URL = reverse_lazy(os.getenv("SAML_REDIRECT_URL"))
-
-    SAML_ATTRIBUTE_MAPPING = {
-        'uid': (os.getenv("SAML_ATTR_MAP_USERNAME")),
-        'mail': (os.getenv("SAML_ATTR_MAP_MAIL")),
-        'cn': (os.getenv("SAML_ATTR_MAP_CN")),
-        'sn': (os.getenv("SAML_ATTR_MAP_SN")),
-    }
-
-    import saml_config
-    
-
-
-
-if os.getenv("USE_LDAP"):
-    AUTHENTICATION_BACKENDS.append["django_auth_ldap.backend.LDAPBackend"]
-    if os.getenv("LDAP_SERVER_ADDR") is not None:
-        AUTH_LDAP_SERVER_URI = os.getenv("LDAP_SERVER_ADDR")
-        
-    AUTH_LDAP_BIND_DN = ""
-    AUTH_LDAP_BIND_PASSWORD = ""
-    AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    os.getenv("LDAP_BASE_DN"), ldap.SCOPE_SUBTREE, os.getenv("LDAP_FILTERSTR")
-    )
-
-    AUTH_LDAP_CACHE_TIMEOUT = 3600
-
-    AUTH_LDAP_USER_ATTR_MAP = {
-    "username":os.getenv("LDAP_MAP_USERNAME"),
-    "first_name": os.getenv("LDAP_MAP_FIRSTNAME"),
-    "last_name": os.getenv("LDAP_MAP_LASTNAME"),
-    "email": os.getenv("LDAP_MAP_EMAIL")
-    }
 
 ROOT_URLCONF = 'domena.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
