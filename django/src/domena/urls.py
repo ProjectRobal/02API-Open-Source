@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
 from django.contrib import admin
 from django.urls import path,re_path,include
 from devices.views import devsPage,twingoPage,device_page,node_list,home_page,rat,plugin_add,ploader,plugin_show,plugin_rm,device_add,devloader,device_rm,device_purge,api
@@ -47,5 +48,8 @@ urlpatterns = [
     path('devloader/',devloader),
     path('ave_prezes',rat)
 ]
+
+if os.getenv("USE_EAUTH"):
+    urlpatterns.append(path('accounts/', include('allauth.urls')))
 
 urlpatterns+=staticfiles_urlpatterns()

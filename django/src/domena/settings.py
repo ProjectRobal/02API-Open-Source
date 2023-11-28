@@ -18,6 +18,8 @@ from rest_framework.settings import api_settings
 from .plugins import PLUGINS
 from devices.plugin_loader import scan_for_plugin
 
+import logging
+import json
 
 # a server version
 SERVER_VERSION="0.5"
@@ -62,7 +64,9 @@ INSTALLED_APPS = [
     'nodes',
     'importer',
     'rest_framework',
-    'knox'
+    'knox',
+    'allauth',
+    'allauth.account'
 ] + scan_for_plugin()+['mqtt']
 
 MQTT_SERVER="mqtt"
@@ -82,7 +86,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'domena.middleware.SessionChecker'
+    'domena.middleware.SessionChecker',
+    'allauth.account.middleware.AccountMiddleware'
     ]
 
 PASSWORD_HASHERS = [
@@ -93,12 +98,35 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
+AUTHENTICATION_BACKENDS=["allauth.account.auth_backends.AuthenticationBackend"
+                         ,"django.contrib.auth.backends.ModelBackend"]
+
+if bool(os.getenv("USE_EAUTH")):
+    INSTALLED_APPS.append('allauth.socialaccount')
+
+    try:
+        with open("/app/auth.json","r") as data:
+            auths=json.load(data)
+            for serv in auths.keys():
+                INSTALLED_APPS.append('allauth.socialaccount.providers.'+str(serv))
+
+            SOCIALACCOUNT_PROVIDERS=auths
+    except OSError:
+        logging.error("Cannot open auth.json file!")
+
+ACCOUNT_AUTHENTICATION_METHOD="username"
+ACCOUNT_CHANGE_EMAIL=True
+ACCOUNT_EMAIL_VERIFICATION='none'
+
+
 ROOT_URLCONF = 'domena.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -149,6 +177,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+LOGIN_REDIRECT_URL="/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

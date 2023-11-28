@@ -57,10 +57,7 @@ class WebadminConfig(AppConfig):
         from domena.menu import entries as menu_entries
         from domena.menu_types import HomeBlock,MenuBlock
 
-        urlpatterns.append(path('webadmin/register/',reg_form))
-        urlpatterns.append(path('webadmin/reg/',reg))
         urlpatterns.append(path('webadmin/profile/',profile))
-        urlpatterns.append(path('webadmin/userup/',update_profile))
         urlpatterns.append(path('webadmin/img_set/',img_set))
         urlpatterns.append(path('webadmin/n_card/',generate_new_card))
         urlpatterns.append(path('webadmin/l_base/',logout_from_basement))
@@ -68,10 +65,8 @@ class WebadminConfig(AppConfig):
         urlpatterns.append(path('webadmin/lscards/',cards_view))
 
         entries.append(HomeBlock("Profile","/webadmin/profile/"))
-        entries.append(HomeBlock("Card register","/webadmin/register/"))
         entries.append(HomeBlock("Basement status","/webadmin/lscards/"))
         menu_entries.append(MenuBlock("Profile","/webadmin/profile/"))
-        menu_entries.append(MenuBlock("Card register","/webadmin/register/"))
         menu_entries.append(MenuBlock("Basement status","/webadmin/lscards/"))
 
         onLogin(WebadminConfig.on_user_login)

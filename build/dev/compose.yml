@@ -38,6 +38,9 @@ services:
       - internal
     volumes:
       - type: bind
+        source: ./auth.json
+        target: /app/auth.json
+      - type: bind
         source: ../../django/web/static
         target: /web/static
       - type: bind

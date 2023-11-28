@@ -7,7 +7,10 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /app
 
 COPY requirements.txt /app
+COPY packages.txt /app
+
 RUN apt-get update && apt-get upgrade -y
+RUN xargs -a packages.txt apt install -y
 RUN pip3 install -r requirements.txt --no-cache-dir
 
 COPY ./compose/prod/entrypoint.sh /app/entrypoint.sh

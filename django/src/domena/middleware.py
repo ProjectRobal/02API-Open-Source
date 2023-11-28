@@ -2,6 +2,11 @@ from datetime import datetime, timedelta
 import time
 from django.contrib import auth
 import logging
+
+
+
+
+
 '''
 A middleware to check if user session has expired
 '''

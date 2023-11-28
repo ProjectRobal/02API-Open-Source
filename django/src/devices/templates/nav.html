@@ -38,7 +38,7 @@
 
     {% endif %}
 
-    <a href="/unauth">
+    <a href="/accounts/logout/">
         <div class="navlogout navblock">
             Logout
         </div>
@@ -50,11 +50,18 @@
 
 {% else %}
 
-    <a href="/login">
+    <a href="/accounts/login/">
         <div class="navlogout navblock">
             Login
         </div>
     </a>
+
+    <a href="/accounts/signup/">
+        <div class="navlogout navblock">
+            Register
+        </div>
+    </a>
+
 
 {% endif %}
 

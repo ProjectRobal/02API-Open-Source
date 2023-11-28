@@ -15,7 +15,7 @@ from django import forms
 
 import json
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login")
 def cards_view(request):
     if request.method != "GET":
         return HttpResponseBadRequest()
@@ -40,7 +40,7 @@ def cards_view(request):
     
     return render(request,"/app/webadmin/templates/index.html",context={"users":users})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login")
 def generate_new_card(request):
     if request.method != "GET":
         return HttpResponseBadRequest()
@@ -79,7 +79,7 @@ def generate_new_card(request):
 
     return redirect("/webadmin/profile")
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login")
 def logout_from_basement(request):
     if request.method != "GET":
         return HttpResponseBadRequest()
@@ -100,7 +100,7 @@ def logout_from_basement(request):
 
     return redirect("/webadmin/profile")
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login")
 def img_set(request):
     if request.method != "POST":
         return HttpResponseBadRequest()
@@ -133,7 +133,7 @@ def img_set(request):
     return redirect("/webadmin/profile")
 
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login")
 def update_profile(request):
 
     if request.method != "POST":
@@ -176,7 +176,7 @@ def update_profile(request):
 
     return redirect("/webadmin/profile")
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login")
 def profile(request):
 
     if request.method != "GET":
@@ -238,7 +238,7 @@ def reg(request):
     register=register.cleaned_data
 
     if O2User.objects.filter(email=register["email"]).exists() or O2User.objects.filter(email=register["username"]).exists():
-        return redirect("/login?user_exists=1")
+        return redirect("/accounts/login?user_exists=1")
     
 
     user:O2User=O2User.objects.create_user(
@@ -268,7 +268,7 @@ def reg(request):
 
     user_card.save()
 
-    return redirect("/login?login_success=1")
+    return redirect("/accounts/login?login_success=1")
 
 def reg_form(request):
 
