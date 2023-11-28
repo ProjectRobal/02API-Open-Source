@@ -224,66 +224,6 @@ def profile(request):
                                                                             "profile_img":profile_img,
                                                                             "msg":msg})
 
-def reg(request):
-    
-    if request.method != "POST":
-        return HttpResponseBadRequest()
-    
-    register=Register02Form(request.POST)
-
-    if not register.is_valid():
-        request.session["login_error"]=register.errors
-        return redirect("/webadmin/register")
-
-    register=register.cleaned_data
-
-    if O2User.objects.filter(email=register["email"]).exists() or O2User.objects.filter(email=register["username"]).exists():
-        return redirect("/accounts/login?user_exists=1")
-    
-
-    user:O2User=O2User.objects.create_user(
-        username=register["username"],
-        first_name=register["first_name"],
-        last_name=register["last_name"],
-        email=register["email"],
-        password=register["password"]
-        )
-
-    cards_view=Permission.objects.get(codename="cards_view")
-    device_view=Permission.objects.get(codename="device_view")
-    plugin_view=Permission.objects.get(codename="plugin_view")
-
-    user.user_permissions.add(cards_view)
-    user.user_permissions.add(device_view)
-    user.user_permissions.add(plugin_view)
-
-    user.save()
-
-    for group in ProjectGroup.objects.filter(name__in=register["project"]):
-        group.user.add(user)
-        group.save()
-
-
-    user_card=CardNode(user=user)
-
-    user_card.save()
-
-    return redirect("/accounts/login?login_success=1")
-
-def reg_form(request):
-
-    if request.method != "GET":
-        return HttpResponseBadRequest()
-    
-    msg=None
-
-    if "login_error" in request.session.keys():
-        msg=str(list(request.session["login_error"].values())[-1][0])+" \n"
-        del request.session["login_error"]
-
-    return render(request,"/app/webadmin/templates/register02form.html",context={"form":Register02Form,"msg":msg})
-
-
 def get_id(request):
     if request.method != "GET":
         return HttpResponseNotFound()

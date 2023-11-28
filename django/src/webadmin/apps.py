@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from domena.signals import onLogin,onLogout
+from domena.plugins import addURL
 import logging
 
 class WebadminConfig(AppConfig):
@@ -51,18 +52,19 @@ class WebadminConfig(AppConfig):
     def ready(self) -> None:
 
         from domena.urls import urlpatterns
-        from webadmin.views import reg_form,reg,profile,update_profile,img_set,generate_new_card,get_id,cards_view,logout_from_basement
+        from webadmin.views import profile,update_profile,img_set,generate_new_card,get_id,cards_view,logout_from_basement
         from django.urls import path
         from domena.home import entries
         from domena.menu import entries as menu_entries
         from domena.menu_types import HomeBlock,MenuBlock
 
-        urlpatterns.append(path('webadmin/profile/',profile))
-        urlpatterns.append(path('webadmin/img_set/',img_set))
-        urlpatterns.append(path('webadmin/n_card/',generate_new_card))
-        urlpatterns.append(path('webadmin/l_base/',logout_from_basement))
-        urlpatterns.append(path('webadmin/uid/',get_id))
-        urlpatterns.append(path('webadmin/lscards/',cards_view))
+        addURL('webadmin/profile/',profile)
+        addURL('webadmin/img_set/',img_set)
+        addURL('webadmin/n_card/',generate_new_card)
+        addURL('webadmin/l_base/',logout_from_basement)
+        addURL('webadmin/uid/',get_id)
+        addURL('webadmin/userup/',update_profile)
+        addURL('webadmin/lscards/',cards_view)
 
         entries.append(HomeBlock("Profile","/webadmin/profile/"))
         entries.append(HomeBlock("Basement status","/webadmin/lscards/"))
