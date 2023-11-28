@@ -30,6 +30,7 @@ urlpatterns = [
     path('ext/auth/logout', knox_views.LogoutView.as_view()),
     path('ext/auth/logoutall',  knox_views.LogoutAllView.as_view()),
     #handle path in format api/<path> like api/samples/
+    path('accounts/', include('allauth.urls')),
     path('api/<str:path>/',api),
     path('api/<str:path>/<str:cmd>',api),
     path('devs/',devsPage),
@@ -49,7 +50,5 @@ urlpatterns = [
     path('ave_prezes',rat)
 ]
 
-if os.getenv("USE_EAUTH"):
-    urlpatterns.append(path('accounts/', include('allauth.urls')))
 
 urlpatterns+=staticfiles_urlpatterns()
