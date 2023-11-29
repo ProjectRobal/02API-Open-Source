@@ -29,11 +29,26 @@ class Topic(common):
 
         from common.fetch_api import Fetch
 
+        try:
+            logging.debug("Unsubscribed to topics: ")
+
+            past_topic=Topic.objects.get(uuid=self.uuid)
+
+            for key in Fetch.requests.keys():
+                topic=past_topic.path+"/"+key
+                #MqttConfig.client.unsubscribe(topic)
+                MqttConfig.client.unsubscribe(topic)
+                logging.debug(topic)
+
+        except Topic.DoesNotExist:
+            logging.debug("Brand new topic!")
+
         logging.debug("Subscribed to topics: ")
 
         if MqttConfig.client is not None:
             for key in Fetch.requests.keys():
-                topic=self.path+key
+                topic=self.path+"/"+key
+                #MqttConfig.client.unsubscribe(topic)
                 MqttConfig.client.subscribe(topic)
                 logging.debug(topic)
                 
@@ -48,7 +63,7 @@ class Topic(common):
 
         if MqttConfig.client is not None:
             for key in Fetch.requests.keys():
-                topic=self.path+key
+                topic=self.path+"/"+key
                 MqttConfig.client.unsubscribe(topic)
                 logging.debug(topic)
 

@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from domena.signals import onLogin,onLogout
+from domena.signals import onLogin
 from domena.plugins import addURL
 import logging
 
@@ -47,13 +47,9 @@ class WebadminConfig(AppConfig):
 
             card.save()
 
-
-
     def ready(self) -> None:
 
-        from domena.urls import urlpatterns
-        from webadmin.views import profile,update_profile,img_set,generate_new_card,get_id,cards_view,logout_from_basement
-        from django.urls import path
+        from webadmin.views import profile,update_profile,img_set,generate_new_card,get_id,cards_view,logout_from_basement,program_card,clear_program_card
         from domena.home import entries
         from domena.menu import entries as menu_entries
         from domena.menu_types import HomeBlock,MenuBlock
@@ -65,6 +61,8 @@ class WebadminConfig(AppConfig):
         addURL('webadmin/uid/',get_id)
         addURL('webadmin/userup/',update_profile)
         addURL('webadmin/lscards/',cards_view)
+        addURL('webadmin/card_prog/',program_card)
+        addURL('webadmin/progcls',clear_program_card)
 
         entries.append(HomeBlock("Profile","/webadmin/profile/"))
         entries.append(HomeBlock("Basement status","/webadmin/lscards/"))

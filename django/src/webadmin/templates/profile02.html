@@ -14,6 +14,7 @@
     {
         margin:5px;
     }
+    
 
     img
     {
@@ -76,7 +77,33 @@
         padding-top:10px;
     }
 
+    #close_block
+    {
+        display:none;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        border-radius: 0;
+        justify-content: center;
+        align-items: center;
+    }
+
     @media only screen and (min-width:768px) {
+
+    #close_block
+    {
+        display:none; 
+        padding: 5px; 
+        width:30%; 
+        height:fit-content;
+        position:absolute;
+        z-index: 10;
+        top: 30%;
+        left: 30%;
+        justify-content: left;
+    }
 
     .profile_form
     {
@@ -154,7 +181,7 @@
 
     <div class="img_profile block">
 
-    <form method="post" action="/webadmin/img_set/" style="padding:5px;" class="block overlay" enctype="multipart/form-data">
+    <form method="post" action="/webadmin/img_set/" style="padding:5px;" class="overlay" enctype="multipart/form-data">
         <div class="overlay_content logform" >
             {% csrf_token %}
             {{img_form}}
@@ -171,23 +198,52 @@
     <div class="profile_form">
 
        
-    <form method="post" action="/webadmin/userup/" class="login_space">
-        <div class="logform">
+    <form method="post" action="/webadmin/userup/">
+
+        <div>
+            <div style="margin-bottom:10px;">
                 {% csrf_token %}
+                <div>
+                    <p>Login:</p>
+                    {{user.username}}
+                </div>
+                <div>
+                    <p>First name:</p>
+                    {{user.first_name}}
+                </div>
+                <div>
+                    <p>Second name:</p>
+                    {{user.last_name}}
+                </div>
+                <div>
+                    <p>E-mail:</p>
+                    {{user.email}}
+                </div>
+            </div>
                 {{profile_form}}
-            
         <input type="submit" value="Update">
         </div>
             
     </form>
-    <div id="open_block">
+
+    <div id="open_block" class="columns-space">
     <button class="shadow" onclick="show_popup('Generate new card','/webadmin/n_card')">Regenerate card</button>
     <button class="shadow" onclick="show_popup('Logout from basement','/webadmin/l_base')">Leave basement</button>
+    <button class="shadow" onclick="show_popup('Program your card','/webadmin/card_prog')">Program card</button>
+
+    {% if user.is_staff %}
+
+    <button class="shadow" onclick="show_popup('Clear program querry','/webadmin/progcls')">Release program querry</button>
+
+    {% endif %}
+
     </div>
 
-    <div class="block shadow" id="close_block" style="display:none; padding: 5px; width:100%; margin-top:10px;">
+    </div>
+
+    <div class="block shadow" id="close_block">
     
-        <div class="block">
+        <div>
             <div class="rows-space" style="width:100%;">
         <button class="cross" onclick="close_popup()">X</button>
         <div class="rows-space" style="align-items: center; margin-bottom:5px; width:100%;">

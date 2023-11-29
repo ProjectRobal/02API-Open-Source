@@ -29,7 +29,6 @@ class CardVisitRecord(common):
     has_entered=models.BooleanField()
 
 
-
 # plugin nodes
 
 PROFILE_WIDTH=800
@@ -79,6 +78,10 @@ class CardNode(PublicNode):
                 pass
 
             return super(CardNode,self).save(*args,**kwargs)
+
+class ToProgramBuffer(MonoNode,PublicNode):
+    _name="cardprog"
+    card=models.ForeignKey(CardNode,on_delete=models.CASCADE)
 
 class BasementStatus(MonoNode,PublicNode):
     _name="piwnica"

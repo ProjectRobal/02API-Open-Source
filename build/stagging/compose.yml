@@ -35,6 +35,9 @@ services:
     image: 02_web_stagging
     volumes:
       - type: bind
+        source: ./auth.json
+        target: /app/auth.json
+      - type: bind
         source: ../../django/web/static
         target: /web/static
       - type: bind

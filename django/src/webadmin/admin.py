@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProjectGroup,ProfilePicture,CardVisitRecord
+from .models import ProjectGroup,ProfilePicture,CardVisitRecord,ToProgramBuffer
 
 # Register your models here.
 

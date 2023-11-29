@@ -8,12 +8,60 @@ from django.contrib.auth import authenticate
 from domena.settings import MEDIA_URL
 import logging
 
-from .models import ProfilePicture,ProjectGroup,CardNode
-from .forms import Register02Form,ProfileImage02Form,Profile02Form
-from .apps import WebadminConfig
-from django import forms
+from .models import ProfilePicture,ProjectGroup,CardNode,ToProgramBuffer
+from .forms import ProfileImage02Form,Profile02Form
+import datetime
 
 import json
+
+@login_required(login_url="/accounts/login")
+def program_card(request):
+    if request.method != "GET":
+        return HttpResponseBadRequest()
+    
+    if ToProgramBuffer.objects.count()>0:
+        
+        buffer=ToProgramBuffer.objects.get()
+
+        if datetime.datetime.today().astimezone()-buffer.created_date > datetime.timedelta(days=1):
+            buffer.delete()
+        else:
+            request.session["profile_msg"]="Another card is waitting for programming!"
+            return redirect("/webadmin/profile")
+
+    user:O2User=request.user
+
+    cards=CardNode.objects.filter(user=user)
+
+    if not cards.exists():
+        request.session["profile_msg"]="No cards defined for a user!"
+        return redirect("/webadmin/profile")
+    
+    buff=ToProgramBuffer(card=cards.first())
+
+    buff.save()
+
+    request.session["profile_msg"]="Card is waiting for programing"
+
+    return redirect("/webadmin/profile")
+
+
+@login_required(login_url="/accounts/login")
+def clear_program_card(request):
+    if request.method != "GET":
+        return HttpResponseBadRequest()
+    
+    user:O2User=request.user
+
+    if not user.is_staff:
+        return HttpResponse("Unauthorized",'text/html',401)
+    
+    for buf in ToProgramBuffer.objects.all():
+        buf.delete()
+
+    request.session["profile_msg"]="Program buffer is cleared!"
+
+    return redirect("/webadmin/profile")
 
 @login_required(login_url="/accounts/login")
 def cards_view(request):
@@ -86,10 +134,11 @@ def logout_from_basement(request):
     
     user:O2User=request.user
 
-    cards=CardNode.objects.all()
+    cards=CardNode.objects.filter(user=user)
 
     if not cards.exists():
         request.session["profile_msg"]="No cards defined for a user!"
+        return redirect("/webadmin/profile")
 
     for card in cards:
         card.is_in_basement=False
@@ -143,27 +192,6 @@ def update_profile(request):
     user_form:Profile02Form=Profile02Form(request.POST)
 
     user:O2User=request.user
-
-    if len(user_form["email"].value())!=0:
-        
-        if not O2User.objects.filter(email=user_form["email"].value()).exists() or user_form["email"].value()==user.email:
-            user.email=user_form["email"].value()
-        else:
-            request.session["profile_msg"]="User with specific email exits!"
-
-    if len(user_form["first_name"].value())!=0:
-        user.first_name=user_form["first_name"].value()
-
-    if len(user_form["last_name"].value())!=0:
-        user.last_name=user_form["last_name"].value()
-    if len(user_form["username"].value())!=0:
-
-        if not O2User.objects.filter(username=user_form["username"].value()).exists() or user_form["username"].value()==user.username:
-            user.username=user_form["username"].value()
-        else:
-            request.session["profile_msg"]="User with specific username exits!"
-    
-    user.save()
 
     for group in ProjectGroup.objects.filter(user=user):
         if not group.name in user_form["project"].value():

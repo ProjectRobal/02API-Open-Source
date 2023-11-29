@@ -251,13 +251,13 @@ form
 {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 100%;
     padding-top: 10px;
     padding-bottom: 25px;
     background-color: var(--primary-color);
     padding-left: 10px;
     padding-right: 15px;
-    border-radius: 0;
+    border-radius: 5px;
     gap:0;
     box-shadow: 6px 4px 2px 1px black;
 }

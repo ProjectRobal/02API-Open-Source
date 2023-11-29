@@ -105,14 +105,13 @@ class Fetch:
             if self.model.objects.count()==0:
                 return FetchResult(-2,"Database is empty",self.model.get_name())
 
-            result=self.model.objects.all()[0]
+            result=self.model.objects.all()
 
             output:list[dict]=[]
 
-            for res in result.values(*mask):
-                output.append(res)
+            output.append(result.values(*mask)[0])
 
-            result.delete()
+            result[0].delete()
 
             return FetchResult(0,"Poped first element",self.model.get_name(),output)
         

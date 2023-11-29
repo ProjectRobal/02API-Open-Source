@@ -5,6 +5,7 @@ from .models import Topic,TopicCatcher
 from common.fetch_api import Fetch
 import logging
 from .models import PublicNodes
+from parse import parse
 
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
@@ -17,7 +18,7 @@ def subscribe_to_topics(mqtt_client:mqtt.Client):
         for node in topics:
 
             for req in Fetch.requests.keys():
-                topic:str=node.path+req
+                topic:str=node.path+"/"+req
                 mqtt_client.subscribe(topic)
                 logging.debug(topic)
 
@@ -44,88 +45,92 @@ def on_connect(mqtt_client, userdata, flags, rc):
 
 def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
    
-   try:
-   
-    logging.debug(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
-
-    # mqtt catcher:
-
     try:
+   
+        logging.debug(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
 
-        catcher=TopicCatcher.objects.get(path=msg.topic)
+        # mqtt catcher:
 
-        node:PublicNodes=PublicNodes.get_obj(catcher.node)
+        msg.topic=msg.topic.replace('\\' , "/").encode()
 
-        if node is not None:
-            model=node(**json.loads(msg.payload.decode('utf-8')))
+        if not isinstance(msg.payload,str):
+            msg.payload=msg.payload.decode('utf-8')
 
-            model.save()
+        try:
 
-            logging.info("Data saved from topic: "+msg.topic+" to node "+catcher.node)
-            mqtt_client.subscribe(catcher.path)
-            return
+            catcher=TopicCatcher.objects.get(path=msg.topic)
+
+            node:PublicNodes=PublicNodes.get_obj(catcher.node)
+
+            if node is not None:
+                model=node(**json.loads(msg.payload))
+
+                model.save()
+
+                logging.info("Data saved from topic: "+msg.topic+" to node "+catcher.node)
+                mqtt_client.subscribe(catcher.path)
+                return
          
-    except TopicCatcher.DoesNotExist:
-        logging.debug("Cannot find topic in topic catcher, trying with fetch api")
-        pass
+        except TopicCatcher.DoesNotExist:
+            logging.debug("Cannot find topic in topic catcher, trying with fetch api")
    
-    topic:str=msg.topic
+        topic:str=msg.topic
 
-    logging.debug("Topic: "+topic)
+        logging.debug("Topic: "+topic)
 
-    paths:list[str]=topic.rpartition("/")
+        paths:list[str]=topic.rpartition("/")
+        
+        # fetch api:
 
-    # fetch api:
+        try:
 
-    try:
+            check=Topic.objects.get(path=paths[0])
 
-        check=Topic.objects.get(path=paths[0])
-
-    except Topic.DoesNotExist:
-        logging.debug("Topic not found")
-        return
+        except Topic.DoesNotExist:
+            logging.debug("Topic not found")
+            return
    
-    mqtt_client.subscribe(topic)
+        mqtt_client.subscribe(topic)
    
-    cmd:str=paths[2]
+        cmd:str=paths[2]
 
-    logging.debug("Found command: "+cmd)
+        logging.debug("Found command: "+cmd)
    
-    data:dict=json.loads(msg.payload.decode('utf-8'))
+        data:dict=json.loads(msg.payload)
 
-    key=None
+        key=None
 
-    out=None
+        out=None
 
-    if "key" in data:
-           key=data["key"]
-           out=key
+        if "key" in data:
+               key=data["key"]
+               out=key
     
-    if "out" in data:
-           out=data["out"]
+        if "out" in data:
+               out=data["out"]
 
-    if "data" in data:
-           data=data["data"]
-    else:
-           data={}
+        if "data" in data:
+               data=data["data"]
+        else:
+               data={}
                  
-    fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
+        fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
 
-    result=fetch.match(cmd,data)
+        result=fetch.match(cmd,data)
 
-    if key is not None:
-        # return data
-        mqtt_client.publish(paths[0]+"/"+str(out),str(result))
+        if key is not None:
+            # return data
+            mqtt_client.publish(paths[0]+"/"+str(out),str(result))
 
-        logging.debug("Answer at: "+paths[0]+"/"+str(key))
-        logging.debug("With result: "+str(result))
-    else:
-           logging.debug("No key or output provided!")
+            logging.debug("Answer at: "+paths[0]+"/"+str(key))
+            logging.debug("With result: "+str(result))
+        else:
+               logging.debug("No key or output provided!")
 
-   except Exception as e:
-        logging.error("I się wywalił")
-        logging.debug(str(e))
-   #retrive 
+    except Exception as e:
+            logging.error("I się wywalił")
+            logging.debug(str(e))
+    #retrive 
 
 def on_unsubscribe(client, userdata, mid):
     logging.debug("Unsubscribed: ")

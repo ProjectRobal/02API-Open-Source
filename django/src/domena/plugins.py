@@ -9,6 +9,7 @@ from domena.home import entries
 from domena.menu import entries as menu_entries
 from domena.menu_types import HomeBlock,MenuBlock
 
+
 PLUGINS:list[str]=[
 "webadmin"
 ]
@@ -16,6 +17,3 @@ PLUGINS:list[str]=[
 def addURL(path_:str,response):
     from domena.urls import urlpatterns
     urlpatterns.append(path(path_,response))
-
-
-    
