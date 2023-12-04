@@ -54,12 +54,3 @@ class Device(common):
                 ("plugin_rm","Can remove plugins"),
                 ("plugin_view","Can view plugins")
             ]
- 
-
-class SupportedProtocols(common):
-
-    '''
-    A model that will hold a list of protocols supported by device
-    '''
-    protocol=models.IntegerField(choices=Protocols.choices)
-    device=models.ForeignKey(Device,on_delete=models.SET_NULL,null=True)

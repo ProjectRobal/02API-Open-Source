@@ -1,4 +1,6 @@
 {% load static %}
+{% load gravatar %}
+
 <!--     ______
       _\/      \         /
      < *_   _   \_______/
@@ -178,7 +180,7 @@ BGJ.~Y!7JYYJJ55Y5JJ5PP5JYGP55YY5PP5555PPGBBB###&&#B#&&&#GB####BB#BBBGBGBBBGPPPGP
     {% for user in users %}
     <div class="profile" id="{{user.0.username}}">
         <img class="rat_icon" style="width:96px;" src={% static  "ratback.png" %} alt="rad">
-        <img src="{{user.1}}">
+        <img src="{{ user|gravatar_url:600 }}">
         <div>
             {% if user.0.first_name %}
             <p style="margin-bottom:0;">{{user.0.first_name}} {{user.0.last_name}}</p>

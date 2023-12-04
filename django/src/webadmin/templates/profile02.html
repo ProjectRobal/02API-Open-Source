@@ -1,4 +1,5 @@
 {% load static %}
+{% load gravatar %}
 <!DOCTYPE html>
 <html>
 
@@ -184,12 +185,12 @@
     <form method="post" action="/webadmin/img_set/" style="padding:5px;" class="overlay" enctype="multipart/form-data">
         <div class="overlay_content logform" >
             {% csrf_token %}
-            {{img_form}}
+            {{ img_form }}
             <input type="submit" value="Change Picture">
         </div>
     </form>
 
-    <img src="{{profile_img}}" width="800px" height="600px">
+    <img src="{{ user|gravatar_url:600 }}" width="800px" height="600px">
 
     </div>
 

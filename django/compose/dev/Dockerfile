@@ -9,7 +9,7 @@ WORKDIR /app
 COPY requirements.txt /app
 COPY packages.txt /app
 
-RUN apt update && apt upgrade -y
+RUN apt update
 RUN xargs -a packages.txt apt install -y
 RUN pip3 install -r requirements.txt --no-cache-dir
 

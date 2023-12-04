@@ -5,8 +5,6 @@ from .models import Topic,TopicCatcher
 from common.fetch_api import Fetch
 import logging
 from .models import PublicNodes
-from parse import parse
-
 
 def subscribe_to_topics(mqtt_client:mqtt.Client):
 

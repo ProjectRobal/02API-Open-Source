@@ -172,8 +172,14 @@ def img_set(request):
     for img in images:
         img.delete(keep_parents=True)
 
+    clean_data=form.cleaned_data
+
+    if clean_data.get("picture") is None:
+        logging.debug("Picture has been removed!")
+        return redirect("/webadmin/profile")
+
     image:ProfilePicture=ProfilePicture(user=user,
-                                        image=form.cleaned_data.get("picture"))
+                                        image=clean_data.get("picture"))
     
     image.save()
 
@@ -210,8 +216,6 @@ def profile(request):
     if request.method != "GET":
         return HttpResponseBadRequest()
     
-    profile_img=""
-
     user:O2User=request.user
 
     groups=ProjectGroup.objects.filter(user=user)
@@ -232,14 +236,6 @@ def profile(request):
     })   
 
 
-    try:
-
-        pic=ProfilePicture.objects.get(user=user)
-        profile_img='{0}/{1}'.format(MEDIA_URL,pic.image)
-        
-    except ProfilePicture.DoesNotExist:
-        profile_img="/static/dummy.png"
-
     msg=None
 
     if "profile_msg" in request.session.keys():
@@ -249,7 +245,6 @@ def profile(request):
 
     return render(request,"/app/webadmin/templates/profile02.html",context={"img_form":ProfileImage02Form,
                                                                             "profile_form":profile_form,
-                                                                            "profile_img":profile_img,
                                                                             "msg":msg})
 
 def get_id(request):

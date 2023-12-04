@@ -101,11 +101,11 @@ elif [ $cmd = "restore" ]; then
 
 elif [ $cmd = "restore_copy" ]; then
 
-    docker compose exec -T db pg_restore -v --if-exists -c -U devs -d domena_db /backup/$2
+    docker compose exec -T db pg_restore -v --data-only --disable-triggers  -U devs -d domena_db /backup/$2
 
 elif [ $cmd = "copy_db" ]; then
 
-    docker compose exec -T db pg_dump -Fc -U devs -Z 9 -f /backup/$2 domena_db
+    docker compose exec -T db pg_dump --column-inserts --on-conflict-do-nothing -Fc -U devs -Z 9 -f /backup/$2 domena_db
 
 elif [ $cmd = "help" ]; then
 

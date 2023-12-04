@@ -38,7 +38,7 @@ def api(request,path,cmd=""):
 
         try:
 
-            check=Topic.objects.get(path="/"+path+"/")
+            check=Topic.objects.get(path="/"+path)
 
         except Topic.DoesNotExist:
             logging.debug("Topic not found")

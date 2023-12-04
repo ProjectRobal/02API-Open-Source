@@ -17,4 +17,4 @@ class Profile02Form(forms.Form):
 
 
 class ProfileImage02Form(forms.Form):
-    picture=forms.ImageField()
+    picture=forms.ImageField(allow_empty_file=True,required=False)

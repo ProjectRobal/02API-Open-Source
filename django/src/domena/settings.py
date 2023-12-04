@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'dbbackup',
     'auth02',
     'devices',
     'nodeacl',
@@ -74,6 +75,9 @@ MQTT_USER=os.environ.get('MQTT_USER')
 MQTT_PASSWORD=os.environ.get('MQTT_PASSWORD')
 MQTT_PORT=int(os.environ.get('MQTT_PORT'))
 MQTT_KEEPALIVE =int(os.environ.get('MQTT_KEEPALIVE'))
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/app/backups'}
 
 AUTH_USER_MODEL = 'auth02.O2User' 
 
