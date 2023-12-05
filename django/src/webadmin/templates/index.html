@@ -25,9 +25,21 @@
 
 
 <div>
-<h1 class="main_title" id="We appreciate you Kamil.W">
-    Znajdź konarowicza w piwnicy
-</h1>
+
+
+{% if msg %}
+
+    <h1 class="main_title" id="We appreciate you Kamil.W" style="color:red;">
+        Uwaga droniarze w piwnicy!!
+    </h1>
+
+{% else %}
+
+    <h1 class="main_title" id="We appreciate you Kamil.W">
+        Znajdź konarowicza w piwnicy
+    </h1>
+
+{% endif %}
 
 {% if users|length > 0 %}
 
@@ -180,7 +192,7 @@ BGJ.~Y!7JYYJJ55Y5JJ5PP5JYGP55YY5PP5555PPGBBB###&&#B#&&&#GB####BB#BBBGBGBBBGPPPGP
     {% for user in users %}
     <div class="profile" id="{{user.0.username}}">
         <img class="rat_icon" style="width:96px;" src={% static  "ratback.png" %} alt="rad">
-        <img src="{{ user|gravatar_url:600 }}">
+        <img src="{{ user.0|gravatar_url:600 }}">
         <div>
             {% if user.0.first_name %}
             <p style="margin-bottom:0;">{{user.0.first_name}} {{user.0.last_name}}</p>
@@ -188,10 +200,10 @@ BGJ.~Y!7JYYJJ55Y5JJ5PP5JYGP55YY5PP5555PPGBBB###&&#B#&&&#GB####BB#BBBGBGBBBGPPPGP
             {% else %}
             <p>{{user.0.username}}</p>
             {% endif %}
-            {% if user.2|length > 0%}
+            {% if user.1|length > 0%}
             <div>Członek projektów:
                     <ul>
-                {% for project in user.2 %}
+                {% for project in user.1 %}
                         <li>{{project}}</li>
                 {% endfor %}
                     </ul>

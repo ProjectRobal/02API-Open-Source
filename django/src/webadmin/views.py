@@ -74,19 +74,22 @@ def cards_view(request):
 
     users:list[tuple[O2User,ProfilePicture,list[str]]]=[]
 
+    msg=None
+
     for piwniczak in in_piwnica:
-        try:
-            picture=ProfilePicture.objects.get(user=piwniczak.user).image
-            picture='{0}/{1}'.format(MEDIA_URL,picture)
-        except ProfilePicture.DoesNotExist:
-            logging.debug("User "+piwniczak.user.username+" doesn't have profile picture!")
-            picture='/static/dummy.png'
 
-        users_groups:list[str]=[group.project_name for group in ProjectGroup.objects.filter(user=piwniczak.user)]
+        groups=ProjectGroup.objects.filter(user=piwniczak.user)
 
-        users.append((piwniczak.user,picture,users_groups))
+        users_groups:list[str]=[group.project_name for group in groups]
+
+        users_groups_names:list[str]=[group.name.lower() for group in groups]
+
+        if "dron" in users_groups_names:
+            msg="Uwaga droniarze w piwnicy!"
+
+        users.append((piwniczak.user,users_groups))
     
-    return render(request,"/app/webadmin/templates/index.html",context={"users":users})
+    return render(request,"/app/webadmin/templates/index.html",context={"users":users,"msg":msg})
 
 @login_required(login_url="/accounts/login")
 def generate_new_card(request):

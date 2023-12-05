@@ -9,6 +9,7 @@ from common.models import common
 import secrets
 from io import BytesIO
 import datetime
+from django.utils import timezone
 
 from PIL import Image
 
@@ -25,7 +26,7 @@ class CardVisitRecord(common):
     '''
 
     user=models.ForeignKey(O2User,on_delete=models.SET_NULL,null=True)
-    data=models.DateTimeField(default=datetime.datetime.now())
+    data=models.DateTimeField(default=timezone.now())
     has_entered=models.BooleanField()
 
 
