@@ -26,7 +26,7 @@ class CardVisitRecord(common):
     '''
 
     user=models.ForeignKey(O2User,on_delete=models.SET_NULL,null=True)
-    data=models.DateTimeField(default=timezone.now())
+    data=models.DateTimeField(default=timezone.now)
     has_entered=models.BooleanField()
 
 

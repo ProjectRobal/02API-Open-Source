@@ -31,8 +31,8 @@ urlpatterns = [
     path('ext/auth/logoutall',  knox_views.LogoutAllView.as_view()),
     #handle path in format api/<path> like api/samples/
     path('accounts/', include('allauth.urls')),
-    path('api/<str:path>/',api),
-    path('api/<str:path>/<str:cmd>',api),
+    path('api/<path:path>',api),
+    #path('api/<str:path>/<str:cmd>',api),
     path('devs/',devsPage),
     path('django-admin/', admin.site.urls),
     path('hello/<str:name>',home_page),

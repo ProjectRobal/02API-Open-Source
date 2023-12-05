@@ -14,7 +14,7 @@ from .device_loader import add_device,remove_device,purge_device,remove_topic,DE
 from .forms import PluginFileForm,DeviceFileForm
 import os
 import json
-from common.fetch_api import Fetch
+from common.fetch_api import Fetch,FetchResult
 
 import logging
 
@@ -30,6 +30,11 @@ def api(request,path,cmd=""):
     if request.method!="GET":
         return HttpResponseNotFound()
     
+    paths=path.rpartition("/")
+
+    cmd=paths[1]
+    path=paths[0]
+    
     try:
     
         logging.info("Got API request through HTTP")
@@ -42,7 +47,7 @@ def api(request,path,cmd=""):
 
         except Topic.DoesNotExist:
             logging.debug("Topic not found")
-            return HttpResponseNotFound()
+            return HttpResponse(str(FetchResult(-12,"Topic not found","")),content_type="application/json")
     
         logging.debug("Found command: "+cmd)
 
@@ -73,12 +78,12 @@ def api(request,path,cmd=""):
         else:
             logging.debug("No key or output provided!")
 
-        return HttpResponseBadRequest()
+        return HttpResponse(str(FetchResult(-12,"Bad request","")),content_type="application/json")
     
     except Exception as e:
         logging.error("I się wywalił")
         logging.error(str(e))
-        return HttpResponseServerError()
+        return HttpResponse(str(FetchResult(-12,"Server error!","")),content_type="application/json")
 
 @login_required(login_url="/login")
 @permission_required("devices.device_rm",login_url="/permf")

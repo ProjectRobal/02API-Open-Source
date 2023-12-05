@@ -1,5 +1,11 @@
 #!/bin/bash
 
+apt update -y
+
+xargs -a /app/packages.txt apt install -y
+
+pip3 install -r /app/requirements.txt --no-cache-dir
+
 echo "Collecing static files"
 python3  manage.py collectstatic --noinput
 
