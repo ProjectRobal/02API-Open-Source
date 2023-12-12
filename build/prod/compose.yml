@@ -103,7 +103,7 @@ services:
         source: ./sql_buckups
         target: /backup
     env_file:
-      - ./conf1/sql.env
+      - ./conf/sql.env
     expose:
       - 5432
     

@@ -46,7 +46,7 @@ elif [ $cmd = "stop" ]; then
 elif [ $cmd = "run" ]; then
 
     docker compose -f compose.yml cp ../../django/src/. web:/app
-    docker compose -f compose.yml -d up
+    docker compose -f compose.yml up -d
 
 elif [ $cmd = "purge" ]; then
 
