@@ -40,9 +40,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["zerotwo.tenere.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl"]
-CORS_ALLOWED_ORIGINS = ["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
-CSRF_TRUSTED_ORIGINS=["https://zerotwo.tenere.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+ALLOWED_HOSTS = ["zerotwo.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl"]
+CORS_ALLOWED_ORIGINS = ["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+CSRF_TRUSTED_ORIGINS=["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
 
 if os.environ.get("DJANGO_MODE")=='DEBUG':
     ALLOWED_HOSTS.extend([os.environ.get('IP_ADDR'),"localhost"])
@@ -106,6 +106,8 @@ AUTHENTICATION_BACKENDS=["allauth.account.auth_backends.AuthenticationBackend"
 
 if bool(os.getenv("USE_EAUTH")):
     INSTALLED_APPS.append('allauth.socialaccount')
+
+    SOCIALACCOUNT_LOGIN_ON_GET=True
 
     try:
         with open("/app/auth.json","r") as data:
