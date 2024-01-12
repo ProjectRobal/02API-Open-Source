@@ -26,13 +26,13 @@ class TopicInterface:
         self.topic=node.topic
         self.node=node
 
-def api(request,path,cmd=""):
+def api(request,path):
     if request.method!="GET":
         return HttpResponseNotFound()
     
     paths=path.rpartition("/")
 
-    cmd=paths[1]
+    cmd=paths[2]
     path=paths[0]
     
     try:

@@ -108,6 +108,7 @@ if bool(os.getenv("USE_EAUTH")):
     INSTALLED_APPS.append('allauth.socialaccount')
 
     SOCIALACCOUNT_LOGIN_ON_GET=True
+    ACCOUNT_DEFAULT_HTTP_PROTOCOL="https"
 
     try:
         with open("/app/auth.json","r") as data:
@@ -183,6 +184,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 LOGIN_REDIRECT_URL="/"
+
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS=True
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

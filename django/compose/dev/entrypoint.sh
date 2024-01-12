@@ -1,11 +1,5 @@
 #!/bin/bash
 
-apt update -y
-
-xargs -a /app/packages.txt apt install -y
-
-pip3 install -r /app/requirements.txt --no-cache-dir
-
 
 function on_close() {
 

@@ -6,35 +6,21 @@ A file that stores all REST API views.
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
+import domena.rest_api_exceptions as exceptions
+
 from knox.views import LoginView as KnoxLoginView
 from knox.auth import TokenAuthentication
 from django.contrib.auth import authenticate,login
+from django.contrib.auth.models import Permission
 
-class AuthSerializer(serializers.Serializer):
-    '''serialize for the user object'''
-    username=serializers.CharField()
-    password=serializers.CharField(
-        style={'input_type':'password'},
-        trim_whitespace=False
-    )
-    def validate(self,attrs):
-        username= attrs.get('username')
-        password= attrs.get('password')
+from auth02.models import O2User
 
-        user = authenticate(
-            request=self.context.get('request'),
-            username=username,
-            password=password
-        )
 
-        if user is None:
-            raise serializers.ValidationError(("Unable to authencticate user with credentials"),code='authentication')
-        
-        attrs['user'] = user
 
 class LoginView(KnoxLoginView):
     serializer_class=AuthSerializer 
@@ -58,3 +44,74 @@ class ExampleView(APIView):
         }
         return Response(content)
     
+class UserView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+
+        uuid=UserUUID(request.data).uuid
+
+        user=request.user
+
+        if len(uuid)>0:
+            try:
+                user=O2User.objects.get(uuid)
+            except O2User.DoesNotExist:
+                return NotFound("User not found")
+       
+        return Response(UserSerializer(user).data)
+    
+class UserPermissionView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+
+        uuid=UserUUID(request.data).uuid
+
+        user=request.user
+
+        if len(uuid)>0:
+            try:
+                user=O2User.objects.get(uuid)
+            except O2User.DoesNotExist:
+                return NotFound("User not found")
+
+        out=[]
+
+        if user.is_superuser:
+            out=Permission.objects.all()
+        else:
+            out=user.user_permissions.all()
+
+        return Response(UserPermissionSerializer(out,many=True).data)
+
+
+class RegisterView(APIView):
+    authentication_classes = ()
+    permission_classes=(AllowAny,)
+
+    def post(self,request,format=None):
+        serializer=UserRegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data
+
+        try:
+            
+            O2User.objects.get(username=user["username"])
+
+            return exceptions.UserExits()
+            
+        except O2User.DoesNotExist:
+            register_user=O2User(
+                username=user["username"],
+                password=user["password"],
+                first_name=user["first_name"],
+                last_name=user["last_name"],
+                email=user["email"]
+            )
+
+            register_user.save()
+        
+        return Response('Succesfully registered user with username: {}'.format(register_user.username))
