@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
 
-class UserUUID(serializers.Serializer):
+class UUIDParser(serializers.Serializer):
     '''get optional uuid'''
     uuid=serializers.CharField(max_length=36,allow_blank=True)
 
@@ -53,3 +53,23 @@ class AuthSerializer(serializers.Serializer):
             raise serializers.ValidationError(("Unable to authencticate user with credentials"),code='authentication')
         
         attrs['user'] = user
+
+
+class DeviceSerializer(serializers.Serializer):
+    name=serializers.CharField(max_length=64)
+    last_login_date=serializers.DateTimeField(required=False)
+    key=serializers.CharField(max_length=32,required=False)
+    status=serializers.IntegerField()
+    version=serializers.CharField(max_length=5)
+
+
+class PluginViewSerializer(serializers.Serializer):
+    name=serializers.CharField(max_length=255,required=True)
+
+class PluginMetaSerializer(serializers.Serializer):
+    name=serializers.CharField(max_length=255)
+    author=serializers.CharField()
+    installation_date=serializers.DateTimeField()
+    creation_date=serializers.DateTimeField()
+    version=serializers.CharField(max_length=32)
+    app_name=serializers.CharField(max_length=64)

@@ -8,8 +8,9 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
-from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework import generics
+from rest_framework import permissions
 
 import domena.rest_api_exceptions as exceptions
 
@@ -20,10 +21,73 @@ from django.contrib.auth.models import Permission
 
 from auth02.models import O2User
 
+import domena.rest_serializers as rest_serializers
+
+from devices.models import Device
+from domena.settings import PLUGINS_LIST
+
+
+
+
+
+class PluginView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self,request, format=None):
+        
+        plugin_name=rest_serializers.PluginViewSerializer(request.data).name
+
+        if not plugin_name in PLUGINS_LIST:
+            return NotFound("No plugin with name {}".format(plugin_name))
+
+        try:
+            meta_data=open("/app/{}/meta.json","r")
+        except OSError: 
+            return NotFound("Cannot find metadata for plugin {}".format(plugin_name))
+
+        meta=rest_serializers.PluginMetaSerializer(meta_data.read())
+
+        meta_data.close()
+
+        return Response(meta.data)
+
+class PluginList(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self,request, format=None):
+        
+        return Response(PLUGINS_LIST)
+
+class DeviceView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, format=None):
+
+        uuid=rest_serializers.UUIDParser(request.data).uuid
+
+        user=request.user
+
+        if len(uuid)>0:
+            try:
+                user=Device.objects.get(uuid)
+            except Device.DoesNotExist:
+                return NotFound("Device not found")
+       
+        return Response(rest_serializers.DeviceSerializer(user).data)
+
+
+class DeviceList(generics.ListCreateAPIView):
+    queryset=Device.objects.all()
+    serializer_class=rest_serializers.DeviceSerializer
+    permission_classes=[permissions.DjangoModelPermissions,]
+
 
 
 class LoginView(KnoxLoginView):
-    serializer_class=AuthSerializer 
+    serializer_class=rest_serializers.AuthSerializer 
     permission_classes=(AllowAny,)
 
     def post(self,request,format=None):
@@ -50,7 +114,7 @@ class UserView(APIView):
 
     def get(self, request, format=None):
 
-        uuid=UserUUID(request.data).uuid
+        uuid=rest_serializers.UUIDParser(request.data).uuid
 
         user=request.user
 
@@ -60,7 +124,7 @@ class UserView(APIView):
             except O2User.DoesNotExist:
                 return NotFound("User not found")
        
-        return Response(UserSerializer(user).data)
+        return Response(rest_serializers.UserSerializer(user).data)
     
 class UserPermissionView(APIView):
     authentication_classes = (TokenAuthentication,)
@@ -68,7 +132,7 @@ class UserPermissionView(APIView):
 
     def get(self, request, format=None):
 
-        uuid=UserUUID(request.data).uuid
+        uuid=rest_serializers.UUIDParser(request.data).uuid
 
         user=request.user
 
@@ -85,7 +149,7 @@ class UserPermissionView(APIView):
         else:
             out=user.user_permissions.all()
 
-        return Response(UserPermissionSerializer(out,many=True).data)
+        return Response(rest_serializers.UserPermissionSerializer(out,many=True).data)
 
 
 class RegisterView(APIView):
@@ -93,7 +157,7 @@ class RegisterView(APIView):
     permission_classes=(AllowAny,)
 
     def post(self,request,format=None):
-        serializer=UserRegisterSerializer(data=request.data)
+        serializer=rest_serializers.UserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
 

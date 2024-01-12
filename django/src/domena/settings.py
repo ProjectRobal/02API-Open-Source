@@ -50,6 +50,8 @@ if os.environ.get("DJANGO_MODE")=='DEBUG':
     CSRF_TRUSTED_ORIGINS.extend(["http://"+os.environ.get('IP_ADDR'),"http://localhost"])
 
 # Application definition
+    
+PLUGINS_LIST=scan_for_plugin()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -68,7 +70,7 @@ INSTALLED_APPS = [
     'knox',
     'allauth',
     'allauth.account'
-] + scan_for_plugin()+['mqtt']
+] + PLUGINS_LIST+['mqtt']
 
 MQTT_SERVER="mqtt"
 MQTT_USER=os.environ.get('MQTT_USER')
@@ -200,6 +202,7 @@ USE_TZ = True
 
 DEFAULT_SESSION_TIME=360
 
+api_settings.DATETIME_FORMAT='iso-8601'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
