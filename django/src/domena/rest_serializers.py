@@ -73,3 +73,16 @@ class PluginMetaSerializer(serializers.Serializer):
     creation_date=serializers.DateTimeField()
     version=serializers.CharField(max_length=32)
     app_name=serializers.CharField(max_length=64)
+
+
+class TopicSerializer(serializers.Serializer):
+    path=serializers.CharField(max_length=255)
+    node=serializers.CharField(max_length=255)
+
+class FetchRequestSerializer(serializers.Serializer):
+    topic=serializers.CharField()
+    data = serializers.DictField(child=serializers.CharField())
+
+class FetchNodeInfoSerializer(serializers.Serializer):
+    topic=serializers.CharField(allow_null=True)
+    node_name=serializers.CharField(allow_null=True)

@@ -6,7 +6,7 @@ A file that stores all REST API views.
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound,ParseError
 from rest_framework.views import APIView
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework import generics
@@ -23,11 +23,154 @@ from auth02.models import O2User
 
 import domena.rest_serializers as rest_serializers
 
+from common.fetch_api import Fetch
+
 from devices.models import Device
 from domena.settings import PLUGINS_LIST
 
+from mqtt.models import Topic,TopicBeamer,TopicCatcher
+from nodes.models import PublicNodes,PublicNode
 
 
+class TopicList(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self,request, format=None):
+
+        topics=rest_serializers.TopicSerializer(Topic.objects.all(),many=True).data
+        beamer=rest_serializers.TopicSerializer(TopicBeamer.objects.all(),many=True).data
+        catcher=rest_serializers.TopicSerializer(TopicCatcher.objects.all(),many=True).data
+
+        for topic in topics:
+            topic["type"]="topic"
+
+        for topic in beamer:
+            topic["type"]="beamer"
+        
+        for topic in catcher:
+            topic["type"]="catcher"
+
+        all_topics=topics+beamer+catcher
+
+        return Response(all_topics)
+    
+
+
+def find_node(path:str)->PublicNode:
+        try:
+            node_topic=Topic.objects.get(path=path).node
+        except Topic.DoesNotExist:
+            try:
+                node_topic=TopicBeamer.objects.get(path=path).node
+            except TopicBeamer.DoesNotExist:
+                try:
+                    node_topic=TopicCatcher.objects.get(path=path).node
+                except TopicCatcher.DoesNotExist:
+                    return None
+        
+        return PublicNodes.get_obj(node_topic)
+
+    
+class NodeInfo(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def format_output(self,node:PublicNode):
+        output={}
+            
+        for field in node._meta.get_fields():
+            output[field.name]=str(field.help_text)
+
+        return output
+
+    def get(self,request,format=None):
+        data_input=rest_serializers.FetchNodeInfoSerializer(request.data)
+
+        if data_input.topic is not None:
+            node=find_node(data_input.topic)
+
+            if node is None:
+                return NotFound("No node found with specified topic")
+            
+            return Response(str(self.format_output(node)))
+        
+        if data_input.node_name is not None:
+            node=PublicNodes.get_obj(data_input.node_name)
+
+            if node is None:
+                return NotFound("No node found with specified name") 
+
+            return Response(str(self.format_output(node)))           
+        
+        return ParseError("No valid topic or node provided")
+    
+class NodeView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+
+    def post(self,request, format=None):
+        data_input=rest_serializers.FetchRequestSerializer(request.data)
+
+        path:str=data_input.topic
+        data:dict=data_input.data
+
+        node_obj=find_node(path)
+
+        if node_obj is None:
+            return NotFound("No node found for specific path!")
+
+        result=Fetch(None,node_obj,path).post(data)
+
+        return Response(str(result))
+
+
+    def get(self,request,fromat=None):
+        data_input=rest_serializers.FetchRequestSerializer(request.data)
+
+        path:str=data_input.topic
+        data:dict=data_input.data
+
+        node_obj=find_node(path)
+
+        if node_obj is None:
+            return NotFound("No node found for specific path!")
+
+        result=Fetch(None,node_obj,path).get(data)
+
+        return Response(str(result))
+
+    def put(self,request,format=None):
+        data_input=rest_serializers.FetchRequestSerializer(request.data)
+
+        path:str=data_input.topic
+        data:dict=data_input.data
+
+        node_obj=find_node(path)
+
+        if node_obj is None:
+            return NotFound("No node found for specific path!")
+
+        result=Fetch(None,node_obj,path).mod(data)
+
+        return Response(str(result))
+    
+    def delete(self,request,format=None):
+        data_input=rest_serializers.FetchRequestSerializer(request.data)
+
+        path:str=data_input.topic
+        data:dict=data_input.data
+
+        node_obj=find_node(path)
+
+        if node_obj is None:
+            return NotFound("No node found for specific path!")
+
+        result=Fetch(None,node_obj,path).pop(data)
+
+        return Response(str(result))
+        
 
 
 class PluginView(APIView):

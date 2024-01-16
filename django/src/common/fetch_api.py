@@ -24,6 +24,10 @@ class FetchAuth:
     '''
 
     def check(dev_key:str or None,access:Access.choices,topic:Topic)->bool:
+        
+        if dev_key is None:
+            # add permission check for user?
+            return True
 
         try:
         

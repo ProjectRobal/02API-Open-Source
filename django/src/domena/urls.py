@@ -34,6 +34,11 @@ urlpatterns = [
     path('ext/auth/perms',rest.UserPermissionView.as_view()),
     path('ext/devls',rest.DeviceList.as_view()),
     path('ext/dev',rest.DeviceView.as_view()),
+    path('ext/pluginls',rest.PluginList.as_view()),
+    path('ext/pluginmeta',rest.PluginView.as_view()),
+    path('ext/node',rest.NodeView.as_view()),
+    path('ext/nodeinfo',rest.NodeInfo.as_view()),
+    path('ext/topicls',rest.TopicList.as_view()),
 
     #handle path in format api/<path> like api/samples/
     path('accounts/', include('allauth.urls')),
