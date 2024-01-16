@@ -1,0 +1,13 @@
+image: docker/docker:latest
+
+services:
+  - docker:dind
+
+before_script:
+  - docker info
+  - docker compose --version
+
+build image:
+  stage: build
+  script:
+    - ./prod.sh run
