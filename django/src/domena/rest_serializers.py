@@ -5,6 +5,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 from rest_framework import serializers
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from django.contrib.auth import authenticate
 
 
 class UUIDParser(serializers.Serializer):
