@@ -85,7 +85,15 @@ class Fetch:
     def __init__(self,dev_id:str=None,model:NodeEntry=None,topic:Topic=None) -> None:
         self.model=model
         self.dev_id=dev_id
-        self.topic=topic     
+        self.topic=topic    
+
+    def getDevice(self)->Device|None:
+        try:
+
+            return Device.objects.get(key=self.dev_id)
+
+        except Device.DoesNotExist:
+            return None 
     
     def match(self,request:str,data:dict|None)->FetchResult:
 

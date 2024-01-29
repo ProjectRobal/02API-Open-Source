@@ -98,37 +98,37 @@ def on_message(mqtt_client:mqtt.Client, userdata, msg:mqtt.MQTTMessage):
 
         key=None
 
-        out=None
-
         if "key" in data:
                key=data["key"]
-               out=key
     
-        if "out" in data:
-               out=data["out"]
-
         if "data" in data:
                data=data["data"]
         else:
                data={}
-                 
-        fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
-
-        result=fetch.match(cmd,data)
 
         if key is not None:
-            # return data
-            mqtt_client.publish(paths[0]+"/"+str(out),str(result))
 
-            logging.debug("Answer at: "+paths[0]+"/"+str(key))
-            logging.debug("With result: "+str(result))
+            fetch=Fetch(key,PublicNodes.get_obj(check.node),check)
+
+            result=fetch.match(cmd,data)
+
+            dev=fetch.getDevice()
+            
+            if dev is not None:
+                # return data
+                return_topic:str="/devs/"+dev.name+"/output"
+                mqtt_client.publish(return_topic,str(result))
+
+                logging.debug("Answer at: "+return_topic)
+                logging.debug("With result: "+str(result))
+            else:
+                logging.error("Invalid device key!")
         else:
                logging.debug("No key or output provided!")
 
     except Exception as e:
             logging.error("I się wywalił")
             logging.debug(str(e))
-    #retrive 
 
 def on_unsubscribe(client, userdata, mid):
     logging.debug("Unsubscribed: ")
