@@ -3,7 +3,7 @@ A file that stores all REST API views.
 
 '''
 
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound,ParseError
@@ -33,7 +33,7 @@ from nodes.models import PublicNodes,PublicNode
 
 
 class TopicList(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def get(self,request, format=None):
@@ -73,7 +73,7 @@ def find_node(path:str)->PublicNode:
 
     
 class NodeInfo(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def format_output(self,node:PublicNode):
@@ -106,7 +106,7 @@ class NodeInfo(APIView):
         return ParseError("No valid topic or node provided")
     
 class NodeView(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
 
@@ -174,7 +174,7 @@ class NodeView(APIView):
 
 
 class PluginView(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def get(self,request, format=None):
@@ -196,7 +196,7 @@ class PluginView(APIView):
         return Response(meta.data)
 
 class PluginList(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def get(self,request, format=None):
@@ -204,7 +204,7 @@ class PluginList(APIView):
         return Response(PLUGINS_LIST)
 
 class DeviceView(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
@@ -241,7 +241,7 @@ class LoginView(KnoxLoginView):
         return super().post(request,format=None)
 
 class ExampleView(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
@@ -252,7 +252,7 @@ class ExampleView(APIView):
         return Response(content)
     
 class UserView(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
@@ -270,7 +270,7 @@ class UserView(APIView):
         return Response(rest_serializers.UserSerializer(user).data)
     
 class UserPermissionView(APIView):
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
