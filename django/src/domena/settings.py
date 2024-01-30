@@ -207,7 +207,10 @@ DEFAULT_SESSION_TIME=360
 api_settings.DATETIME_FORMAT='iso-8601'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'knox.auth.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        )
 }
 
 REST_KNOX = {
