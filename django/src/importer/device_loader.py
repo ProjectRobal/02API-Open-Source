@@ -8,13 +8,9 @@ Example index.json
 
 {
 
-“service_rev”: “1.0” - wersja serwera,
-
-“version”:”1.0” - wersja 02API,
+“version”:”1.0.0” - wersja serwera,
 
 “device_rev”: “1.0.0” - wersja urządzenia,
-
-“node_file”:”nodes.json” - nazwa pliku z nodami, ( domyślnie nodes.json)
 
 “name”: ”dev1” - nazwa urządzenia,
 
@@ -44,6 +40,24 @@ Example index.json
 
 }
 
+Working of script:
+
+1.Load archive
+    - Unpack it
+2.Verified it
+    - check if required files are presented
+    - check if versions are in tact
+3.If server version mismatch prompt user about it and ask him to continue:
+    - no : abort and remove unpacked files
+    - yes : continue
+4. Check if device with specified name exits:
+    - no : continue
+    - yes : ask user about it and ask if he wish to overwrite it only if device has higher version than existing device
+5. If so continue
+6. Generate nodes
+7. Add appropiate acl records if they don't exist
+8. Prompt user about succesful process
+
 '''
 
 import datetime
@@ -61,7 +75,7 @@ from ..devices.models import Device
 from mqtt.models import Topic
 from nodeacl.models import NodeACL
 
-from ..devices import node_generator
+from . import node_generator
 
 DEVICE_TMP_FILE="tmp/device.tmp"
 
@@ -70,17 +84,116 @@ DEVICE_TMP_ARCHIVE="tmp/dev_unpacked"
 # zero two device extension
 DEVICE_ARCHIVE_EXTENSION="ztd"
 
+
+required_index_field:list[str]=['name','version','device_rev','topics']
+
+required_nodes_field:list[str]=['nodes']
+
+
+
+def version_to_number(ver:str)->list[int]:
+    '''
+    A function that converts version string in format:
+    a.b.c into list of numbers
+    '''
+
+    numbers:list[int]=[int(x) for x in ver.split('.')]
+
+    return numbers
+
+def version_difference(ver1:list[int],ver2:list[int])->list[int]:
+
+    output:list[int]=[]
+
+    for v1,v2 in zip(ver1,ver2):
+        output.append(v1-v2)
+
+    return output
+
+
+def compare_versions(ver1:list[int],ver2:list[int])->int:
+
+    '''
+        Return 0 when both versions are the same,
+        Return 1 when first verion is ahead of second version
+        Return -1 when first version is behind of second version
+    '''
+
+    diff=version_difference(ver1,ver2)
+
+    output=0
+
+    for d in diff:
+        if d>0:
+            output=1
+        elif d<0:
+            output=-1
+
+    return output
+
 def clean_temporary():
     shutil.rmtree('tmp', ignore_errors=True)
 
-def version_to_number(ver:str)->int:
-    '''
-    A function that converts version string in format:
-    a.b.c into number abc
-    returns -1 if string version has invalid format
-    '''
+def unpack_and_verify_archive()->[int,str]:
+    try:
 
-    return ver[0]*100+ver[2]*10+ver[4]
+        logging.info("Unpacking the ZTD archive into temporary")
+
+        shutil.unpack_archive(
+            filename=DEVICE_TMP_FILE,
+            extract_dir=DEVICE_TMP_ARCHIVE,
+            format='zip'
+        )
+
+        logging.info("Search for index.json")
+
+        # check if meta file exists
+        if not os.path.exists(DEVICE_TMP_ARCHIVE+'/index.json'):
+            logging.error("No valid index.json file")
+            raise ValueError([-1,"No valid index.json file"])
+        
+        if not os.path.exists(DEVICE_TMP_ARCHIVE+'/nodes.json'):
+            logging.error("No valid nodes.json file")
+            raise ValueError([-2,"No valid nodes.json file"])
+        
+
+        with open(DEVICE_TMP_ARCHIVE+'/index.json','r') as file:
+            index:dict=json.load(file)
+
+            for req in required_index_field:
+                if not req in index.keys():
+                    raise ValueError([-3,"No key in index.json: {}".format(req)])
+                
+        with open(DEVICE_TMP_ARCHIVE+'/nodes.json','r') as file:
+            nodes:dict=json.load(file)
+
+            for req in required_nodes_field:
+                if not req in nodes.keys():
+                    raise ValueError([-3,"No key in index.json: {}".format(req)])
+                
+        # check server version
+        with open(DEVICE_TMP_ARCHIVE+'/index.json','r') as file:
+            index:dict=json.load(file)
+
+            version=version_to_number(index["version"])
+            server_version=version_to_number(SERVER_VERSION)
+
+            if compare_versions(version,server_version) != 0:
+                return [1,"Device server version and current server version mismatch"]
+        
+
+        return [0,"OK"]
+        
+    except ValueError as e:
+        
+        clean_temporary()
+        if type(e) is list:
+            return e
+        
+        logging.error("Cannot open archive: "+str(e))
+        return [-10,"Cannot open archive:"+str(e)]
+
+
 
 def load_device(obj)->Device or None:
     '''
@@ -207,6 +320,8 @@ def remove_topic(path:str)->bool:
     
     except Topic.DoesNotExist:
         return False
+    
+
 
 def add_device()->tuple[bool,str]:
 
@@ -232,12 +347,12 @@ def add_device()->tuple[bool,str]:
                   
         obj=json.load(file)
 
-        if not obj["service_rev"]==SERVER_VERSION:
+        if not obj["version"]==SERVER_VERSION:
             logging.error("Server version mismatch")
             clean_temporary()
             return (False,"Server version mismatch")
         
-        if not obj["version"]==O2_API_VERSION:
+        if not obj["device_rev"]==O2_API_VERSION:
             logging.error("02API version mismatch")
             clean_temporary()
             return (False,"02API version mismatch")
