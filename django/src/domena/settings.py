@@ -83,6 +83,8 @@ DBBACKUP_STORAGE_OPTIONS = {'location': '/app/backups'}
 
 AUTH_USER_MODEL = 'auth02.O2User' 
 
+NODES_IMPORT_PATH="/app/nodes/imported/"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
