@@ -16,10 +16,15 @@ class NodeRefernece(common):
 		from server.
 
 		path is relative to node's import path
+
+		major, minor and patch version holds information about node version and whether to overwrite it or not.
 	
 	'''
 	path=models.CharField(max_length=255)
 	node_name=models.CharField(max_length=255,unique=True)
+	major_version=models.PositiveIntegerField()
+	minor_version=models.PositiveIntegerField()
+	patch_version=models.PositiveIntegerField()
 	ref_number=models.IntegerField(default=1)
 
 

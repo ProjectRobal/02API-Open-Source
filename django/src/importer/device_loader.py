@@ -57,11 +57,11 @@ from domena.settings import SERVER_VERSION
 from common.fetch_api import O2_API_VERSION
 from common.acess_levels import Access
 
-from .models import Device
+from ..devices.models import Device
 from mqtt.models import Topic
 from nodeacl.models import NodeACL
 
-from . import node_generator
+from ..devices import node_generator
 
 DEVICE_TMP_FILE="tmp/device.tmp"
 
