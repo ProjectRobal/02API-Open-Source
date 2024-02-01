@@ -71,11 +71,12 @@ from domena.settings import SERVER_VERSION
 from common.fetch_api import O2_API_VERSION
 from common.acess_levels import Access
 
-from ..devices.models import Device
+from devices.models import Device
 from mqtt.models import Topic
 from nodeacl.models import NodeACL
 
-from . import node_generator
+from importer.models import NodeRefernece
+import importer.node_generator as node_generator
 
 DEVICE_TMP_FILE="tmp/device.tmp"
 
@@ -88,6 +89,25 @@ DEVICE_ARCHIVE_EXTENSION="ztd"
 required_index_field:list[str]=['name','version','device_rev','topics']
 
 required_nodes_field:list[str]=['nodes']
+
+'''
+
+Device load sequence:
+
+unpack_and_verify_archive() - / upload REST topic
+add_device() - / add_device REST topic
+generate_nodes() -
+generate_acl_and_topics() - / add_device2 REST topic
+# on failure:
+    remove_device()
+
+
+Device remove sequence:
+remove_device()
+remove_device_associated_nodes()
+remove_topics_associated_with_removed_nodes()
+
+'''
 
 
 
@@ -131,8 +151,46 @@ def compare_versions(ver1:list[int],ver2:list[int])->int:
 
     return output
 
+
 def clean_temporary():
     shutil.rmtree('tmp', ignore_errors=True)
+
+
+def load_device(obj)->Device or None:
+    '''
+    Add device from json from index.json
+    '''
+    try:
+
+        dev_ver:list[int]=version_to_number(obj["device_rev"])
+
+        try:
+            dev=Device.objects.get(name=obj["name"])
+
+            curr_dev_ver:list[int]=dev.version_int_list()
+            
+            if compare_versions(dev_ver,curr_dev_ver)<=0:
+                logging.error("Cannot overwrite device with lesser or similar version!")
+                return None
+                        
+        except Device.DoesNotExist:
+            dev=Device()
+
+        dev.name=obj["name"]
+        if "device_key" in obj.keys():
+            dev.key=obj["device_key"]
+
+        dev.major_version=dev_ver[0]
+        dev.minor_version=dev_ver[1]
+        dev.patch_version=dev_ver[2]
+        
+    except Exception as e:
+        logging.error("Device json is invalid!")
+        logging.error(str(e))
+        return None
+
+    return dev
+
 
 def unpack_and_verify_archive()->[int,str]:
     try:
@@ -194,34 +252,72 @@ def unpack_and_verify_archive()->[int,str]:
         return [-10,"Cannot open archive:"+str(e)]
 
 
+def generate_nodes(dev:Device)->[int,str]:
 
-def load_device(obj)->Device or None:
-    '''
-    Add device from json from index.json
-    '''
     try:
+    
+        with open(DEVICE_TMP_ARCHIVE+'/nodes.json','r') as file:
+                nodes:dict=json.load(file)["nodes"]
 
-        try:
-            dev=Device.objects.get(name=obj["name"])
+                create_node=False
 
-            if version_to_number(dev.version)<=version_to_number(obj["device_rev"]):
-                logging.error("Cannot overwrite device with lesser version")
-                return None
+                for node in nodes.keys():
+                    # check if node with the same name exits
+
+                    try:
                         
-        except Device.DoesNotExist:
-            dev=Device()
+                        ref:NodeRefernece=NodeRefernece.objects.get(node_name=node)
 
-        dev.name=obj["name"]
-        if "device_key" in obj.keys():
-            dev.key=obj["device_key"]
-        dev.version=obj["device_rev"]
+                        ref.ref_number+=1
+
+                        dev_ver:list[int]=dev.version_int_list()
+                        ref_ver:list[int]=ref.version_int_list()
+                        
+                        if compare_versions(dev_ver,ref_ver)>0:
+
+                            ref.major_version=dev_ver[0]
+                            ref.minor_version=dev_ver[1]
+                            ref.patch_version=dev_ver[2]
+                            create_node=True
+
+
+                    except NodeRefernece.DoesNotExist:
+                        # generate node if not exist
+
+                        ref=NodeRefernece()
+
+                        ref.ref_device=dev
+
+                        ref.ref_number=1
+                        ref.node_name=node
+                        ref.path=node_buff
+                        create_node=True
+                    
+                    if create_node:
+                        node_buff:str=node_generator.make_node(node,nodes[node])
+
+                        node_path:str=node_generator.OUTPUT_NODE_PATH+"/"+node+".py"
+
+                        if node_path is None:
+                            raise ValueError([-4,"Error in node generation!"])
+
+                        file=open(node_path,"w+")
+
+                        file.write(node_buff)
+
+                        file.close()
+                    
+                    ref.save()
+                    
+    except ValueError as e:
+        clean_temporary()
+        if type(e) is list:
+            return e
         
-    except Exception as e:
-        logging.error("Device json is invalid!")
-        logging.error(str(e))
-        return None
+        logging.error("Cannot generate nodes: "+str(e))
+        return [-10,"Cannot generate nodes:"+str(e)]
 
-    return dev
+
 
 def add_topics(topics:dict)->tuple[list[Topic]|None,list[NodeACL]|None]:
     paths:list[Topic]=[]
@@ -261,6 +357,10 @@ def add_topics(topics:dict)->tuple[list[Topic]|None,list[NodeACL]|None]:
     except (ValueError,Device.DoesNotExist) as e:
         logging.error(str(e))
         return (None,None)
+
+
+
+# device removed related functions:
 
 
 def remove_device(name:str)->bool:
@@ -320,111 +420,3 @@ def remove_topic(path:str)->bool:
     
     except Topic.DoesNotExist:
         return False
-    
-
-
-def add_device()->tuple[bool,str]:
-
-    added_nodes:list[str]=[]
-        
-    try:
-        logging.info("Unpacking the ZTD archive into temporary")
-        shutil.unpack_archive(
-            filename=DEVICE_TMP_FILE,
-            extract_dir=DEVICE_TMP_ARCHIVE,
-            format='zip'
-        )
-
-        logging.info("Search for index.json")
-
-        # check if meta file exists
-        if not os.path.exists(DEVICE_TMP_ARCHIVE+'/index.json'):
-            logging.error("No valid index.json file")
-            clean_temporary()
-            return (False,"No valid index.json file")
-        
-        file=open(DEVICE_TMP_ARCHIVE+'/index.json')
-                  
-        obj=json.load(file)
-
-        if not obj["version"]==SERVER_VERSION:
-            logging.error("Server version mismatch")
-            clean_temporary()
-            return (False,"Server version mismatch")
-        
-        if not obj["device_rev"]==O2_API_VERSION:
-            logging.error("02API version mismatch")
-            clean_temporary()
-            return (False,"02API version mismatch")
-        
-        dev=load_device(obj)
-        
-        if dev is None:
-            logging.error("Invalid index.json file")
-            clean_temporary()
-            return (False,"Invalid index.json file")
-        
-        if "node_file" in obj.keys():
-            node_file=obj["node_file"]
-        else:
-            logging.info("No node_file key switching to default node file")
-            node_file="nodes.json"
-
-        logging.info("Search node file ")
-
-        # check if node file exists
-        if not os.path.exists(DEVICE_TMP_ARCHIVE+'/'+node_file):
-            logging.error("No valid node file file, cannot find: "+node_file)
-            clean_temporary()
-            return (False,"No valid node file file, cannot find: "+node_file)
-        
-
-        logging.info("Generating node files ")
-
-        # list that stores names of generated nodes
-        added_nodes:list[str]=node_generator.node_generator(DEVICE_TMP_ARCHIVE+'/'+node_file)
-        
-        if len(added_nodes)==0:
-            logging.error("No nodes were added")
-            clean_temporary()
-            return (False,"No nodes were added")
-        
-
-        logging.info("Adding ACL and topics rules")
-
-        topics=obj["topics"]
-
-        paths,acls=add_topics(topics)
-
-        if paths is None or acls is None:
-            logging.error("No topics and acls were added")
-            node_generator.purge_nodes(added_nodes)
-            clean_temporary()
-            return (False,"No topics and acls were added")
-
-
-        logging.info("Saving device instance")
-
-        dev.save()
-
-        logging.info("Saving topics instance")
-
-        for topic in paths:
-            topic.save()
-
-        logging.info("Saving nodes instance")
-
-        for acl in acls:
-            if acl.device==None:
-                acl.device=dev
-            acl.save()
-
-        logging.info("Device has been added!")
-
-        return (True,"Device has been added")
-
-    except ValueError as e:
-        logging.error("Cannot open archive: "+str(e))
-        node_generator.purge_nodes(added_nodes)
-        clean_temporary()
-        return (False,"Cannot open archive: "+str(e))
