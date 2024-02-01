@@ -420,3 +420,7 @@ def remove_topic(path:str)->bool:
     
     except Topic.DoesNotExist:
         return False
+    
+
+def add_device():
+    pass

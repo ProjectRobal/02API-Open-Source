@@ -23,7 +23,7 @@ class NodeRefernece(common):
 	
 	'''
 	path=models.CharField(max_length=255)
-	ref_device=models.ForeignKey(Device,on_delete=models.SET_NULL)
+	ref_device=models.ForeignKey(Device,on_delete=models.SET_NULL,null=True)
 	node_name=models.CharField(max_length=255,unique=True)
 	major_version=models.PositiveIntegerField()
 	minor_version=models.PositiveIntegerField()

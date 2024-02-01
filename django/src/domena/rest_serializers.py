@@ -87,4 +87,4 @@ class FetchRequestSerializer(serializers.Serializer):
 
 class FetchNodeInfoSerializer(serializers.Serializer):
     topic=serializers.CharField(allow_null=True)
-    node_name=serializers.CharField(allow_null=True)
+    node_name=serializers.CharField(allow_null=True)    

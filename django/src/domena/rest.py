@@ -22,6 +22,7 @@ from django.contrib.auth.models import Permission
 from auth02.models import O2User
 
 import domena.rest_serializers as rest_serializers
+from rest_framework.parsers import FileUploadParser
 
 from common.fetch_api import Fetch
 
@@ -30,6 +31,25 @@ from domena.settings import PLUGINS_LIST
 
 from mqtt.models import Topic,TopicBeamer,TopicCatcher
 from nodes.models import PublicNodes,PublicNode
+
+import importer.device_loader as device_loader
+
+import json
+
+
+class UploadDevicePackage(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    parser_classes = [FileUploadParser]
+
+    def post(self,request, format=None):
+        file_obj = request.FILES['file']
+
+        print(file_obj)
+        
+        return Response(str(file_obj.file.read()))
+
 
 
 class TopicList(APIView):
