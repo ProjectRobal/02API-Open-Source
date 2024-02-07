@@ -7,6 +7,6 @@ class SensorBoard(PublicNode):
     _name="sensorboard"
 
     temperature=models.FloatField()
-    humidity=models.FloatField
+    humidity=models.FloatField()
     oxygen=models.FloatField()
     dust=models.FloatField()
