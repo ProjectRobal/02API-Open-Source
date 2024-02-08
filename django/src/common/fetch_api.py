@@ -97,6 +97,8 @@ class Fetch:
     
     def match(self,request:str,data:dict|None)->FetchResult:
 
+        request=request.lower()
+
         if request in self.requests:
             return self.requests[request](self,data)
         else:

@@ -322,18 +322,7 @@ class TopicList(APIView):
 
 
 def find_node(path:str)->PublicNode:
-        try:
-            node_topic=Topic.objects.get(path=path).node
-        except Topic.DoesNotExist:
-            try:
-                node_topic=TopicBeamer.objects.get(path=path).node
-            except TopicBeamer.DoesNotExist:
-                try:
-                    node_topic=TopicCatcher.objects.get(path=path).node
-                except TopicCatcher.DoesNotExist:
-                    return None
-        
-        return PublicNodes.get_obj(node_topic)
+        return PublicNodes.get_obj(path)
 
     
 class NodeInfo(APIView):
@@ -348,8 +337,11 @@ class NodeInfo(APIView):
 
         return output
 
-    def get(self,request,format=None):
-        data_input=rest_serializers.FetchNodeInfoSerializer(request.data)
+    def post(self,request,format=None):
+        data_input=rest_serializers.FetchNodeInfoSerializer(data=request.data)
+
+        data_input.is_valid(raise_exception=True)
+
 
         if data_input.topic is not None:
             node=find_node(data_input.topic)
@@ -358,16 +350,15 @@ class NodeInfo(APIView):
                 raise NotFound("No node found with specified topic")
             
             return Response(str(self.format_output(node)))
-        
-        if data_input.node_name is not None:
-            node=PublicNodes.get_obj(data_input.node_name)
+            
+        node=PublicNodes.get_obj(data_input.node_name)
 
             if node is None:
                 raise NotFound("No node found with specified name") 
 
-            return Response(str(self.format_output(node)))           
-        
-        return ParseError("No valid topic or node provided")
+        return Response(str(self.format_output(node)))
+         
+            
     
 class NodeView(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)
@@ -431,19 +422,22 @@ class NodeView(APIView):
         if node_obj is None:
             raise NotFound("No node found for specific path!")
 
-        result=Fetch(None,node_obj,path).pop(data)
+        result=Fetch(None,node_obj,path).match(request,data)
 
         return Response(str(result))
-        
 
 
 class PluginView(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
-    def get(self,request, format=None):
+    def post(self,request, format=None):
         
-        plugin_name=rest_serializers.PluginViewSerializer(request.data).name
+        plugin_name=rest_serializers.PluginViewSerializer(data=request.data)
+
+        plugin_name.is_valid(raise_exception=True)
+
+        plugin_name=plugin_name.name
 
         if not plugin_name in PLUGINS_LIST:
             raise NotFound("No plugin with name {}".format(plugin_name))
@@ -471,9 +465,13 @@ class DeviceView(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
 
-        uuid=rest_serializers.UUIDParser(request.data).uuid
+        uuid=rest_serializers.UUIDParser(data=request.data)
+
+        uuid.is_valid(raise_exception=True)
+
+        uuid=uuid.validated_data["uuid"]
 
         user=request.user
 

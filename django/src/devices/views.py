@@ -90,6 +90,34 @@ def api(request,path):
         logging.error(str(e))
         return HttpResponse(str(FetchResult(-12,"Server error!","")),content_type="application/json")
 
+
+@login_required(login_url="/login")
+@permission_required("devices.device_add",login_url="/permf")
+def node_view(request):
+
+    if request.method == "GET":   
+
+        if not "node" in request.GET:
+            return HttpResponseBadRequest()
+        
+        obj=PublicNodes.get_obj(request.GET["node"])
+
+        if obj is None:
+            logging.error("Not found node with name: "+str(request.GET["node"]))
+            return HttpResponseNotFound()
+        
+        # we exclude fields about creation date and modification date
+        params_list_count:list=[x.name for x in obj._meta.get_fields()]
+        logging.debug("Got "+str(params_list_count))
+
+        for rem in ["created_date","modified_date","uuid"]:
+            params_list_count.remove(rem)
+        
+        return render(request,"/app/devices/templates/nodes_view.html",context={"node":request.GET["node"],"node_params":params_list_count})
+    
+    return HttpResponseBadRequest()
+
+
 @login_required(login_url="/login")
 @permission_required("devices.device_rm",login_url="/permf")
 def device_rm(request):

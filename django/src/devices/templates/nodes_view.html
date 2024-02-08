@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>{{node}}</title>
+</head>
+
+<style>
+
+    .value_block
+    {
+        display: flex;
+        flex-direction: row;
+        width: 80%;
+        height: fit-content;
+    }
+
+    .value_subblock
+    {
+        display:flex;
+        flex-direction: column;
+        width:fit-content;
+        padding-left:5px;
+        padding-right:5px;
+        padding-top:10px;
+        padding-bottom:10px;
+        background-color:var(--primary-color);
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .chart_block
+    {
+        background-color:var(--secondary-color);
+        width:100%;
+        height: 100%;
+        padding:2px;
+    }
+
+    #node_space
+    {
+        display:flex;
+        flex-direction: column;
+        gap:10px;
+        width:100%;
+        height:100vh;
+        margin-left:5px;
+        margin-right:5px;
+    }
+    
+    #node_data_list
+    {
+        padding-top:200px;
+        display:flex;
+        width:100%;
+        height:100%;
+        justify-content:center;
+        overflow-y:auto;
+        flex-direction: column;
+        gap:10px;
+    }
+
+    .chart_canvas
+    {
+        display: flex;
+        justify-content:center;
+        width:100%;
+        height:100%;
+    }
+
+</style>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div id="node_space">
+
+        <h1>{{node}}</h1>
+
+        <div id="node_data_list">
+
+        {% for param in node_params %}
+
+            <div class="value_block">
+
+                <div class="value_subblock">
+                    <p id="chart_name{{ forloop.counter0 }}"></p>
+                    <div>
+                        <label>Current value:</label>
+                        <input type="text" id="value{{ forloop.counter0 }}">
+                    </div>
+                </div>
+
+                <div class="chart_block">
+                    <canvas id="chart{{ forloop.counter0 }}"  class="chart_canvas"></canvas>                    
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+        </div>
+
+    </div>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+<script>
+
+    // it will holds data from node
+    const DataList=Array();
+    const Charts=Array();
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function show_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="flex";
+    }
+    
+    function hide_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="none";
+    }
+
+    function updateData()
+    {
+
+    }
+
+
+    function initCharts()
+    {
+        // create array for each plot
+        for(let i=0;i<4;++i)
+        {
+            DataList.push(new Array({x:0,y:0}))
+        }
+
+        for(let i=0;i<4;++i)
+        {
+
+            Charts.push(new Chart("chart"+i, {
+                type: "line",
+                data: {datasets: [{
+                    data: [DataList[i]]
+                }]},
+                options: {
+                    devicePixelRatio:2,
+                    responsive:true,
+                    aspectRatio:4
+                }
+            }))
+
+        }
+    }
+
+    function getData()
+    {
+        const csrftoken = getCookie('csrftoken');
+        const sessionid = getCookie('session-id');
+
+        fetch("/ext/node",
+        {
+            method:"POST",
+            headers: { 'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken},
+            credentials: 'include',
+            mode:"cors",
+            body: JSON.stringify({
+                request:"get",
+                node:"{{node}}",
+                data:{}
+            })
+
+        }).then((response)=>{
+            response.json()
+        }).then((response)=>{
+            console.log(response)
+        })
+
+    }
+
+    initCharts();
+
+
+    setInterval(getData,250);
+
+        
+    </script>
+
+</html>
