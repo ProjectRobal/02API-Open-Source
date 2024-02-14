@@ -96,7 +96,7 @@ class TopicSerializer(serializers.Serializer):
 class FetchRequestSerializer(serializers.Serializer):
     node = serializers.CharField()
     request = serializers.CharField()
-    data = serializers.DictField(child=serializers.CharField())
+    data = serializers.DictField()
 
 class FetchNodeInfoSerializer(serializers.Serializer):
     topic=serializers.CharField(allow_null=True)

@@ -112,8 +112,16 @@
 <script>
 
     // it will holds data from node
-    const DataList=Array();
-    const Charts=Array();
+    const DataList={};
+    const DataLabel= new Array();
+    
+    const Charts=new Array();
+
+    const ParamList=new Array(
+        {% for param in node_params %}
+            "{{param}}",
+        {% endfor %}
+    );
 
     function getCookie(name) {
         var cookieValue = null;
@@ -144,42 +152,149 @@
         block.style.display="none";
     }
 
-    function updateData()
+    function setCharts(data)
     {
+            result=data["result"]
+
+            if(result === undefined)
+            {
+                return;
+            }
+            
+            DataLabel.splice(0, DataLabel.length)
+
+            Object.values(DataList).forEach( list => {
+                list.splice(0, list.length);
+            })
+            
+            
+
+            result.forEach(x =>{
+
+                const timestamp=x.created_date;
+
+                const date=new Date(timestamp)
+
+                DataLabel.push(date.toLocaleString())
+
+                Object.keys(x).forEach(key=>{
+                    
+                    const paramId=ParamList.indexOf(key);
+
+                    if( paramId >= 0 )
+                    {
+                        DataList[key].push({x:timestamp,y:x[key]});
+                        console.log("Key: ",DataList[key])
+                        document.getElementById("value"+paramId).value=x[key];
+                    }
+                })
+
+            })
+
+            Charts.forEach((chart)=>{
+                chart.update()
+            })
 
     }
 
+    function updateCharts(data)
+    {
+            result=data["result"][0]
+
+            console.log("Result: ",result)
+
+            if(result === undefined)
+            {
+                return;
+            }
+
+            const timestamp=result.created_date;
+
+            const date=new Date(timestamp).toLocaleString()
+            
+            if(date === DataLabel[DataLabel.length-1])
+            {
+                return;
+            }
+
+            if(DataLabel.length > 10)
+            {
+
+                DataLabel.shift();
+
+                Object.values(DataList).forEach( list => {
+                    list.shift();
+                })
+            }
+
+            DataLabel.push(date)
+
+            Object.keys(result).forEach(key=>{
+                    
+                const paramId=ParamList.indexOf(key);
+
+                if( paramId >= 0 )
+                {
+                    DataList[key].push({x:timestamp,y:result[key]});
+                    console.log("Key: ",DataList[key])
+                    document.getElementById("value"+paramId).value=result[key];
+                }
+            })
+
+            Charts.forEach((chart)=>{
+                chart.update()
+            })
+
+    }
 
     function initCharts()
     {
-        // create array for each plot
-        for(let i=0;i<4;++i)
-        {
-            DataList.push(new Array({x:0,y:0}))
-        }
 
-        for(let i=0;i<4;++i)
-        {
+        console.info("Parameters: ",ParamList);
+
+
+        ParamList.forEach((param,i) => {
+            DataList[param]=new Array();
+
+            document.getElementById("chart_name"+i).innerHTML=param;
 
             Charts.push(new Chart("chart"+i, {
                 type: "line",
-                data: {datasets: [{
-                    data: [DataList[i]]
+                
+                data: {
+                    labels:DataLabel,
+                    datasets: [{
+                        label:param,
+                        data: DataList[param]
                 }]},
                 options: {
                     devicePixelRatio:2,
                     responsive:true,
-                    aspectRatio:4
+                    aspectRatio:6,
+                    scales: {
+                        y:{
+                            type:'linear'
+                        },
+                        x: {
+                            type: 'time',
+                            time:
+                            {
+                                parser:'YYYY-MM-DDTHH:mm:ss.ssssssZ'
+                               
+                            }   
+                        }
+                    }
                 }
             }))
+        })
 
-        }
+        getDataInitial();
+
     }
 
     function getData()
     {
         const csrftoken = getCookie('csrftoken');
-        const sessionid = getCookie('session-id');
 
         fetch("/ext/node",
         {
@@ -192,21 +307,52 @@
             body: JSON.stringify({
                 request:"get",
                 node:"{{node}}",
-                data:{}
+                data:{
+                    "max":1,
+                    "mask":[...ParamList,"created_date"],
+                    "order":"-created_date"
+                }
             })
 
-        }).then((response)=>{
-            response.json()
-        }).then((response)=>{
-            console.log(response)
+        }).then((response)=>response.json())
+        .then((response)=>{
+            updateCharts(response);
         })
 
     }
 
+    function getDataInitial()
+    {
+        const csrftoken = getCookie('csrftoken');
+
+        fetch("/ext/node",
+        {
+            method:"POST",
+            headers: { 'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken},
+            credentials: 'include',
+            mode:"cors",
+            body: JSON.stringify({
+                request:"get",
+                node:"{{node}}",
+                data:{
+                    "max":10,
+                    "mask":[...ParamList,"created_date"],
+                    "order":"created_date"
+                }
+            })
+
+        }).then((response)=>response.json())
+        .then((response)=>{
+            setCharts(response);
+            setInterval(getData,500);   
+        })
+
+    }
+
+
     initCharts();
-
-
-    setInterval(getData,250);
 
         
     </script>

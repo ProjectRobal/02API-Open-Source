@@ -422,9 +422,55 @@ class NodeView(APIView):
         if node_obj is None:
             raise NotFound("No node found for specific path!")
 
-        result=Fetch(None,node_obj,path).match(request,data)
+        result=Fetch(None,node_obj,path).post(data)
 
         return Response(str(result))
+
+
+    def get(self,request,fromat=None):
+        data_input=rest_serializers.FetchRequestSerializer(request.data)
+
+        path:str=data_input.topic
+        data:dict=data_input.data
+
+        node_obj=find_node(path)
+
+        if node_obj is None:
+            raise NotFound("No node found for specific path!")
+
+        result=Fetch(None,node_obj,path).get(data)
+
+        return Response(str(result))
+
+    def put(self,request,format=None):
+        data_input=rest_serializers.FetchRequestSerializer(request.data)
+
+        path:str=data_input.topic
+        data:dict=data_input.data
+
+        node_obj=find_node(path)
+
+        if node_obj is None:
+            raise NotFound("No node found for specific path!")
+
+        result=Fetch(None,node_obj,path).mod(data)
+
+        return Response(str(result))
+    
+    def delete(self,request,format=None):
+        data_input=rest_serializers.FetchRequestSerializer(request.data)
+
+        path:str=data_input.topic
+        data:dict=data_input.data
+
+        node_obj=find_node(path)
+
+        if node_obj is None:
+            raise NotFound("No node found for specific path!")
+
+        result=Fetch(None,node_obj,path).match(request,data)
+
+        return Response(result.__dict__())
 
 
 class PluginView(APIView):
