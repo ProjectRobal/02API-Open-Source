@@ -210,9 +210,9 @@
 
             const timestamp=result.created_date;
 
-            const date=new Date(timestamp).toLocaleString()
+            const date=new Date(timestamp)
             
-            if(date === DataLabel[DataLabel.length-1])
+            if(date.getTime() <= new Date(DataList[ParamList[0]][DataList[ParamList[0]].length-1].x).getTime())
             {
                 return;
             }
@@ -227,7 +227,7 @@
                 })
             }
 
-            DataLabel.push(date)
+            DataLabel.push(date.toLocaleString())
 
             Object.keys(result).forEach(key=>{
                     
