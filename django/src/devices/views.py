@@ -92,7 +92,7 @@ def api(request,path):
 
 
 @login_required(login_url="/login")
-@permission_required("devices.device_add",login_url="/permf")
+#@permission_required("devices.device_add",login_url="/permf")
 def node_view(request):
 
     if request.method == "GET":   
