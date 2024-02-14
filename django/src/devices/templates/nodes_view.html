@@ -212,7 +212,7 @@
 
             const date=new Date(timestamp)
             
-            if(date.getTime() <= new Date(DataList[ParamList[0]][DataList[ParamList[0]].length-1].x).getTime())
+            if((DataLabel.length > 0) && (date.getTime() <= new Date(DataList[ParamList[0]][DataList[ParamList[0]].length-1].x).getTime()))
             {
                 return;
             }
