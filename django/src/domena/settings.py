@@ -42,9 +42,9 @@ if os.environ.get("DJANGO_MODE")=='DEBUG':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ["zerotwo.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl"]
-CORS_ALLOWED_ORIGINS = ["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
-CSRF_TRUSTED_ORIGINS=["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+ALLOWED_HOSTS = ["zerotwo.konar.pwr.edu.pl","staging.zerotwo.konar.pwr.edu.pl"]
+CORS_ALLOWED_ORIGINS = ["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.konar.pwr.edu.pl"]
+CSRF_TRUSTED_ORIGINS=["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.konar.pwr.edu.pl"]
 
 INTERNAL_IPS = [
     "127.0.0.1",
