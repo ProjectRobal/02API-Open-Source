@@ -3,6 +3,7 @@ bin
 include
 lib
 lib64
+migrations
 pyvenv.cfg
 mqtt/config/password.txt
 build/dev/sql
