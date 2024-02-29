@@ -52,6 +52,9 @@ services:
       - type: bind
         source: ../../django/debug_nodes
         target: /app/nodes/imported
+      - type: bind
+        source: ../../django/src
+        target: /app
     depends_on:
       db:
         condition: service_healthy

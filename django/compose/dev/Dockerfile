@@ -4,20 +4,22 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PORT=8000
 
-WORKDIR /app
+WORKDIR /pack
 
-COPY requirements.txt /app
-COPY packages.txt /app
+COPY requirements.txt /pack
+COPY packages.txt /pack
 
 RUN apt update
 RUN xargs -a packages.txt apt install -y
 RUN pip3 install -r requirements.txt --no-cache-dir
 
-COPY ./compose/dev/entrypoint.sh /app/entrypoint.sh
+COPY ./compose/dev/entrypoint.sh /pack/entrypoint.sh
 
-COPY ./src /app
 COPY ./debug /app
 
 EXPOSE 8000
-RUN chmod +x /app/entrypoint.sh
-CMD ["./entrypoint.sh"]
+RUN chmod +x /pack/entrypoint.sh
+
+WORKDIR /app
+
+CMD ["/pack/entrypoint.sh"]
