@@ -1,9 +1,9 @@
 :root
 {
-    --primary-color:rgb(255, 128, 0);
-    --secondary-color:rgb(110, 50, 24);
-    --teritary-color:rgb(166, 86, 35);
-    --quaternary-color:white;
+    --primary-color:#A66E62;
+    --secondary-color:white;
+    --teritary-color:#F4907B;
+    --quaternary-color:#82574D;
 }
 
 
