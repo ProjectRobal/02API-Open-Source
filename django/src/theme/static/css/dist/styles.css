@@ -1029,20 +1029,12 @@ form input[type="checkbox"]:focus {
   margin-top: 2.5rem;
 }
 
-.mt-16 {
-  margin-top: 4rem;
-}
-
 .mt-2 {
   margin-top: 0.5rem;
 }
 
 .mt-8 {
   margin-top: 2rem;
-}
-
-.mt-5 {
-  margin-top: 1.25rem;
 }
 
 .block {
@@ -1068,6 +1060,10 @@ form input[type="checkbox"]:focus {
 
 .h-screen {
   height: 100vh;
+}
+
+.h-full {
+  height: 100%;
 }
 
 .max-h-64 {
@@ -1163,17 +1159,12 @@ form input[type="checkbox"]:focus {
   gap: 0.5rem;
 }
 
-.gap-5 {
-  gap: 1.25rem;
-}
-
 .gap-20 {
   gap: 5rem;
 }
 
-.gap-x-20 {
-  -moz-column-gap: 5rem;
-       column-gap: 5rem;
+.gap-5 {
+  gap: 1.25rem;
 }
 
 .gap-y-2 {
@@ -1348,10 +1339,6 @@ form input[type="checkbox"]:focus {
   padding-top: 0.125rem;
 }
 
-.pt-5 {
-  padding-top: 1.25rem;
-}
-
 .pt-10 {
   padding-top: 2.5rem;
 }
@@ -1494,5 +1481,9 @@ form input[type="checkbox"]:focus {
 
   .md\:min-w-\[200px\] {
     min-width: 200px;
+  }
+
+  .md\:pt-10 {
+    padding-top: 2.5rem;
   }
 }
