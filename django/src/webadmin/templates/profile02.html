@@ -15,7 +15,7 @@
 
     <div class="flex flex-row flex-wrap pb-40 md:pb-0  h-screen w-full gap-20 overflow-y-auto overflow-x-hidden max-h-screen  md:pt-10"> 
 
-        <div class="flex flex-col w-full h-fit md:w-[600px] py-10 bg-secondary shadow-2xl rounded-xl place-items-center">
+        <div class="flex flex-col w-full h-fit md:w-[600px] py-10 bg-secondary shadow-2xl rounded-xl place-items-center md:ml-auto">
 
             <div class ="w-[200px] mb-5 relative" onmouseover="show_onmouseover()" onmouseout="show_onmouseout()" >
 
@@ -75,38 +75,38 @@
 
             </div>
 
+            <div  class="flex flex-col h-fit w-fit px-14 py-5 gap-y-2 place-items-center bg-secondary shadow-2xl rounded-xl mx-auto md:ml-0 md:mr-auto">
 
-        <div  class="flex flex-col h-fit w-fit px-14 py-5 gap-y-2 place-items-center bg-secondary shadow-2xl rounded-xl">
+                <button class="border-teritary bg-teritary" onclick="show_popup('Generate new card','/webadmin/n_card')">Regenerate card</button>
+                <button class="border-primary bg-primary" onclick="show_popup('Logout from basement','/webadmin/l_base')">Leave basement</button>
+                <button class="border-quaternary bg-quaternary" onclick="show_popup('Program your card','/webadmin/card_prog')">Program card</button>
 
-            <button class="border-teritary bg-teritary" onclick="show_popup('Generate new card','/webadmin/n_card')">Regenerate card</button>
-            <button class="border-primary bg-primary" onclick="show_popup('Logout from basement','/webadmin/l_base')">Leave basement</button>
-            <button class="border-quaternary bg-quaternary" onclick="show_popup('Program your card','/webadmin/card_prog')">Program card</button>
+                {% if user.is_staff %}
 
-            {% if user.is_staff %}
+                <button class="border-teritary bg-teritary" onclick="show_popup('Clear program querry','/webadmin/progcls')">Release program querry</button>
 
-            <button class="border-teritary bg-teritary" onclick="show_popup('Clear program querry','/webadmin/progcls')">Release program querry</button>
+                {% endif %}
 
-            {% endif %}
-
-        </div>
+            </div>
 
     </div>
 
     <div class="hidden z-30 bg-secondary pb-4 rounded-2xl top-1/2 left-1/2 shadow-2xl" id="close_block">
-    
-        <div>
-            <div class="flex flex-col gap-y-5 w-full">
-                <button class="text-primary text-3xl bg-[#00000000] border-none p-0 ml-2 mt-2" onclick="close_popup()">X</button>
-                <div class="flex flex-col content-center mb-2 px-10 gap-5 w-full">
-                    <h2 class="text-2xl">Are you sure?</h2>
+        
+            <div>
+                <div class="flex flex-col gap-y-5 w-full">
 
-                    <a href="" id="block_link">
-                        <button class="border-teritary bg-teritary text-secondary" id="block_button">Yes</button>
-                    </a>
+                    <button class="text-primary text-3xl bg-[#00000000] border-none p-0 ml-2 mt-2" onclick="close_popup()">X</button>
+                    <div class="flex flex-col content-center mb-2 px-10 gap-5 w-full">
+                        <h2 class="text-2xl">Are you sure?</h2>
 
+                        <a href="" id="block_link">
+                            <button class="border-teritary bg-teritary text-secondary" id="block_button">Yes</button>
+                        </a>
+
+                    </div>
                 </div>
             </div>
-        </div>
 
     </div>
 
