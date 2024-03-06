@@ -21,3 +21,4 @@ djangosaml2==1.8.0
 django-allauth==0.58.2
 django-allauth[saml]
 django-dbbackup==4.0.2
+django-tailwind[reload]==3.8.0

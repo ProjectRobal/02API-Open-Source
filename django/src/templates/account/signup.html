@@ -1,29 +1,48 @@
 {% extends "account/base_entrance.html" %}
 {% load allauth i18n socialaccount %}
+
 {% block head_title %}
     {% trans "Signup" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Sign Up" %}
-    {% endelement %}
-    {% url 'account_signup' as action_url %}
-    {% element form form=form method="post" action=action_url tags="entrance,signup" %}
-        {% slot body %}
-            {% csrf_token %}
-            {% element fields form=form unlabeled=True %}
-            {% endelement %}
-            {% if redirect_field_value %}
-                <input type="hidden"
-                       name="{{ redirect_field_name }}"
-                       value="{{ redirect_field_value }}" />
-            {% endif %}
-        {% endslot %}
-        {% slot actions %}
-            {% element button tags="prominent,signup" type="submit" %}
+<div class="w-[700px] h-fit bg-secondary shadow-2xl flex flex-row flex-nowrap  place-self-center mx-auto">
+
+    <div class="basis-3/4 py-8 flex flex-col gap-y-4">
+
+        <div class="self-center text-center">
+            <h1 class="font-medium text-4xl">
                 {% trans "Sign Up" %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
-    {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+            </h1>
+            
+            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+        </div>
+
+        {% url 'account_login' as login_url %}
+
+        {% url 'account_signup' as action_url %}
+        {% element form form=form method="post" class="flex flex-col gap-y-4 w-fit items-center self-center" action=action_url tags="entrance,signup" %}
+            {% slot body %}
+                {% csrf_token %}
+                {% element fields form=form unlabeled=True %}
+                {% endelement %}
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                        name="{{ redirect_field_name }}"
+                        value="{{ redirect_field_value }}" />
+                {% endif %}
+            {% endslot %}
+            {% slot actions %}
+                {% element button tags="prominent,signup" class="px-16 mt-10 text-secondary bg-teritary border-teritary" type="submit" %}
+                    {% trans "Sign Up" %}
+                {% endelement %}
+            {% endslot %}
+        {% endelement %}
+
+    </div>
+
+    <div class="basis-1/4 bg-primary py-10 flex flex-col gap-y-24 items-center justify-around">
+        <h1 class="text-7xl text-center text-secondary" >02</h1>
+        <button class="border-secondary text-secondary" onclick="location.href='{{ login_url }}'">{% trans "Sign in" %}</button>
+    </div>
+</div>
 {% endblock content %}

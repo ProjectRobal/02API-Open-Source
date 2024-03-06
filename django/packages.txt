@@ -7,3 +7,4 @@ xmlsec1
 libxmlsec1
 libxmlsec1-dev
 pkg-config
+nodejs

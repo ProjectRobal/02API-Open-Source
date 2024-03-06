@@ -4,24 +4,23 @@
     {% trans "Sign Out" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Sign Out" %}
-    {% endelement %}
-    <p>{% trans 'Are you sure you want to sign out?' %}</p>
-    {% url 'account_logout' as action_url %}
-    {% element form method="post" action=action_url no_visible_fields=True %}
-        {% slot body %}
-            {% csrf_token %}
-            {% if redirect_field_value %}
-                <input type="hidden"
-                       name="{{ redirect_field_name }}"
-                       value="{{ redirect_field_value }}" />
-            {% endif %}
-        {% endslot %}
-        {% slot actions %}
-            {% element button type="submit" %}
-                {% trans 'Sign Out' %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
+    <div class="w-fit h-fit bg-secondary shadow-2xl flex flex-col flex-nowrap  place-self-center mx-auto p-4 rounded-xl gap-2 ">
+        <p class="text-xl my-2">{% trans 'Are you sure you want to sign out?' %}</p>
+        {% url 'account_logout' as action_url %}
+        {% element form method="post" action=action_url class="place-items-center" no_visible_fields=True %}
+            {% slot body %}
+                {% csrf_token %}
+                {% if redirect_field_value %}
+                    <input type="hidden"
+                        name="{{ redirect_field_name }}"
+                        value="{{ redirect_field_value }}" />
+                {% endif %}
+            {% endslot %}
+            {% slot actions %}
+                {% element button type="submit" class="bg-teritary border-teritary" %}
+                    {% trans 'Sign Out' %}
+                {% endelement %}
+            {% endslot %}
+        {% endelement %}
+    </div>
 {% endblock content %}

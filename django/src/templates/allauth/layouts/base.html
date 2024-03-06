@@ -12,15 +12,15 @@
     </head>
     <body>
         {% block body %}
-        <div>
-            {% include 'nav.html'  %}
-        </div>
-            {% if messages %}
+        {% include 'nav.html'  %}
+        
+            <!-- {% if messages %}
                 <div class="message_list">
                     <strong>{% trans "Messages:" %}</strong>
                     {% for message in messages %}{{ message }}{% endfor %}
                 </div>
             {% endif %}
+            -->
             {% block content %}
             {% endblock content %}
         {% endblock body %}

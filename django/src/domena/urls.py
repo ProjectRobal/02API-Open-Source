@@ -18,8 +18,10 @@ from django.contrib import admin
 from django.urls import path,re_path,include
 from devices.views import devsPage,twingoPage,device_page,node_list,home_page,rat,plugin_add,ploader,plugin_show,plugin_rm,device_add,devloader,device_rm,device_purge,api
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
 
 import domena.rest as rest
+import domena.settings as settings
 from knox import views as knox_views
 
 urlpatterns = [
@@ -61,5 +63,7 @@ urlpatterns = [
     path('ave_prezes',rat)
 ]
 
-
+if os.environ.get("DJANGO_MODE") == 'DEBUG':
+    urlpatterns.append(path("__reload__/", include("django_browser_reload.urls")))
+    
 urlpatterns+=staticfiles_urlpatterns()

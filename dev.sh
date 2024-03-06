@@ -107,6 +107,10 @@ elif [ $cmd = "copy_db" ]; then
 
     docker compose exec -T db pg_dump --column-inserts --on-conflict-do-nothing -Fc -U devs -Z 9 -f /backup/$2 domena_db
 
+elif [ $cmd = "makecss" ]; then
+
+    docker compose run -i web python3 -u manage.py tailwind build
+
 elif [ $cmd = "help" ]; then
 
 echo "build - zbuduj kontenery"
@@ -121,6 +125,7 @@ echo "debug - uruchom terminal bash na kontenerze django"
 echo "init_root - utwórz użytkownika roota w django"
 echo "init_mqtt - ustaw użytkownika dla serwera mqtt"
 echo "remigrate - ponów migracje"
+echo "makecss - skompiluj tailwindcss"
 echo "restore - załaduj buckup bazy danych, do wyboru: "
 echo "  -daily - codzienny"
 echo "  -weekly - tygodniowy"

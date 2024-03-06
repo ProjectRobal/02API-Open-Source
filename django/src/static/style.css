@@ -96,30 +96,6 @@ ul
     padding-inline-start: 12px;
 }
 
-.allauth_provider_list
-{
-    padding-inline-start: 10px;
-}
-
-.allauth_provider
-{
-    background-color: white;
-    color: black;
-    border: 8px solid white;
-    border-radius: 4px;
-    padding: 6px;  
-    list-style-type:none; 
-    width: fit-content;
-}
-
-.allauth_provider:hover
-{
-    color: white;
-    background-color: black;
-    cursor: pointer;
-    border: 8px solid black;
-}
-
 
 .cross
 {
@@ -253,52 +229,6 @@ ul
     flex-direction: row;
 }
 
-form p
-{
-    margin-bottom: 1px;
-    font-size: large;
-}
-
-form input
-{
-    margin-top: 0;
-}
-
-form input[type=submit]
-{
-    border: none;
-    margin-top: 30px;
-    background-color: var(--primary-color);
-    color: black;
-    padding: 5px;
-    cursor: pointer;
-    font-size: large;
-    font-weight: bold;
-    border-radius: 5px;
-}
-
-form input[type=submit]:hover
-{
-    background-color: black;
-    color: var(--quaternary-color);
-    padding: 5px;
-}
-
-form
-{
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding-top: 10px;
-    padding-bottom: 25px;
-    background-color: var(--primary-color);
-    padding-left: 10px;
-    padding-right: 15px;
-    border-radius: 5px;
-    gap:0;
-    box-shadow: 6px 4px 2px 1px black;
-}
-
 
 .logform p
 {
@@ -331,67 +261,6 @@ form
     padding: 5px;
 }
 
-#navbar
-{
-
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        height: 100%;
-        background-color:var(--teritary-color);
-        gap: 15px;
-        margin:0;
-        padding: 5px;
-        position: fixed;
-        z-index: 10;
-        top: 0;
-        left: 0;
-        
-}
-
-
-
-.navblock
-{
-    width: fit-content;
-    height: fit-content;
-    padding: 15px;
-    background-color: var(--primary-color);
-    font-size:x-large;
-    cursor: pointer;
-    border-radius: 10px;
-    margin-left: auto;
-    margin-right: auto;
- 
-}
-
-.navblock:hover
-{
-    background-color: black;
-    color:var(--quaternary-color);
-}
-
-#navbutton
-{
-    display: block;
-    position: fixed;
-    right: 5px;
-    top:5px;
-    padding: 15px;
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: 10px;
-    z-index: 20;
-    font-size: large;
-    width: fit-content;
-    height: fit-content;
-}
-
-#navbutton:hover
-{
-    background-color: black;
-    color:var(--quaternary-color);
-}
 
 
 .logform
@@ -527,38 +396,6 @@ form
         box-shadow: 6px 4px 2px 1px black;
     }
 
-    .navlogout
-    {
-        margin-left: auto;
-        margin-right: 0;
-    } 
-
-    #navbutton
-    {
-        display: none;
-    }
-
-    .navblock
-{
-    width: fit-content;
-    height: fit-content;
-    padding: 6px;
-    background-color: var(--primary-color);
-    font-size:large;
-    cursor: pointer;
-    border-radius: 10px;
-}
-
-.navblock:hover
-{
-    background-color: black;
-    color:var(--quaternary-color);
-    padding:30px;
-    font-size: larger;
-    animation-name: navgrow;
-    animation-duration: 0.5s;
-}
-
     .logform
     {
         display: flex;
@@ -667,22 +504,6 @@ form
         width: fit-content;
         margin-left: auto;
         margin-right: auto;
-    }
-
-    #navbar
-    {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        height: fit-content;
-        background-color:var(--teritary-color);
-        gap: 10px;
-        margin-top: 0;
-        margin-left: 0;
-        margin-right: 0;
-        padding: 5px;
-        position: relative;
-        justify-content: start;
     }
     
 }

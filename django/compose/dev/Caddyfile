@@ -2,15 +2,15 @@
 
     encode zstd gzip
 
-    @statics {
-        path /static/*
-        path /media/*
-    }
+    #@statics {
+    #    path /static/*
+    #    path /media/*
+    #}
 
-    handle @statics {
-        root * /data/
-        file_server
-    }
+    #handle @statics {
+    #    root * /data/
+    #    file_server
+    #}
 
     handle /broker {
         reverse_proxy  mqtt_02_dev:9001
