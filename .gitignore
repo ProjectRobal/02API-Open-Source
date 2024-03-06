@@ -12,6 +12,7 @@ build/prod/sql
 build/stagging/sql
 django/web/
 
+django/src/**/migrations/*
 django/src/**/migrations
 
 build/prod/conf/django.env

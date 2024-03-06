@@ -10,7 +10,7 @@
     }
 
     body{
-        @apply flex flex-row flex-nowrap bg-secondary m-0 overflow-x-hidden w-full h-full;
+        @apply flex flex-row flex-nowrap bg-secondary mx-0 mb-0 mt-16 md:mt-0 overflow-x-hidden overflow-y-hidden w-full h-full;
     }
 
     button{

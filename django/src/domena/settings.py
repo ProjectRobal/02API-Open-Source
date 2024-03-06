@@ -150,7 +150,19 @@ if bool(os.getenv("USE_EAUTH")):
 ACCOUNT_AUTHENTICATION_METHOD="username"
 ACCOUNT_CHANGE_EMAIL=True
 ACCOUNT_EMAIL_VERIFICATION='none'
+ACCOUNT_EMAIL_UNKNOWN_ACCOUNTS=True
+ACCOUNT_EMAIL_REQUIRED=False
 
+ACCOUNT_FORMS = {
+    'add_email': 'allauth.account.forms.AddEmailForm',
+    'change_password': 'allauth.account.forms.ChangePasswordForm',
+    'login': 'auth02.forms.LoginForm02',
+    'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    'set_password': 'allauth.account.forms.SetPasswordForm',
+    'signup': 'allauth.account.forms.SignupForm',
+    'user_token': 'allauth.account.forms.UserTokenForm',
+}
 
 ROOT_URLCONF = 'domena.urls'
 
