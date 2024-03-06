@@ -43,11 +43,15 @@ class PluginInfo:
 def scan_for_plugin()-> list[str]:
 
     output:list[str]=[]
+    
+    try:
 
-    for dir in os.listdir('/app/'):
-        if os.path.isdir(dir):
-            if os.path.exists('/app/'+dir+'/meta.json'):
-                output.append(dir)
+        for dir in os.listdir('/app/'):
+            if os.path.isdir(dir):
+                if os.path.exists('/app/'+dir+'/meta.json'):
+                    output.append(dir)
+    except Exception:
+        return []
     
     return output
 

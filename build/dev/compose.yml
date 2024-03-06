@@ -38,6 +38,9 @@ services:
       - internal
     volumes:
       - type: bind
+        source: ../../django/src
+        target: /app
+      - type: bind
         source: ./backups
         target: /app/backups
       - type: bind
@@ -49,12 +52,46 @@ services:
       - type: bind
         source: ../../django/web/media
         target: /web/media
-      - type: bind
-        source: ../../django/debug_nodes
-        target: /app/nodes/imported
+    depends_on:
+      db:
+        condition: service_healthy
+      mqtt:
+        condition: service_started
+      proxy:
+        condition: service_started
+    expose:
+      - 8000
+      - 9000
+
+  tailwind:
+    container_name: tailwind_02_dev
+    build:
+      context: ../../django
+      dockerfile: ./compose/dev/Dockerfile
+    image: 02_web_dev
+    command: "/pack/entry_tailwind.sh"
+    tty: true
+    env_file:
+      - ./conf/django.env
+      - ./conf/sql.env
+    networks:
+      - internal
+    volumes:
       - type: bind
         source: ../../django/src
         target: /app
+      - type: bind
+        source: ./backups
+        target: /app/backups
+      - type: bind
+        source: ./auth.json
+        target: /app/auth.json
+      - type: bind
+        source: ../../django/web/static
+        target: /web/static
+      - type: bind
+        source: ../../django/web/media
+        target: /web/media
     depends_on:
       db:
         condition: service_healthy

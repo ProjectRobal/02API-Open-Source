@@ -1,69 +1,86 @@
-<button id="navbutton" class="shadow" onclick="toggle()">Menu</button>
 
-<div id="navbar">
-
-    <a href="/">
-        <div class="navblock">
-            Home
-        </div>
-    </a>
-
-    {% if perms.devices.plugin_view or perms.devices.device_view  %}
-
-    <a href="/devs">
-        <div class="navblock">
-            Devices
-        </div>
-    </a>
-
-    {% endif %}
-
-{% autoescape off %}
-    {%for item in menu_items %}
-
-    {{item}}
-
-    {%endfor%}
-{% endautoescape %}
+<button id="navbutton" class="sm:hidden block w-fit h-fit fixed top-[5px] left-[5px] p-3 hover:text-quaternary bg-primary rounded-xl z-20 text-xl" onclick="toggle()">Menu</button>
 
 {% if user.is_authenticated %}
+{% load gravatar %}
 
-    {% if user.is_staff %}
-
-    <a href="/django-admin">
-        <div class="navlogout navblock">
-            Admin
+    <div class="fixed md:block hidden z-50 right-2 top-2">
+        
+        <div class="flex flex-row content-center items-center">
+            <p class="text-4xl mr-5" id="Thank you Jan Napieralski">{{user.username}}</p>
+            <a href="/webadmin/profile"><img class="rounded-full bg-cover cursor-pointer w-20 h-20"  src="{{ user|gravatar_url:600 }}" width="800px" height="600px"></a>
         </div>
-    </a>
 
-    {% endif %}
-
-    <a href="/accounts/logout/">
-        <div class="navlogout navblock">
-            Logout
-        </div>
-    </a>
-
-    <div class="navblock">
-        Hello {{user.username}}!
     </div>
-
-{% else %}
-
-    <a href="/accounts/login/">
-        <div class="navlogout navblock">
-            Login
-        </div>
-    </a>
-
-    <a href="/accounts/signup/">
-        <div class="navlogout navblock">
-            Register
-        </div>
-    </a>
-
 
 {% endif %}
 
+<div id="navbar" class="hidden md:flex flex-col w-full max-h-full h-screen md:w-fit bg-primary gap-2 mx-0 mt-0 p-1 md:relative md:float-left fixed justify-start z-10">
+
+    <h1 class="text-secondary text-4xl text-center py-4">02</h2>
+
+    <div class="mt-10">
+
+        <a href="/">
+            <div class="navblock">
+                Home
+            </div>
+        </a>
+
+        {% if perms.devices.plugin_view or perms.devices.device_view  %}
+
+        <a href="/devs">
+            <div class="navblock">
+                Devices
+            </div>
+        </a>
+
+        {% endif %}
+
+    {% autoescape off %}
+        {%for item in menu_items %}
+
+        {{item}}
+
+        {%endfor%}
+    {% endautoescape %}
+
+    {% if user.is_authenticated %}
+
+        {% if user.is_staff %}
+
+        <a href="/django-admin">
+            <div class="navblock">
+                Admin
+            </div>
+        </a>
+
+        {% endif %}
+
+        <a href="/accounts/logout/">
+            <div class="navblock">
+                Logout
+            </div>
+        </a>
+
+
+    {% else %}
+
+        <a href="/accounts/login/">
+            <div class="navblock">
+                Login
+            </div>
+        </a>
+
+        <a href="/accounts/signup/">
+            <div class="navblock">
+                Register
+            </div>
+        </a>
+
+
+    {% endif %}
+
+    </div>
 
 </div>

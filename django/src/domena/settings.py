@@ -38,11 +38,20 @@ ROOT_API_PATH=os.getenv("FETCH_API_ROOT_PATH")
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+if os.environ.get("DJANGO_MODE")=='DEBUG':
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ["zerotwo.konar.pwr.edu.pl","staging.zerotwo.tenere.konar.pwr.edu.pl"]
 CORS_ALLOWED_ORIGINS = ["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
 CSRF_TRUSTED_ORIGINS=["https://zerotwo.konar.pwr.edu.pl", "https://staging.zerotwo.tenere.konar.pwr.edu.pl"]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "tailwind",
+    "web"
+]
 
 if os.environ.get("DJANGO_MODE")=='DEBUG':
     ALLOWED_HOSTS.extend([os.environ.get('IP_ADDR'),"localhost"])
@@ -69,8 +78,19 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox',
     'allauth',
-    'allauth.account'
+    'allauth.account',
+    'tailwind',
+    'theme'
 ] + PLUGINS_LIST+['mqtt']
+
+if os.environ.get("DJANGO_MODE")=='DEBUG':
+    INSTALLED_APPS.append('django_browser_reload')
+    
+
+TAILWIND_APP_NAME = 'theme'
+
+TAILWIND_CSS_PATH = 'css/dist/styles.css'
+
 
 MQTT_SERVER="mqtt"
 MQTT_USER=os.environ.get('MQTT_USER')
@@ -107,6 +127,9 @@ PASSWORD_HASHERS = [
 
 AUTHENTICATION_BACKENDS=["allauth.account.auth_backends.AuthenticationBackend"
                          ,"django.contrib.auth.backends.ModelBackend"]
+
+if os.environ.get("DJANGO_MODE")=='DEBUG':
+    MIDDLEWARE.append("django_browser_reload.middleware.BrowserReloadMiddleware")
 
 if bool(os.getenv("USE_EAUTH")):
     INSTALLED_APPS.append('allauth.socialaccount')
@@ -235,7 +258,7 @@ STATIC_ROOT = str("/web/static")
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = ["/app/static/"]
+STATICFILES_DIRS = ["/app/static/","/app/theme/static/"]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",

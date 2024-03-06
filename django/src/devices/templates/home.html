@@ -6,66 +6,9 @@
     <title>Home Page</title>
 </head>
 <body>
+    {% include 'nav.html' %}
 
-    <h1 class="homeheader">SmartKoN/02 Project Home Page</h1>
-
-    {% if name %}
-
-    <p style="margin-left:auto; margin-right:auto; width:fit-content;">Hello panie: {{name}}</p>
-
-    {% endif %}
-
-    {% if user.is_authenticated %}
-
-    <p style="margin-left:auto; margin-right:auto; width:fit-content; font-size:medium;">Hello: {{user.username}}!</p>
-
-    {% endif %}
-
-    <div id="homepage">
-
-        {% if perms.devices.plugin_view or perms.devices.device_view  %}
-
-        <a href="/devs"  class="homeblock block">
-                Devices Menu
-        </a>
-
-        {% endif %}
-        
-    {% if user.is_authenticated %}
-
-    {% if user.is_staff %}
-    
-        <a href="/django-admin"  class="homeblock block">
-                Admin
-        </a>
-
-    {% endif %}
-    
-        <a href="/accounts/logout/"  class="homeblock block">
-                Logout
-        </a>
-    
-    {% else %}
-    
-        <a href="/accounts/signup/"  class="homeblock block">
-                Register
-        </a>
-
-        <a href="/accounts/login/"  class="homeblock block">
-                Login
-        </a>
-    
-    {% endif %}
-
-    {% autoescape off %}
-    {%for block in blocks%}
-
-    {{block}}
-
-    {%endfor%}
-    {% endautoescape %}
-    
-    </div>
+    <h1 class="text-black font-bold text-3xl mx-auto bg-secondary px-3 pt-0.5 pb-1 text-center">SmartKoN/02 Project Home Page</h1>
 
 </body>
 </html>
