@@ -1,5 +1,5 @@
 
-<button id="navbutton" class="sm:hidden block w-fit h-fit fixed top-[5px] left-[5px] p-3 hover:text-quaternary bg-primary rounded-xl z-20 text-xl" onclick="toggle()">Menu</button>
+<button id="navbutton" class="sm:hidden block w-1/4 h-fit fixed top-[5px] left-[5px] p-3 hover:text-quaternary bg-primary rounded-xl z-20 text-xl" onclick="toggle()">Menu</button>
 
 {% if user.is_authenticated %}
 {% load gravatar %}
@@ -15,7 +15,7 @@
 
 {% endif %}
 
-<div id="navbar" class="hidden md:flex flex-col w-full max-h-full h-screen md:w-fit bg-primary gap-2 mx-0 mt-0 p-1 md:relative md:float-left fixed justify-start z-10">
+<div id="navbar" class="hidden md:flex flex-col w-full max-h-full h-screen md:w-[200px] md:min-w-[200px] bg-primary gap-2 mx-0 mt-0 top-0 p-1 md:relative md:float-left fixed justify-start z-10">
 
     <h1 class="text-secondary text-4xl text-center py-4">02</h2>
 
