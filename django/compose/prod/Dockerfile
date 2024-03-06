@@ -19,6 +19,4 @@ COPY ./src /app
 EXPOSE 8000
 RUN chmod +x /app/entrypoint.sh
 
-RUN python3 manage.py tailwind install
-
 ENTRYPOINT ["./entrypoint.sh"]
