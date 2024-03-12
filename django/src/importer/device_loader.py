@@ -78,9 +78,9 @@ from nodeacl.models import NodeACL
 from importer.models import NodeRefernece
 import importer.node_generator as node_generator
 
-DEVICE_TMP_FILE="tmp/device.tmp"
+DEVICE_TMP_FILE="/tmp/device.tmp"
 
-DEVICE_TMP_ARCHIVE="tmp/dev_unpacked"
+DEVICE_TMP_ARCHIVE="/tmp/dev_unpacked"
 
 # zero two device extension
 DEVICE_ARCHIVE_EXTENSION="ztd"
@@ -158,7 +158,7 @@ def clean_temporary():
 
 def load_device(obj)->Device or None:
     '''
-    Add device from json from index.json
+    Add device from json in index.json
     '''
     try:
 
@@ -192,7 +192,7 @@ def load_device(obj)->Device or None:
     return dev
 
 
-def unpack_and_verify_archive()->[int,str]:
+def unpack_and_verify_archive()->(int,str):
     try:
 
         logging.info("Unpacking the ZTD archive into temporary")
@@ -208,11 +208,11 @@ def unpack_and_verify_archive()->[int,str]:
         # check if meta file exists
         if not os.path.exists(DEVICE_TMP_ARCHIVE+'/index.json'):
             logging.error("No valid index.json file")
-            raise ValueError([-1,"No valid index.json file"])
+            raise ValueError((-1,"No valid index.json file"))
         
         if not os.path.exists(DEVICE_TMP_ARCHIVE+'/nodes.json'):
             logging.error("No valid nodes.json file")
-            raise ValueError([-2,"No valid nodes.json file"])
+            raise ValueError((-2,"No valid nodes.json file"))
         
 
         with open(DEVICE_TMP_ARCHIVE+'/index.json','r') as file:
@@ -220,14 +220,14 @@ def unpack_and_verify_archive()->[int,str]:
 
             for req in required_index_field:
                 if not req in index.keys():
-                    raise ValueError([-3,"No key in index.json: {}".format(req)])
+                    raise ValueError((-3,"No key in index.json: {}".format(req)))
                 
         with open(DEVICE_TMP_ARCHIVE+'/nodes.json','r') as file:
             nodes:dict=json.load(file)
 
             for req in required_nodes_field:
                 if not req in nodes.keys():
-                    raise ValueError([-3,"No key in index.json: {}".format(req)])
+                    raise ValueError((-3,"No key in index.json: {}".format(req)))
                 
         # check server version
         with open(DEVICE_TMP_ARCHIVE+'/index.json','r') as file:
@@ -237,10 +237,10 @@ def unpack_and_verify_archive()->[int,str]:
             server_version=version_to_number(SERVER_VERSION)
 
             if compare_versions(version,server_version) != 0:
-                return [1,"Device server version and current server version mismatch"]
-        
+                return (1,"Device server version and current server version mismatch")
+    
 
-        return [0,"OK"]
+        return (0,"OK")
         
     except ValueError as e:
         
@@ -249,7 +249,7 @@ def unpack_and_verify_archive()->[int,str]:
             return e
         
         logging.error("Cannot open archive: "+str(e))
-        return [-10,"Cannot open archive:"+str(e)]
+        return (-10,"Cannot open archive:"+str(e))
 
 
 def generate_nodes(dev:Device)->[int,str]:

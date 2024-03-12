@@ -34,6 +34,7 @@ from nodes.models import PublicNodes,PublicNode
 
 import importer.device_loader as device_loader
 
+import os
 import json
 
 
@@ -47,8 +48,18 @@ class UploadDevicePackage(APIView):
         file_obj = request.FILES['file']
 
         print(file_obj)
+                
+        tmp=open(device_loader.DEVICE_TMP_FILE,"wb")
         
-        return Response(str(file_obj.file.read()))
+        tmp.write(file_obj.file.read())
+        
+        tmp.close()
+        
+        file_obj.close()
+        
+        error=device_loader.unpack_and_verify_archive()   
+        
+        return Response({'code':error[0],'msg':error[1]})
 
 
 
@@ -270,6 +281,7 @@ class ExampleView(APIView):
             'auth': str(request.auth),  # None
         }
         return Response(content)
+    
     
 class UserView(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)
