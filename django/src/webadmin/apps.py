@@ -49,7 +49,7 @@ class WebadminConfig(AppConfig):
 
     def ready(self) -> None:
 
-        from webadmin.views import profile,update_profile,img_set,generate_new_card,get_id,cards_view,logout_from_basement,program_card,clear_program_card
+        from webadmin.views import profile,update_profile,img_set,generate_new_card,get_id,cards_view,logout_from_basement,program_card,clear_program_card,logout_user_from_basement
         from domena.home import entries
         from domena.menu import entries as menu_entries
         from domena.menu_types import HomeBlock,MenuBlock
@@ -63,6 +63,7 @@ class WebadminConfig(AppConfig):
         addURL('webadmin/lscards/',cards_view)
         addURL('webadmin/card_prog/',program_card)
         addURL('webadmin/progcls',clear_program_card)
+        addURL('webadmin/kickout/<str:uuid>',logout_user_from_basement)
 
         entries.append(HomeBlock("Profile","/webadmin/profile/"))
         entries.append(HomeBlock("Basement status","/webadmin/lscards/"))
