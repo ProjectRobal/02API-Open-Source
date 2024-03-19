@@ -237,7 +237,20 @@ ul
     /*animation: rotate_ratbox 10s infinite;*/
     animation: rotate_ratbox1 10s infinite linear;
     /*transform: translate3d(200px,200px,-200px);*/
-  }  
+  }
+
+  .leave_button
+  {
+    flex-basis: fit-content;
+    overflow: hidden;
+    padding: 10px;
+    font-size: larger;
+  }
+
+  .leave_button:hover
+  {
+    color:red;
+  }
  
   .face
   {
@@ -284,10 +297,17 @@ ul
     overflow-x: hidden;
   }
 
+  .leave_button
+  {
+    overflow: hidden;
+    font-size: 64px;
+    position: absolute;
+    left: 0;
+  }
+
   .profile
   {
     flex-direction: column;
-    width: fit-content;
     align-items: center;
   }
 

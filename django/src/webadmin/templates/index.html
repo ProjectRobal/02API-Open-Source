@@ -189,21 +189,24 @@ BGJ.~Y!7JYYJJ55Y5JJ5PP5JYGP55YY5PP5555PPGBBB###&&#B#&&&#GB####BB#BBBGBGBBBGPPPGP
 
 <div class="profiles" id="Mirek">
 
-    {% for user in users %}
-    <div class="profile" id="{{user.0.username}}">
+    {% for usr in users %}
+    <div class="profile" id="{{usr.0.username}}">
+        {% if user.is_superuser %}
+        <div class="leave_button"><a href="/webadmin/kickout/{{ usr.0.uuid }}">X</a></div>
+        {% endif %}
         <img class="rat_icon" style="width:96px;" src={% static  "ratback.png" %} alt="rad">
-        <img src="{{ user.0|gravatar_url:600 }}">
+        <img src="{{ usr.0|gravatar_url:600 }}">
         <div>
-            {% if user.0.first_name %}
-            <p style="margin-bottom:0;">{{user.0.first_name}} {{user.0.last_name}}</p>
-            <p style="font-size:medium; margin-top:0;">aka {{user.0.username}}</p>
+            {% if usr.0.first_name %}
+            <p style="margin-bottom:0;">{{usr.0.first_name}} {{usr.0.last_name}}</p>
+            <p style="font-size:medium; margin-top:0;">aka {{usr.0.username}}</p>
             {% else %}
-            <p>{{user.0.username}}</p>
+            <p>{{usr.0.username}}</p>
             {% endif %}
-            {% if user.1|length > 0%}
+            {% if usr.1|length > 0%}
             <div>Członek projektów:
                     <ul>
-                {% for project in user.1 %}
+                {% for project in usr.1 %}
                         <li>{{project}}</li>
                 {% endfor %}
                     </ul>

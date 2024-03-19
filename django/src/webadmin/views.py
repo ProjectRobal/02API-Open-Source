@@ -6,6 +6,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.decorators import login_required,permission_required
 from django.contrib.auth import authenticate
 from domena.settings import MEDIA_URL
+from django.contrib.auth.decorators import user_passes_test
 import logging
 
 from .models import ProfilePicture,ProjectGroup,CardNode,ToProgramBuffer
@@ -151,6 +152,29 @@ def logout_from_basement(request):
     request.session["profile_msg"]="User succesfuly loged out from basement!"
 
     return redirect("/webadmin/profile")
+
+
+@login_required(login_url="/accounts/login")
+@user_passes_test(lambda u: u.is_superuser)
+def logout_user_from_basement(request,uuid):
+    if request.method != "GET":
+        return HttpResponseBadRequest()
+    try:
+        user:O2User=O2User.objects.get(uuid=uuid)
+    except O2User.DoesNotExist:
+        return HttpResponseNotFound()
+
+    cards=CardNode.objects.filter(user=user)
+
+    if not cards.exists():
+        return redirect("/webadmin/lscards")
+
+    for card in cards:
+        card.is_in_basement=False
+
+        card.save()
+
+    return redirect("/webadmin/lscards")
 
 @login_required(login_url="/accounts/login")
 def img_set(request):
