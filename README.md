@@ -1,4 +1,4 @@
-# Serwer Nowej Luny
+# Serwer projektu SmartKon/02
 
 ## Struktura projektu:
 - django - folder z obrazem serwera django
