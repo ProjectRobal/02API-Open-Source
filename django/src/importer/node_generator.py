@@ -105,7 +105,7 @@ from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode
             buff_str+="""   {}={}({})\n""".format(field_name,field_type,attrs_str)
 
 
-            return buff_str
+        return buff_str
         
     except Exception as e:
         logging.error("Nodes: "+str(e))

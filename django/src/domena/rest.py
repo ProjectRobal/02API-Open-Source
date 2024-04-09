@@ -31,6 +31,7 @@ from domena.settings import PLUGINS_LIST
 
 from mqtt.models import Topic,TopicBeamer,TopicCatcher
 from nodes.models import PublicNodes,PublicNode
+from nodeacl.models import NodeACL
 
 import importer.device_loader as device_loader
 
@@ -64,17 +65,33 @@ class AcceptDeviceInstallation(APIView):
                 ret = device_loader.generate_nodes()
                 
                 if ret[0] >= 0:
+                                        
+                    _dev=Device.objects.filter(name=dev.name)
+                    
+                    if _dev.count()!=0:
+                        dev=_dev[0]
                     
                     dev.save()
                     
                     logging.info("Adding topics for device: "+dev.name)
+                    
                     for topic in topics:
-                        topic.save()
+                        
+                        top=Topic.objects.filter(path=topic.path)
+                        
+                        if top.count()==0:
+                            topic.save()
+                    
                     
                     logging.info("Adding NodeACLs for device: "+dev.name)
+                    
                     for acl in acls:
-                        acl.device=dev
-                        acl.save()
+                        
+                        _acl=NodeACL.objects.filter(device=acl.device,topic=acl.topic)
+                        
+                        if _acl.count()==0:
+                            acl.device=dev
+                            acl.save()
                     
                     logging.info("Saving device!")
                     
