@@ -58,12 +58,31 @@ class AcceptDeviceInstallation(APIView):
             if error[0]>=0:
                 dev:Device=error[2]
                 # generate nodes, topics, acl and etc
-                device_loader.generate_nodes(dev)
                 
-                device_loader.add_topics()
+                topics,acls = device_loader.add_topics()
                 
+                ret = device_loader.generate_nodes()
+                
+                if ret[0] >= 0:
+                    
+                    dev.save()
+                    
+                    logging.info("Adding topics for device: "+dev.name)
+                    for topic in topics:
+                        topic.save()
+                    
+                    logging.info("Adding NodeACLs for device: "+dev.name)
+                    for acl in acls:
+                        acl.device=dev
+                        acl.save()
+                    
+                    logging.info("Saving device!")
+                    
+                    error=(0,"Device added!")
+                else:
+                    error=(-2,"Cannot add device!")
         else:
-            error=[1,"OK - Temporary data clean"]
+            error=(1,"OK - Temporary data clean")
         
         device_loader.clean_temporary()
         

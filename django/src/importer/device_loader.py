@@ -182,7 +182,7 @@ def check_if_newer_ver_of_device_exits(obj)->(int,str):
                 return -3,"Device aleardy exists!"
         
         except Device.DoesNotExist:
-            return -2,"Newer instance of device aleardy exists!"
+            return 0,"OK"
         
     except Exception as e:
         logging.error("Device json is invalid!")
@@ -280,7 +280,7 @@ def unpack_and_verify_archive()->(int,str):
         return (-10,"Cannot open archive:"+str(e))
 
 
-def generate_nodes(dev:Device)->[int,str]:
+def generate_nodes()->[int,str]:
 
     try:
     
@@ -288,8 +288,10 @@ def generate_nodes(dev:Device)->[int,str]:
                 nodes:dict=json.load(file)["nodes"]
 
                 create_node=False
-
+                
                 for node in nodes.keys():
+                    
+                    node_path:str=node_generator.OUTPUT_NODE_PATH+"/"+node+".py"
                     # check if node with the same name exits
 
                     try:
@@ -297,34 +299,24 @@ def generate_nodes(dev:Device)->[int,str]:
                         ref:NodeRefernece=NodeRefernece.objects.get(node_name=node)
 
                         ref.ref_number+=1
-
-                        dev_ver:list[int]=dev.version_int_list()
-                        ref_ver:list[int]=ref.version_int_list()
-                        
-                        if compare_versions(dev_ver,ref_ver)>0:
-
-                            ref.major_version=dev_ver[0]
-                            ref.minor_version=dev_ver[1]
-                            ref.patch_version=dev_ver[2]
-                            create_node=True
-
+                                        
+                        create_node=True
 
                     except NodeRefernece.DoesNotExist:
                         # generate node if not exist
 
                         ref=NodeRefernece()
 
-                        ref.ref_device=dev
-
                         ref.ref_number=1
                         ref.node_name=node
-                        ref.path=node_buff
+                        ref.path=node_path
                         create_node=True
                     
                     if create_node:
-                        node_buff:str=node_generator.make_node(node,nodes[node])
+                        node_buff:str=node_generator.make_node(node,node_generator.NodeHeader(**nodes[node]))
 
-                        node_path:str=node_generator.OUTPUT_NODE_PATH+"/"+node+".py"
+                        if node_buff is None:
+                            raise ValueError([-5,"Error in generating node text"])
 
                         if node_path is None:
                             raise ValueError([-4,"Error in node generation!"])
@@ -339,19 +331,30 @@ def generate_nodes(dev:Device)->[int,str]:
                     
     except ValueError as e:
         clean_temporary()
-        if type(e) is list:
-            return e
         
         logging.error("Cannot generate nodes: "+str(e))
         return [-10,"Cannot generate nodes:"+str(e)]
+    
+    return [0,"OK"]
 
 
 
-def add_topics(topics:dict)->tuple[list[Topic]|None,list[NodeACL]|None]:
+def add_topics()->tuple[list[Topic]|None,list[NodeACL]|None]:
     paths:list[Topic]=[]
     acls:list[NodeACL]=[]
+    
     try:
-
+        
+        with open(DEVICE_TMP_ARCHIVE+"/index.json","r") as file:
+            
+            topics=json.load(file)["topics"]
+        
+    except:
+        logging.error("Cannot open topics section of index.json")
+        return None,None
+    
+    try:
+        
         for topic in topics.items():
             path=Topic()
             path.path=topic[0]

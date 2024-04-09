@@ -23,11 +23,7 @@ class NodeRefernece(common):
 	
 	'''
 	path=models.CharField(max_length=255)
-	ref_device=models.ForeignKey(Device,on_delete=models.SET_NULL,null=True)
 	node_name=models.CharField(max_length=255,unique=True)
-	major_version=models.PositiveIntegerField()
-	minor_version=models.PositiveIntegerField()
-	patch_version=models.PositiveIntegerField()
 	ref_number=models.IntegerField(default=1)
 
 	def version_int_list(self)->list[int]:

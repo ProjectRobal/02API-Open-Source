@@ -5,7 +5,7 @@ device loader
 example nodes file:
 
 {
-nodes:[
+nodes:
 {
     "NazwaObiektu":
         {
@@ -24,7 +24,6 @@ nodes:[
     }
 },
 ...
-]
 }
 
 '''
@@ -35,6 +34,7 @@ import os
 import shutil
 from common.node_field_type import NODE_FIELDS
 import logging
+
 
 OUTPUT_NODE_PATH="/app/nodes/imported"
 
@@ -72,7 +72,7 @@ from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode
         superior:str=""
 
         if node.mono:
-            superior=+",MonoNode"
+            superior+=",MonoNode"
         
         if node.null:
             superior+=",NullNode"
@@ -100,7 +100,7 @@ from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode
             del field_attrs["type"]
 
             for attr in field_attrs.items():
-                attrs_str+="""{}={},""".format(attr[0],attr[1])
+                attrs_str+="""{}={},""".format(str(attr[0]),str(attr[1]))
 
             buff_str+="""   {}={}({})\n""".format(field_name,field_type,attrs_str)
 
