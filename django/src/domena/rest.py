@@ -37,6 +37,47 @@ import importer.device_loader as device_loader
 import os
 import json
 
+import logging
+
+class AcceptDeviceInstallation(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        
+        prompt=rest_serializers.DeviceInstallationPromptSerializer(data=request.data)
+        
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if prompt['go']:
+            error=device_loader.gen_device()
+            
+            if error[0]>=0:
+                dev:Device=error[2]
+                # generate nodes, topics, acl and etc
+                device_loader.generate_nodes(dev)
+                
+                device_loader.add_topics()
+                
+        else:
+            error=[1,"OK - Temporary data clean"]
+        
+        device_loader.clean_temporary()
+        
+        return Response({'code':error[0],'msg':error[1]})
+
+class CheckIfDeviceVersionIsProper(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self,request,format=None):
+        
+        ret=device_loader.check_device_ver()
+        
+        return Response({'code':ret[0],'msg':ret[1]})
 
 class UploadDevicePackage(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)

@@ -95,12 +95,17 @@ required_nodes_field:list[str]=['nodes']
 Device load sequence:
 
 unpack_and_verify_archive() - / upload REST topic
+ ask a prompt if user want to add device with some error messgaes
 add_device() - / add_device REST topic
+
 generate_nodes() -
 generate_acl_and_topics() - / add_device2 REST topic
+
 # on failure:
     remove_device()
 
+
+maybe sperate nodes and device importing
 
 Device remove sequence:
 remove_device()
@@ -156,9 +161,38 @@ def clean_temporary():
     shutil.rmtree('tmp', ignore_errors=True)
 
 
-def load_device(obj)->Device or None:
+
+def check_if_newer_ver_of_device_exits(obj)->(int,str):
+    
+    try:
+        
+        dev_ver:list[int]=version_to_number(obj["device_rev"])
+        
+        try:
+        
+            dev=Device.objects.get(name=obj["name"])
+
+            curr_dev_ver:list[int]=dev.version_int_list()
+            
+            ver=compare_versions(dev_ver,curr_dev_ver)
+                    
+            if ver<0:
+                return -2,"Newer instance of device aleardy exists!"
+            elif ver == 0:
+                return -3,"Device aleardy exists!"
+        
+        except Device.DoesNotExist:
+            return -2,"Newer instance of device aleardy exists!"
+        
+    except Exception as e:
+        logging.error("Device json is invalid!")
+        logging.error(str(e))
+        return -10,"Invalid device json!"
+
+
+def load_device(obj)->Device|None:
     '''
-    Add device from json in index.json
+    Add device from json in index.json, if device aleardy exist it will be overwritten
     '''
     try:
 
@@ -166,12 +200,6 @@ def load_device(obj)->Device or None:
 
         try:
             dev=Device.objects.get(name=obj["name"])
-
-            curr_dev_ver:list[int]=dev.version_int_list()
-            
-            if compare_versions(dev_ver,curr_dev_ver)<=0:
-                logging.error("Cannot overwrite device with lesser or similar version!")
-                return None
                         
         except Device.DoesNotExist:
             dev=Device()
@@ -422,5 +450,33 @@ def remove_topic(path:str)->bool:
         return False
     
 
-def add_device():
-    pass
+def gen_device()->[int,str,Device|None]:
+    
+    try:
+        with open(DEVICE_TMP_ARCHIVE+"/index.json","r") as file:
+            
+            obj=json.load(file)
+            dev:Device|None=load_device(obj)
+            
+            if dev is not None:
+                
+                return [0,"OK",dev]
+    except:
+        
+        return [-15,"Failed to open index.json file",None]
+        
+    return [-16,"Failed to add device, device aleardy exits",None]
+
+
+def check_device_ver()->tuple[int,str]:
+    
+    try:
+        with open(DEVICE_TMP_ARCHIVE+"/index.json","r") as file:
+            
+            obj=json.load(file)
+            
+            return check_if_newer_ver_of_device_exits(obj)
+        
+    except:
+        
+        return -11,"Cannot open index.json file!"

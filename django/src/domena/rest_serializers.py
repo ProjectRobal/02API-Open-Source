@@ -63,6 +63,10 @@ class DeviceSerializer(serializers.Serializer):
     key=serializers.CharField(max_length=32,required=False)
     status=serializers.IntegerField()
     version=serializers.CharField(max_length=5)
+    
+
+class DeviceInstallationPromptSerializer(serializers.Serializer):
+    go=serializers.BooleanField(default=False)
 
 
 class PluginViewSerializer(serializers.Serializer):
