@@ -22,6 +22,7 @@ from django.contrib.auth.models import Permission
 from auth02.models import O2User
 
 import domena.rest_serializers as rest_serializers
+from rest_framework.parsers import FileUploadParser
 
 from common.fetch_api import Fetch
 
@@ -30,6 +31,113 @@ from domena.settings import PLUGINS_LIST
 
 from mqtt.models import Topic,TopicBeamer,TopicCatcher
 from nodes.models import PublicNodes,PublicNode
+from nodeacl.models import NodeACL
+
+import importer.device_loader as device_loader
+
+import os
+import json
+
+import logging
+
+class AcceptDeviceInstallation(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        
+        prompt=rest_serializers.DeviceInstallationPromptSerializer(data=request.data)
+        
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if prompt['go']:
+            error=device_loader.gen_device()
+            
+            if error[0]>=0:
+                dev:Device=error[2]
+                # generate nodes, topics, acl and etc
+                
+                topics,acls = device_loader.add_topics()
+                
+                ret = device_loader.generate_nodes()
+                
+                if ret[0] >= 0:
+                                        
+                    _dev=Device.objects.filter(name=dev.name)
+                    
+                    if _dev.count()!=0:
+                        dev=_dev[0]
+                    
+                    dev.save()
+                    
+                    logging.info("Adding topics for device: "+dev.name)
+                    
+                    for topic in topics:
+                        
+                        top=Topic.objects.filter(path=topic.path)
+                        
+                        if top.count()==0:
+                            topic.save()
+                    
+                    
+                    logging.info("Adding NodeACLs for device: "+dev.name)
+                    
+                    for acl in acls:
+                        
+                        _acl=NodeACL.objects.filter(device=acl.device,topic=acl.topic)
+                        
+                        if _acl.count()==0:
+                            acl.device=dev
+                            acl.save()
+                    
+                    logging.info("Saving device!")
+                    
+                    error=(0,"Device added!")
+                else:
+                    error=(-2,"Cannot add device!")
+        else:
+            error=(1,"OK - Temporary data clean")
+        
+        device_loader.clean_temporary()
+        
+        return Response({'code':error[0],'msg':error[1]})
+
+class CheckIfDeviceVersionIsProper(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self,request,format=None):
+        
+        ret=device_loader.check_device_ver()
+        
+        return Response({'code':ret[0],'msg':ret[1]})
+
+class UploadDevicePackage(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    parser_classes = [FileUploadParser]
+
+    def post(self,request, format=None):
+        file_obj = request.FILES['file']
+
+        print(file_obj)
+                
+        tmp=open(device_loader.DEVICE_TMP_FILE,"wb")
+        
+        tmp.write(file_obj.file.read())
+        
+        tmp.close()
+        
+        file_obj.close()
+        
+        error=device_loader.unpack_and_verify_archive()   
+        
+        return Response({'code':error[0],'msg':error[1]})
+
 
 
 class TopicList(APIView):
@@ -250,6 +358,7 @@ class ExampleView(APIView):
             'auth': str(request.auth),  # None
         }
         return Response(content)
+    
     
 class UserView(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)

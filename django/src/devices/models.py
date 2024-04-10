@@ -40,7 +40,9 @@ class Device(common):
     last_login_date=models.DateTimeField(blank=True,null=True)
     key=models.CharField(max_length=32,unique=True,default=gen_key)
     status=models.IntegerField(choices=_status,default=_status[0][0])
-    version=models.CharField(max_length=5,default="0.0.0")
+    major_version=models.PositiveIntegerField()
+    minor_version=models.PositiveIntegerField()
+    patch_version=models.PositiveIntegerField()
     
     class Meta:
             permissions = [
@@ -54,3 +56,6 @@ class Device(common):
                 ("plugin_rm","Can remove plugins"),
                 ("plugin_view","Can view plugins")
             ]
+
+    def version_int_list(self)->list[int]:
+        return [self.major_version,self.minor_version,self.patch_version]

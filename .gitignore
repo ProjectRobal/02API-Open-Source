@@ -33,3 +33,4 @@ build/stagging/sql_buckups/*
 
 django/debug_nodes/*
 django/debug_src
+django/src/theme/static/css/dist/styles.css

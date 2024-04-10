@@ -63,6 +63,10 @@ class DeviceSerializer(serializers.Serializer):
     key=serializers.CharField(max_length=32,required=False)
     status=serializers.IntegerField()
     version=serializers.CharField(max_length=5)
+    
+
+class DeviceInstallationPromptSerializer(serializers.Serializer):
+    go=serializers.BooleanField(default=False)
 
 
 class PluginViewSerializer(serializers.Serializer):
@@ -87,4 +91,4 @@ class FetchRequestSerializer(serializers.Serializer):
 
 class FetchNodeInfoSerializer(serializers.Serializer):
     topic=serializers.CharField(allow_null=True)
-    node_name=serializers.CharField(allow_null=True)
+    node_name=serializers.CharField(allow_null=True)    

@@ -41,6 +41,9 @@ urlpatterns = [
     path('ext/node',rest.NodeView.as_view()),
     path('ext/nodeinfo',rest.NodeInfo.as_view()),
     path('ext/topicls',rest.TopicList.as_view()),
+    path('ext/dev/upload',rest.UploadDevicePackage.as_view()),
+    path('ext/dev/add',rest.AcceptDeviceInstallation.as_view()),
+    path('ext/dev/vcheck',rest.CheckIfDeviceVersionIsProper.as_view()),
 
     #handle path in format api/<path> like api/samples/
     path('accounts/', include('allauth.urls')),

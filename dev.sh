@@ -47,6 +47,8 @@ elif [ $cmd = "run" ]; then
 
 elif [ $cmd = "purge" ]; then
 
+    find ../../django/src -path "*/migrations/*.py" -not -name "__init__.py" -delete
+    find ../../django/src -path "*/migrations/*.pyc"  -delete
     docker compose rm -f -s -v
     rm -R  sql/data
     rm -R mqtt/data

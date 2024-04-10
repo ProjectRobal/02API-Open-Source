@@ -4,6 +4,8 @@ import logging
 from django.db import models
 from common.models import common
 
+from devices.models import Device
+
 from domena.settings import NODES_IMPORT_PATH
 
 class NodeRefernece(common):
@@ -16,11 +18,16 @@ class NodeRefernece(common):
 		from server.
 
 		path is relative to node's import path
+
+		major, minor and patch version holds information about node version and whether to overwrite it or not.
 	
 	'''
 	path=models.CharField(max_length=255)
 	node_name=models.CharField(max_length=255,unique=True)
 	ref_number=models.IntegerField(default=1)
+
+	def version_int_list(self)->list[int]:
+		return [self.major_version,self.minor_version,self.patch_version]
 
 
 
