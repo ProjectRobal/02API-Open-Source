@@ -81,7 +81,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'tailwind',
-    'theme'
+    'theme',
+    'trashbin'
 ] + PLUGINS_LIST+['mqtt']
 
 if os.environ.get("DJANGO_MODE")=='DEBUG':
@@ -195,7 +196,15 @@ WSGI_APPLICATION = 'domena.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':os.environ.get('POSTGRES_DB'),
+        'NAME':'domena_db',
+        'USER':os.environ.get('POSTGRES_USER'),
+        'PASSWORD':os.environ.get('POSTGRES_PASSWORD'),
+        'HOST':'db',
+        'PORT':os.environ.get('POSTGRES_PORT')
+    },
+    "trashbin": {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME':'trashbin',
         'USER':os.environ.get('POSTGRES_USER'),
         'PASSWORD':os.environ.get('POSTGRES_PASSWORD'),
         'HOST':'db',

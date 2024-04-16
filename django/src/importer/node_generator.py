@@ -98,6 +98,9 @@ from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode
             field_type:str=NODE_FIELDS[field_attrs["type"]]
 
             del field_attrs["type"]
+            
+            if not 'blank' in field_attrs.keys():
+                field_attrs['blank']=True
 
             for attr in field_attrs.items():
                 attrs_str+="""{}={},""".format(str(attr[0]),str(attr[1]))
