@@ -400,6 +400,10 @@ def remove_device(name:str)->bool:
         dev:Device=Device.objects.get(name=name)
 
         dev.delete()
+        
+        dev.uuid=None
+        
+        dev.save(using="trashbin")
 
         return True
 
