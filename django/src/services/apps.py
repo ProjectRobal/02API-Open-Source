@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-SERVICE_IMPORT_PATH="/app/services/imported"
+SERVICE_IMPORT_PATH="services.imported"
 
 
 class ServicesConfig(AppConfig):

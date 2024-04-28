@@ -6,5 +6,3 @@ from .models import ProjectGroup,ProfilePicture,CardVisitRecord,ToProgramBuffer,
 admin.site.register(ProjectGroup)
 admin.site.register(ProfilePicture)
 admin.site.register(CardVisitRecord)
-admin.site.register(CardUp)
-

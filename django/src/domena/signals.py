@@ -51,12 +51,13 @@ def my_handler(sender,instance, **kwargs):
         node_name=sender.get_name()
         try:
             service=ServiceProfile.objects.get(node_name=node_name)
-            service_path:str=SERVICE_IMPORT_PATH+"/"+service.exec_name
+            service_path:str=SERVICE_IMPORT_PATH+"."+service.exec_name
             serv_mod=importlib.import_module(service_path)
             
             serv_mod.service(instance)
             
             logging.debug(f"Executed: {node_name}")
+            del serv_mod
         except ServiceProfile.DoesNotExist:
             logging.debug(f"No service for specific node {node_name}")
         

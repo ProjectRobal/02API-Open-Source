@@ -174,7 +174,7 @@ class PublicNodes:
             if child._name is None:
                 if name == child._name:
                     return child
-            elif child.__name__==name:
+            elif child.__name__ == name:
                 return child
         
         return None

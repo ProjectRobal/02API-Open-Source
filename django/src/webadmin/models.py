@@ -17,7 +17,7 @@ from PIL import Image
 from uuid import uuid4
 import os
 
-from nodes.models import PublicNode,MonoNode,BeamerNode
+from nodes.models import PublicNode,MonoNode,BeamerNode,NullNode
 
 import logging
 
@@ -46,7 +46,7 @@ def gen_key()->bytes:
     
     return key
 
-class CardUp(BeamerNode,MonoNode):
+class CardUp(PublicNode,BeamerNode,NullNode):
     _name="cards_up"
     
     username=models.CharField(max_length=255)
