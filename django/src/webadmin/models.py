@@ -10,13 +10,14 @@ import secrets
 from io import BytesIO
 import datetime
 from django.utils import timezone
+import django.contrib.postgres.fields as fields
 
 from PIL import Image
 
 from uuid import uuid4
 import os
 
-from nodes.models import PublicNode,MonoNode
+from nodes.models import PublicNode,MonoNode,BeamerNode
 
 import logging
 
@@ -45,6 +46,14 @@ def gen_key()->bytes:
     
     return key
 
+class CardUp(BeamerNode):
+    _name="cards_up"
+    
+    username=models.CharField(max_length=255)
+    first_name=models.CharField(max_length=255)
+    second_name=models.CharField(max_length=255)
+    is_in_basement=models.BooleanField(default=False)
+    projects=fields.ArrayField(models.CharField(max_length=255,blank=True))
 
 
 class CardNode(PublicNode):

@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'nodeacl',
     'nodes',
     'importer',
+    'services',
     'rest_framework',
     'knox',
     'allauth',
