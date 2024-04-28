@@ -1,6 +1,7 @@
 from django.contrib.auth.signals import user_logged_in,user_logged_out,user_login_failed
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+import importlib
 
 import logging
 
@@ -44,8 +45,19 @@ def onLoginFailed(func):
 def my_handler(sender,instance, **kwargs):
     from nodes.models import NodeEntry
     from services.models import ServiceProfile
+    from services.apps import SERVICE_IMPORT_PATH
     
     if isinstance(instance,NodeEntry):
         node_name=sender.get_name()
-        logging.debug(f"Executed: {node_name}")
+        try:
+            service=ServiceProfile.objects.get(node_name=node_name)
+            service_path:str=SERVICE_IMPORT_PATH+"/"+service.exec_name
+            serv_mod=importlib.import_module(service_path)
+            
+            serv_mod.service(instance)
+            
+            logging.debug(f"Executed: {node_name}")
+        except ServiceProfile.DoesNotExist:
+            logging.debug(f"No service for specific node {node_name}")
+        
         
