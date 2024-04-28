@@ -46,7 +46,7 @@ def gen_key()->bytes:
     
     return key
 
-class CardUp(BeamerNode):
+class CardUp(BeamerNode,MonoNode):
     _name="cards_up"
     
     username=models.CharField(max_length=255)

@@ -6,7 +6,7 @@ from django.contrib.postgres.fields import ArrayField
 from typing import Tuple
 from django.core.serializers.json import DjangoJSONEncoder
 
-
+from datetime import datetime
 import json
 
 # Create your models here.
@@ -71,11 +71,19 @@ class MonoNode(NodeEntry):
         if amount>0:
 
             fields:dict={}
+            
+            obj=cls.objects.get()
 
-            for field in self._meta.get_fields(include_parents=False):
-                fields[field.name]=field.value_from_object(self)
+            to_inh=self._meta.get_fields(include_parents=False)
+            
+            for field in to_inh:
+                if field != "uuid":
+                    fields[field.name]=field.value_from_object(self)
+                    
+            fields["created_date"]=obj.created_date
+            fields["modified_date"]=datetime.now()
 
-            cls.objects.filter(uuid=cls.objects.get().uuid).update(**fields)
+            cls.objects.filter(uuid=obj.uuid).update(**fields)
 
             return
 
