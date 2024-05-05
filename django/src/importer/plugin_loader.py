@@ -78,6 +78,41 @@ def remove_plugin(name:str)->bool:
     return False
 
 
+def unpack_and_verify_plugin()->[int,str]:
+    
+    try:
+        logging.info("Unpacking the ZTP archive into temporary")
+        shutil.unpack_archive(
+            filename=PLUGIN_TMP_FILE,
+            extract_dir=PLUGIN_TMP_ARCHIVE,
+            format='zip'
+        )
+
+        logging.info("Looking for meta.json file")
+
+        # check if meta file exists
+        if not os.path.exists(PLUGIN_TMP_ARCHIVE+'/meta.json'):
+            logging.error("No valid meta.json file")
+            return [-1,"No valid meta.json file"]
+        
+        logging.info("Loading metadata...")
+        
+        _json:dict=json.load(open(PLUGIN_TMP_ARCHIVE+'/meta.json','r'))
+
+        try:
+            # check if meta.json is valid meta file
+            meta:PluginInfo=namedtuple("PluginInfo",_json.keys())(*_json.values())
+
+        except ValueError as e:
+            logging.error(str(e))
+            return [-2,"No valid meta.json file"]
+        
+        return [0,"Ok"]
+    
+    except ValueError as e:
+        logging.error("Cannot open archive: "+str(e))
+        return [-10,"Cannot parse plugin file"]
+
 
 def add_plugin()->bool:
     '''A file with compressed archive'''
@@ -111,6 +146,8 @@ def add_plugin()->bool:
             logging.error(str(e))
             clean_temporary()
             return False
+        
+        # verification
         
         logging.info("Looking for source code")
         

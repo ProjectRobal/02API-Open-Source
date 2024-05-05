@@ -34,11 +34,62 @@ from nodes.models import PublicNodes,PublicNode
 from nodeacl.models import NodeACL
 
 import importer.device_loader as device_loader
+import importer.plugin_loader as plugin_loader
 
 import os
 import json
 
 import logging
+
+class UploadPluginPackage(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    parser_classes = [FileUploadParser]
+
+    def post(self,request, format=None):
+        file_obj = request.FILES['file']
+
+        print(file_obj)
+        
+        if not os.path.exists("tmp"):
+            os.mkdir("tmp")
+
+        with open(plugin_loader.PLUGIN_TMP_FILE,"wb+") as pfile:
+            for chunk in file_obj.file.chunks():
+                pfile.write(chunk)
+        
+        file_obj.close()
+        
+        error=plugin_loader.unpack_and_verify_plugin() 
+        
+        return Response({'code':error[0],'msg':error[1]})
+
+class RemoveDevice(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        prompt=rest_serializers.DeviceRemoveSerializer(data=request.data)
+        
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        '''Device removal: 
+
+            1.Get device by uuid
+            2.Get all NodeACLs associated with device
+            3.Get NodeReference of each node from NodeACLs and decrease it's counter
+            4.If counter is 0 remove Node completly with all related Topics
+            
+        '''
+        
+        prompt=prompt.validated_data
+        
+        if device_loader.purge_device(prompt["uuid"]):
+            return Response({'code':0,'msg':"Device removed!"})
+        else:
+            return Response({'code':-1,'msg':"Couldn't remove device"})
 
 class AcceptDeviceInstallation(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)

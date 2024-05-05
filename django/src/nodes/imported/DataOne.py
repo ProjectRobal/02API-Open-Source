@@ -4,4 +4,4 @@ from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode
 class DataOne(PublicNode):
    _name="data1"
    tekst=models.CharField(max_length=55,blank=True,)
-   numer=models.IntegerField(default=0)
+   numer=models.IntegerField(blank=True,)

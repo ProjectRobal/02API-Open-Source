@@ -81,8 +81,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'tailwind',
-    'theme',
-    'trashbin'
+    'theme'
 ] + PLUGINS_LIST+['mqtt']
 
 if os.environ.get("DJANGO_MODE")=='DEBUG':
