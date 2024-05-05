@@ -145,9 +145,6 @@ services:
       - type: bind
         source: ./sql_buckups
         target: /backup
-      - type: bind
-        source: ./multi_db
-        target: /docker-entrypoint-initdb.d
         
     networks:
       - internal
