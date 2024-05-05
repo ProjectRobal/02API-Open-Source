@@ -34,11 +34,165 @@ from nodes.models import PublicNodes,PublicNode
 from nodeacl.models import NodeACL
 
 import importer.device_loader as device_loader
+import importer.plugin_loader as plugin_loader
+import importer.service_loader as service_loader
 
 import os
 import json
 
 import logging
+
+
+class RemoveService(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        prompt=rest_serializers.ServiceRemoveSerializer(data=request.data)
+        
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if service_loader.remove_service(prompt['uuid']):
+            return Response({'code':0,'msg':"Service removed!"})
+        else:
+            return Response({'code':-1,'msg':"Cannot remove service!"})
+        
+
+class AcceptServiceInstallation(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        # we are reusing the serializer from Device
+        prompt=rest_serializers.DeviceInstallationPromptSerializer(data=request.data)
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if prompt['go']:
+            error=service_loader.add_service()
+        else:
+            logging.info("Cleaning temporary")
+            service_loader.clean_temporary()
+            
+        return Response({'code':error[0],'msg':error[1]})
+
+class UploadServicePackage(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    parser_classes = [FileUploadParser]
+
+    def post(self,request, format=None):
+        file_obj = request.FILES['file']
+
+        print(file_obj)
+        
+        if not os.path.exists("tmp"):
+            os.mkdir("tmp")
+
+        with open(service_loader.SERVICE_TMP_FILE,"wb+") as pfile:
+            pfile.write(file_obj.file.read())
+        
+        file_obj.close()
+        
+        error=service_loader.unpack_and_verify_service()
+        
+        return Response({'code':error[0],'msg':error[1]})
+
+
+class RemovePlugin(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        prompt=rest_serializers.PluginRemoveSerializer(data=request.data)
+        
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if plugin_loader.remove_plugin(prompt['name']):
+            return Response({'code':0,'msg':"Plugin removed!"})
+        else:
+            return Response({'code':-1,'msg':"Cannot remove plugin!"})
+        
+
+class AcceptPluginInstallation(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        # we are reusing the serializer from Device
+        prompt=rest_serializers.DeviceInstallationPromptSerializer(data=request.data)
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if prompt['go']:
+            error=plugin_loader.add_plugin()
+        else:
+            logging.info("Cleaning temporary")
+            plugin_loader.clean_temporary() 
+            
+        return Response({'code':error[0],'msg':error[1]})
+        
+        
+
+class UploadPluginPackage(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+
+    parser_classes = [FileUploadParser]
+
+    def post(self,request, format=None):
+        file_obj = request.FILES['file']
+
+        print(file_obj)
+        
+        if not os.path.exists("tmp"):
+            os.mkdir("tmp")
+
+        with open(plugin_loader.PLUGIN_TMP_FILE,"wb+") as pfile:
+            pfile.write(file_obj.file.read())
+        
+        file_obj.close()
+        
+        error=plugin_loader.unpack_and_verify_plugin() 
+        
+        return Response({'code':error[0],'msg':error[1]})
+
+class RemoveDevice(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        prompt=rest_serializers.DeviceRemoveSerializer(data=request.data)
+        
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        '''Device removal: 
+
+            1.Get device by uuid
+            2.Get all NodeACLs associated with device
+            3.Get NodeReference of each node from NodeACLs and decrease it's counter
+            4.If counter is 0 remove Node completly with all related Topics
+            
+        '''
+        
+        prompt=prompt.validated_data
+        
+        if device_loader.purge_device(prompt["uuid"]):
+            return Response({'code':0,'msg':"Device removed!"})
+        else:
+            return Response({'code':-1,'msg':"Couldn't remove device"})
 
 class AcceptDeviceInstallation(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)

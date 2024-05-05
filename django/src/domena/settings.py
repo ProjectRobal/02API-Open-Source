@@ -15,8 +15,7 @@ from pathlib import Path
 from datetime import timedelta
 from rest_framework.settings import api_settings
 
-from .plugins import PLUGINS
-from devices.plugin_loader import scan_for_plugin
+from .plugins import PLUGINS,scan_for_plugin
 
 import logging
 import json
@@ -60,7 +59,7 @@ if os.environ.get("DJANGO_MODE")=='DEBUG':
 
 # Application definition
     
-PLUGINS_LIST=scan_for_plugin()
+PLUGINS_LIST:list[str]=scan_for_plugin()
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -195,7 +194,7 @@ WSGI_APPLICATION = 'domena.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':os.environ.get('POSTGRES_DB'),
+        'NAME':'domena_db',
         'USER':os.environ.get('POSTGRES_USER'),
         'PASSWORD':os.environ.get('POSTGRES_PASSWORD'),
         'HOST':'db',
@@ -203,6 +202,8 @@ DATABASES = {
     }
 }
 
+
+#DATABASE_ROUTERS=["domena.routers.DeviceRouter"]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

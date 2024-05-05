@@ -2,4 +2,4 @@ from django.contrib import admin
 
 from importer.models import NodeRefernece
 
-admin.register(NodeRefernece)
+admin.site.register(NodeRefernece)

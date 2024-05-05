@@ -70,9 +70,10 @@ import logging
 from domena.settings import SERVER_VERSION
 from common.fetch_api import O2_API_VERSION
 from common.acess_levels import Access
+from common.utils import version_to_number,version_difference,compare_versions
 
 from devices.models import Device
-from mqtt.models import Topic
+from mqtt.models import Topic,TopicCatcher,TopicBeamer
 from nodeacl.models import NodeACL
 
 from importer.models import NodeRefernece
@@ -116,45 +117,6 @@ remove_topics_associated_with_removed_nodes()
 
 
 
-def version_to_number(ver:str)->list[int]:
-    '''
-    A function that converts version string in format:
-    a.b.c into list of numbers
-    '''
-
-    numbers:list[int]=[int(x) for x in ver.split('.')]
-
-    return numbers
-
-def version_difference(ver1:list[int],ver2:list[int])->list[int]:
-
-    output:list[int]=[]
-
-    for v1,v2 in zip(ver1,ver2):
-        output.append(v1-v2)
-
-    return output
-
-
-def compare_versions(ver1:list[int],ver2:list[int])->int:
-
-    '''
-        Return 0 when both versions are the same,
-        Return 1 when first verion is ahead of second version
-        Return -1 when first version is behind of second version
-    '''
-
-    diff=version_difference(ver1,ver2)
-
-    output=0
-
-    for d in diff:
-        if d>0:
-            output=1
-        elif d<0:
-            output=-1
-
-    return output
 
 
 def clean_temporary():
@@ -400,56 +362,81 @@ def remove_device(name:str)->bool:
         dev:Device=Device.objects.get(name=name)
 
         dev.delete()
+        
+        dev.uuid=None
+        
+        dev.save(using="trashbin")
 
         return True
 
     except Device.DoesNotExist:
         return False
 
-def purge_device(name:str)->bool:
+
+def remove_node(reference:NodeRefernece):
+    
+    os.remove(reference.path)
+    logging.info("Removing node file at path "+str(reference.path))
+    
+    topics=Topic.objects.filter(node=reference.node_name)
+    catchers=TopicCatcher.objects.filter(node=reference.node_name)
+    beamers=TopicBeamer.objects.filter(node=reference.node_name)
+    
+    for topic in topics:
+        topic.delete()
+        
+        logging.info("Removing topic "+str(topic.path)+" of node "+str(reference.node_name))
+        
+    for topic in catchers:
+        topic.delete()
+        
+        logging.info("Removing topic "+str(topic.path)+" of node "+str(reference.node_name))
+        
+    for topic in beamers:
+        topic.delete()
+        
+        logging.info("Removing topic "+str(topic.path)+" of node "+str(reference.node_name))
+    
+        
+        
+
+def purge_device(id:str)->bool:
     '''it should also remove nodes'''
     try:
-        dev:Device=Device.objects.get(name=name)
+        dev:Device=Device.objects.get(uuid=id)
 
         acls=NodeACL.objects.filter(device=dev)
-
+        
+        used_nodes:set[str]=set()
+        
         for acl in acls:
             if acl.topic is not None:
-
-                #check if topic is referenced by another device
-                n_reference:int=NodeACL.objects.filter(topic=acl.topic).exclude(device=dev).count()
-
-                #unless then remove it
-                if n_reference==0:
-                    logging.debug("Found no reference to topic: "+acl.topic.path+" removing...")
-                    acl.topic.delete()
-                else:
-                    logging.debug("Found reference for topic: "+acl.topic.path+" keeping...")
-
+                used_nodes.add(acl.topic.node)
+            
+            logging.debug("Removing Node ACL for device with name: "+str(dev.name))
             acl.delete()
 
+        for node in used_nodes:
+            try:
+                reference=NodeRefernece.objects.get(node_name=node)
+                
+                reference.ref_number=reference.ref_number-1
+                logging.error("Node reference decreased for node "+str(reference.node_name))
+                
+                if reference.ref_number == 0:
+                    remove_node(reference)
+                    reference.delete()
+                else:
+                    reference.save()
+                
+            except NodeRefernece.DoesNotExist:
+                logging.error("Cannot find reference for node: "+str(node))
+            
         dev.delete()
 
         return True
 
     except Device.DoesNotExist:
-        return False
-    
-def remove_topic(path:str)->bool:
-    try:
-
-        topic=Topic.objects.get(path=path)
-
-        acls=NodeACL.objects.filter(topic=topic)
-
-        for acl in acls:
-            acl.delete()
-
-        topic.delete()
-
-        return True
-    
-    except Topic.DoesNotExist:
         return False
     
 

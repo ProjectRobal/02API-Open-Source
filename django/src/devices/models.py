@@ -59,3 +59,11 @@ class Device(common):
 
     def version_int_list(self)->list[int]:
         return [self.major_version,self.minor_version,self.patch_version]
+    
+    
+class TrashDevice(Device):
+    '''
+    A model that holds trash data
+    
+    '''
+    pass

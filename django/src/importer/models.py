@@ -26,9 +26,6 @@ class NodeRefernece(common):
 	node_name=models.CharField(max_length=255,unique=True)
 	ref_number=models.IntegerField(default=1)
 
-	def version_int_list(self)->list[int]:
-		return [self.major_version,self.minor_version,self.patch_version]
-
 
 
 logging.info("Loading generated nodes")

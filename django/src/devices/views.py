@@ -8,9 +8,9 @@ from nodes.models import PublicNodes
 from django.forms.models import model_to_dict
 from django.contrib.auth.decorators import login_required,permission_required
 from domena.home import entries
-from domena.plugins import PLUGINS
-from .plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,scan_for_plugin,remove_plugin
-from importer.device_loader import gen_device,remove_device,purge_device,remove_topic,DEVICE_TMP_FILE
+from domena.plugins import PLUGINS,scan_for_plugin
+from importer.plugin_loader import parse_plugin,PluginInfo,add_plugin,PLUGIN_TMP_FILE,remove_plugin
+from importer.device_loader import gen_device,remove_device,purge_device,DEVICE_TMP_FILE
 from .forms import PluginFileForm,DeviceFileForm
 import os
 import json

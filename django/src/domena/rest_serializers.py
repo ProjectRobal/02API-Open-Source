@@ -67,7 +67,15 @@ class DeviceSerializer(serializers.Serializer):
 
 class DeviceInstallationPromptSerializer(serializers.Serializer):
     go=serializers.BooleanField(default=False)
-
+    
+class DeviceRemoveSerializer(serializers.Serializer):
+    uuid=serializers.CharField(max_length=36)
+    
+class ServiceRemoveSerializer(serializers.Serializer):
+    uuid=serializers.CharField(max_length=36)
+    
+class PluginRemoveSerializer(serializers.Serializer):
+    name=serializers.CharField(max_length=255,required=True)
 
 class PluginViewSerializer(serializers.Serializer):
     name=serializers.CharField(max_length=255,required=True)

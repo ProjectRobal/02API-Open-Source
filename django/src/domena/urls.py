@@ -41,9 +41,19 @@ urlpatterns = [
     path('ext/node',rest.NodeView.as_view()),
     path('ext/nodeinfo',rest.NodeInfo.as_view()),
     path('ext/topicls',rest.TopicList.as_view()),
+    
     path('ext/dev/upload',rest.UploadDevicePackage.as_view()),
     path('ext/dev/add',rest.AcceptDeviceInstallation.as_view()),
     path('ext/dev/vcheck',rest.CheckIfDeviceVersionIsProper.as_view()),
+    path('ext/dev/devrm',rest.RemoveDevice.as_view()),
+    
+    path('ext/plug/upload',rest.UploadPluginPackage.as_view()),
+    path('ext/plug/add',rest.AcceptPluginInstallation.as_view()),
+    path('ext/plug/rm',rest.RemovePlugin.as_view()),
+    
+    path('ext/serv/upload',rest.UploadServicePackage.as_view()),
+    path('ext/serv/add',rest.AcceptServiceInstallation.as_view()),
+    path('ext/serv/rm',rest.RemoveService.as_view()),
 
     #handle path in format api/<path> like api/samples/
     path('accounts/', include('allauth.urls')),
@@ -55,14 +65,11 @@ urlpatterns = [
     path('twingo/',twingoPage),
     path('device/<str:name>',device_page),
     path('nodes/<str:name>',node_list),
-    path('plugin_add/',plugin_add),
-    path('device_add',device_add),
     path('pshow/<str:name>',plugin_show),
     path('prm/',plugin_rm),
     path('devrm/',device_rm),
     path('devpr/',device_purge),
     path('ploader/',ploader),
-    path('devloader/',devloader),
     path('ave_prezes',rat)
 ]
 

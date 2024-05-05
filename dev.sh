@@ -93,6 +93,10 @@ elif [ $cmd = "init_root" ]; then
 
     docker compose exec -T web python manage.py createsuperuser --noinput
 
+elif [ $cmd = "cmd" ]; then
+
+    docker compose run -T web $2
+
 elif [ $cmd = "init_mqtt" ]; then
 
     docker compose run -T mqtt mosquitto_passwd -U /mosquitto/config/password.txt
@@ -122,6 +126,7 @@ echo "down - zatrzymaj i usuń kontenery"
 echo "start - uruchom kontenery"
 echo "stop - zatrzymaj kontenery"
 echo "run - zbuduj i uruchom kontenery"
+echo "cmd - uruchom komendę w kontenerze"
 echo "purge - usuń kontenery wraz z ich danymi"
 echo "debug - uruchom terminal bash na kontenerze django"
 echo "init_root - utwórz użytkownika roota w django"

@@ -109,3 +109,4 @@ class TopicBeamer(common):
     '''
     path=models.CharField(max_length=255,name="path",unique=True,validators=[RegexValidator(topic_regex,"String is not a valid path, must be path /.../ ")])
     node=models.CharField(max_length=255,name="node")
+    
