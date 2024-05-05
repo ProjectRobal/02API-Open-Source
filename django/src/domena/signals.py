@@ -46,7 +46,7 @@ def onLoginFailed(func):
  Here the registers services will listen for incoming Nodes updates
 '''
 @receiver(post_save)
-def my_handler(sender,instance, **kwargs):
+def post_save_slot(sender,instance, **kwargs):
     from nodes.models import NodeEntry,BeamerNode
     from mqtt.models import TopicBeamer
     from mqtt.apps import MqttConfig

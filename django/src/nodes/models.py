@@ -5,6 +5,7 @@ from common.models import common
 from django.contrib.postgres.fields import ArrayField
 from typing import Tuple
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models.signals import post_save
 
 from datetime import datetime
 import json
@@ -53,7 +54,7 @@ class NullNode(NodeEntry):
         app_label= "nodes"
     
     def save(self, *args, **kwargs):
-        return
+        post_save.send(type(self),instance=self,created=True)
 
 class MonoNode(NodeEntry):
     '''A table will singular entry
