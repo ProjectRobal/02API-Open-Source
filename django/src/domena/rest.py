@@ -41,6 +41,47 @@ import json
 
 import logging
 
+
+class RemovePlugin(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        prompt=rest_serializers.PluginRemoveSerializer(data=request.data)
+        
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if plugin_loader.remove_plugin(prompt['name']):
+            return Response({'code':0,'msg':"Plugin removed!"})
+        else:
+            return Response({'code':-1,'msg':"Cannot remove plugin!"})
+        
+
+class AcceptPluginInstallation(APIView):
+    authentication_classes = (TokenAuthentication,SessionAuthentication)
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self,request,format=None):
+        # we are reusing the serializer from Device
+        prompt=rest_serializers.DeviceInstallationPromptSerializer(data=request.data)
+        if not prompt.is_valid():
+            return Response({'code':-20,'msg':"No valid request!"})
+        
+        prompt=prompt.validated_data
+        
+        if prompt['go']:
+            error=plugin_loader.add_plugin()
+        else:
+            logging.info("Cleaning temporary")
+            plugin_loader.clean_temporary() 
+            
+        return Response({'code':error[0],'msg':error[1]})
+        
+        
+
 class UploadPluginPackage(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
@@ -56,8 +97,7 @@ class UploadPluginPackage(APIView):
             os.mkdir("tmp")
 
         with open(plugin_loader.PLUGIN_TMP_FILE,"wb+") as pfile:
-            for chunk in file_obj.file.chunks():
-                pfile.write(chunk)
+            pfile.write(file_obj.file.read())
         
         file_obj.close()
         

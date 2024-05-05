@@ -45,6 +45,9 @@ urlpatterns = [
     path('ext/dev/add',rest.AcceptDeviceInstallation.as_view()),
     path('ext/dev/vcheck',rest.CheckIfDeviceVersionIsProper.as_view()),
     path('ext/dev/devrm',rest.RemoveDevice.as_view()),
+    path('ext/plug/upload',rest.UploadPluginPackage.as_view()),
+    path('ext/plug/add',rest.AcceptPluginInstallation.as_view()),
+    path('ext/plug/rm',rest.RemovePlugin.as_view()),
 
     #handle path in format api/<path> like api/samples/
     path('accounts/', include('allauth.urls')),

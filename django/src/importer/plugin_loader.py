@@ -24,6 +24,15 @@ import gzip
 import shutil
 import logging
 
+from domena.settings import SERVER_VERSION,PLUGINS_LIST
+from domena.plugins import scan_for_plugin
+
+from common.utils import compare_versions,version_to_number
+
+from django.core.serializers.json import DjangoJSONEncoder
+
+
+
 PLUGIN_TMP_FILE="tmp/plugin.tmp"
 
 PLUGIN_TMP_ARCHIVE="tmp/unpacked"
@@ -39,21 +48,6 @@ class PluginInfo:
     version:str
     app_name:str
 
-
-def scan_for_plugin()-> list[str]:
-
-    output:list[str]=[]
-    
-    try:
-
-        for dir in os.listdir('/app/'):
-            if os.path.isdir(dir):
-                if os.path.exists('/app/'+dir+'/meta.json'):
-                    output.append(dir)
-    except Exception:
-        return []
-    
-    return output
 
 
 def parse_plugin(app_name:str)->PluginInfo or None:
@@ -71,6 +65,9 @@ def clean_temporary():
     shutil.rmtree('tmp', ignore_errors=True)
 
 def remove_plugin(name:str)->bool:
+    if not name in PLUGINS_LIST:
+        return False
+    
     if os.path.exists("/app/"+name):
         shutil.rmtree("/app/"+name,ignore_errors=True)
         return True
@@ -78,7 +75,7 @@ def remove_plugin(name:str)->bool:
     return False
 
 
-def unpack_and_verify_plugin()->[int,str]:
+def unpack_and_verify_plugin()->(int,str):
     
     try:
         logging.info("Unpacking the ZTP archive into temporary")
@@ -93,7 +90,7 @@ def unpack_and_verify_plugin()->[int,str]:
         # check if meta file exists
         if not os.path.exists(PLUGIN_TMP_ARCHIVE+'/meta.json'):
             logging.error("No valid meta.json file")
-            return [-1,"No valid meta.json file"]
+            return -1,"No valid meta.json file"
         
         logging.info("Loading metadata...")
         
@@ -102,52 +99,58 @@ def unpack_and_verify_plugin()->[int,str]:
         try:
             # check if meta.json is valid meta file
             meta:PluginInfo=namedtuple("PluginInfo",_json.keys())(*_json.values())
+            
+            server_version=version_to_number(SERVER_VERSION)
+            m_ver=version_to_number(meta.version)
 
+            ver=compare_versions(server_version,m_ver)
+            
+            if ver<0:
+                return -3,"Plugin version is behind server version"
+            
+            # check if plugin aleardy exits
+            
+            curr_meta:PluginInfo=parse_plugin(meta.app_name)
+            
+            if curr_meta is not None:
+                cm_ver=version_to_number(curr_meta.version)
+                ver=compare_versions(m_ver,cm_ver)
+                
+                if ver<0:
+                    return -4,"There is aleardy newest version of that plugin"
+
+                if ver>0:
+                    return -4,"Plugin version mismatch with server version"
+                
         except ValueError as e:
             logging.error(str(e))
-            return [-2,"No valid meta.json file"]
+            return -2,"No valid meta.json file"
         
-        return [0,"Ok"]
+        return 0,"Ok"
     
     except ValueError as e:
         logging.error("Cannot open archive: "+str(e))
-        return [-10,"Cannot parse plugin file"]
+        return -10,"Cannot parse plugin file"
 
 
-def add_plugin()->bool:
-    '''A file with compressed archive'''
+def add_plugin()->(int,str):
     
     try:
-
-        logging.info("Unpacking the ZTP archive into temporary")
-        shutil.unpack_archive(
-            filename=PLUGIN_TMP_FILE,
-            extract_dir=PLUGIN_TMP_ARCHIVE,
-            format='zip'
-        )
-
-        logging.info("Looking for meta.json file")
-
-        # check if meta file exists
-        if not os.path.exists(PLUGIN_TMP_ARCHIVE+'/meta.json'):
-            logging.error("No valid meta.json file")
-            clean_temporary()
-            return False
         
         logging.info("Loading metadata...")
+        
+        if not os.path.exists(PLUGIN_TMP_ARCHIVE+'/meta.json'):
+            return -1,"No valid meta.json file"
         
         _json:dict=json.load(open(PLUGIN_TMP_ARCHIVE+'/meta.json','r'))
 
         try:
             # check if meta.json is valid meta file
-            meta:PluginInfo=namedtuple("PluginInfo",_json.keys())(*_json.values())
-
+            meta:PluginInfo=namedtuple("PluginInfo",_json.keys())(*_json.values())._asdict()
+                
         except ValueError as e:
             logging.error(str(e))
-            clean_temporary()
-            return False
-        
-        # verification
+            return -1,"No valid meta.json file"
         
         logging.info("Looking for source code")
         
@@ -155,43 +158,63 @@ def add_plugin()->bool:
         if not os.path.exists(PLUGIN_TMP_ARCHIVE+"/src"):
             logging.error("No source code has been found")
             clean_temporary()
-            return False
+            return -2,"No source code has been found"
         
-        app_dir:str="/app/"+meta.app_name
+        app_dir:str="/app/"+meta["app_name"]
+        
+            
+        meta["installation_date"]=datetime.datetime.today()
         
         if os.path.exists(app_dir):
-            old_meta=parse_plugin(meta.app_name)
-
-            if old_meta.version!=meta.app_name:
-
-                logging.error("App already exits")
-                clean_temporary()
-                return False
+            logging.info("Found exiting plugin "+str(meta["app_name"])+" instance")
+            logging.info("Moving to temporary")
             
-        meta.installation_date=datetime.datetime.today()
+            if not os.path.exists(PLUGIN_TMP_ARCHIVE+"/copy"):
+                os.mkdir(PLUGIN_TMP_ARCHIVE+"/copy")
+            
+            if os.path.exists(PLUGIN_TMP_ARCHIVE+"/copy/"+meta["app_name"]):
+                shutil.rmtree(PLUGIN_TMP_ARCHIVE+"/copy/"+meta["app_name"],ignore_errors=True)
+                
+            shutil.move(app_dir,PLUGIN_TMP_ARCHIVE+"/copy",)
         
-        logging.info("Creating a folder for: "+meta.app_name)
+        logging.info("Creating a folder for: "+meta["app_name"])
         
         os.mkdir(app_dir)
 
-        logging.info("Moving meta.json file to a new directory")
+        logging.info("Creating meta.json file to a new directory")
+        
+        with open(app_dir+"/meta.json","wb+") as meta_file:
+            meta_file.write(json.dumps(meta,cls=DjangoJSONEncoder).encode())
 
         # move meta.json file
-        shutil.move(PLUGIN_TMP_ARCHIVE+"/meta.json",app_dir+"/meta.json")
+        #shutil.move(PLUGIN_TMP_ARCHIVE+"/meta.json",app_dir+"/meta.json")
 
         logging.info("Moving source into a new directory")
+        
+        allfiles = os.listdir(PLUGIN_TMP_ARCHIVE+"/src/")
 
         # move src to app source
-        shutil.move(PLUGIN_TMP_ARCHIVE+"/src",app_dir)
+        for file in allfiles:
+            shutil.move(PLUGIN_TMP_ARCHIVE+"/src/"+file,app_dir)
 
         logging.info("Cleaning temporary data")
 
         clean_temporary()
 
         logging.info("App has been imported")
-        return True
+        global PLUGINS_LIST
+        PLUGINS_LIST.append(meta["app_name"])
+        return [0,"App has been imported"]
 
     except ValueError as e:
         logging.error("Cannot open archive: "+str(e))
+        
+        # in case of failure bring back a copy of existing plugin
+        if os.path.exists(PLUGIN_TMP_ARCHIVE+"/copy"):
+                if app_dir is not None:
+                    shutil.rmtree(app_dir)
+                    
+                    shutil.move(PLUGIN_TMP_ARCHIVE+"/copy",app_dir)
+        
         clean_temporary()
-        return False
+        return [-10,"Cannot open archive: "+str(e)]
