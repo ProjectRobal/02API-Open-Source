@@ -5,6 +5,10 @@ import importlib
 
 import logging
 
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+
+
 on_login_callbacks=[]
 
 def on_login_callback(sender,user,request,**kwargs):
@@ -43,9 +47,37 @@ def onLoginFailed(func):
 '''
 @receiver(post_save)
 def my_handler(sender,instance, **kwargs):
-    from nodes.models import NodeEntry
+    from nodes.models import NodeEntry,BeamerNode
+    from mqtt.models import TopicBeamer
+    from mqtt.apps import MqttConfig
     from services.models import ServiceProfile
     from services.apps import SERVICE_IMPORT_PATH
+    
+    if isinstance(instance,BeamerNode):
+        
+        logging.debug("Name of BeamerNode: "+sender.__name__)
+
+        topics=TopicBeamer.objects.filter(node=sender.__name__)
+
+        if topics.exists():
+            fields:dict={}
+
+            for field in instance._meta.get_fields(include_parents=False):
+                fields[field.name]=field.value_from_object(instance)
+
+            if "uuid" in fields.keys():
+                del fields["uuid"]
+
+            data:str=json.dumps(fields, cls=DjangoJSONEncoder)
+
+            logging.debug("Data to publish: "+data)
+
+        for topic in topics:
+
+            if MqttConfig.client is not None:
+                MqttConfig.client.publish(topic.path,data)
+
+            logging.debug("Publish data on topic: "+topic.path)
     
     if isinstance(instance,NodeEntry):
         node_name=sender.get_name()

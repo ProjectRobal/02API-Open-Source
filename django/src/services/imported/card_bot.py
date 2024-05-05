@@ -1,4 +1,7 @@
 from nodes.models import PublicNodes
+from auth02.models import get_user_by_id
+from webadmin.models import get_user_projects
+
 import logging
 
 def service(instance):
@@ -7,6 +10,22 @@ def service(instance):
     
     logging.debug(f"Instance name {instance._name}")
     
-    output_node=PublicNodes.get_obj("CardUp")
-    if output_node is not None:
-        logging.info(f"Run service for {output_node.__name__}")
+    OutputNode=PublicNodes.get_obj("CardUp")
+    if OutputNode is not None:
+        logging.info(f"Run service for {OutputNode.__name__}")
+                
+        message=OutputNode()
+        message.username=instance.user.username
+        message.first_name=instance.user.first_name
+        message.second_name=instance.user.last_name
+        message.is_in_basement=instance.is_in_basement
+        
+        projects=[]
+        
+        for project in get_user_projects(instance.user):
+            projects.append(project.project_name)
+        
+        message.projects=projects
+        
+        message.save()
+        logging.debug("Basement Bot message sent!")

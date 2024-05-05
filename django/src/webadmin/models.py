@@ -46,7 +46,7 @@ def gen_key()->bytes:
     
     return key
 
-class CardUp(PublicNode,BeamerNode,NullNode):
+class CardUp(PublicNode,BeamerNode):
     _name="cards_up"
     
     username=models.CharField(max_length=255)
@@ -104,6 +104,12 @@ class ProjectGroup(common):
     project_name=models.CharField(verbose_name="Nazwa projektu",max_length=255)
 
     user=models.ManyToManyField(O2User,blank=True)
+
+def get_user_projects(user:O2User):
+    
+    out=ProjectGroup.objects.filter(user=user)
+    
+    return out
 
 def user_directory_path(instance, filename):
     
