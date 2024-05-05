@@ -16,7 +16,7 @@ class MqttConfig(AppConfig):
         MqttConfig.client=None
         
         super().__init__(app_name, app_module)
-
+        
     def ready(self) -> None:
         
         from nodes.models import PublicNodes

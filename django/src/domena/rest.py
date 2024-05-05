@@ -199,7 +199,7 @@ class NodeInfo(APIView):
             node=find_node(data_input.topic)
 
             if node is None:
-                return NotFound("No node found with specified topic")
+                raise NotFound("No node found with specified topic")
             
             return Response(str(self.format_output(node)))
         
@@ -207,7 +207,7 @@ class NodeInfo(APIView):
             node=PublicNodes.get_obj(data_input.node_name)
 
             if node is None:
-                return NotFound("No node found with specified name") 
+                raise NotFound("No node found with specified name") 
 
             return Response(str(self.format_output(node)))           
         
@@ -227,7 +227,7 @@ class NodeView(APIView):
         node_obj=find_node(path)
 
         if node_obj is None:
-            return NotFound("No node found for specific path!")
+            raise NotFound("No node found for specific path!")
 
         result=Fetch(None,node_obj,path).post(data)
 
@@ -243,7 +243,7 @@ class NodeView(APIView):
         node_obj=find_node(path)
 
         if node_obj is None:
-            return NotFound("No node found for specific path!")
+            raise NotFound("No node found for specific path!")
 
         result=Fetch(None,node_obj,path).get(data)
 
@@ -258,7 +258,7 @@ class NodeView(APIView):
         node_obj=find_node(path)
 
         if node_obj is None:
-            return NotFound("No node found for specific path!")
+            raise NotFound("No node found for specific path!")
 
         result=Fetch(None,node_obj,path).mod(data)
 
@@ -273,7 +273,7 @@ class NodeView(APIView):
         node_obj=find_node(path)
 
         if node_obj is None:
-            return NotFound("No node found for specific path!")
+            raise NotFound("No node found for specific path!")
 
         result=Fetch(None,node_obj,path).pop(data)
 
@@ -290,12 +290,12 @@ class PluginView(APIView):
         plugin_name=rest_serializers.PluginViewSerializer(request.data).name
 
         if not plugin_name in PLUGINS_LIST:
-            return NotFound("No plugin with name {}".format(plugin_name))
+            raise NotFound("No plugin with name {}".format(plugin_name))
 
         try:
             meta_data=open("/app/{}/meta.json","r")
         except OSError: 
-            return NotFound("Cannot find metadata for plugin {}".format(plugin_name))
+            raise NotFound("Cannot find metadata for plugin {}".format(plugin_name))
 
         meta=rest_serializers.PluginMetaSerializer(meta_data.read())
 
@@ -325,7 +325,7 @@ class DeviceView(APIView):
             try:
                 user=Device.objects.get(uuid)
             except Device.DoesNotExist:
-                return NotFound("Device not found")
+                raise NotFound("Device not found")
        
         return Response(rest_serializers.DeviceSerializer(user).data)
 
@@ -364,17 +364,18 @@ class UserView(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
 
-        uuid=rest_serializers.UUIDParser(request.data).uuid
-
+        uuid=rest_serializers.UUIDParser(data=request.data)
+        uuid.is_valid(raise_exception=True)
+        uuid=uuid.validated_data['uuid']
         user=request.user
 
         if len(uuid)>0:
             try:
-                user=O2User.objects.get(uuid)
+                user=O2User.objects.get(uuid=uuid)
             except O2User.DoesNotExist:
-                return NotFound("User not found")
+                raise NotFound("User not found")
        
         return Response(rest_serializers.UserSerializer(user).data)
     
@@ -382,17 +383,19 @@ class UserPermissionView(APIView):
     authentication_classes = (TokenAuthentication,SessionAuthentication)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
 
-        uuid=rest_serializers.UUIDParser(request.data).uuid
+        uuid=rest_serializers.UUIDParser(data=request.data)
+        uuid.is_valid(raise_exception=True)
+        uuid=uuid.validated_data['uuid']
 
         user=request.user
 
         if len(uuid)>0:
             try:
-                user=O2User.objects.get(uuid)
+                user=O2User.objects.get(uuid=uuid)
             except O2User.DoesNotExist:
-                return NotFound("User not found")
+                raise NotFound("User not found")
 
         out=[]
 

@@ -15,6 +15,14 @@ class O2User(AbstractUser):
     uuid=models.UUIDField(default=uuid.uuid4,
                                 primary_key=True,
                                editable=False)
+    
+def get_user_by_id(id)->O2User|None:
+    try:
+        
+        return O2User.objects.get(uuid=id)
+        
+    except O2User.DoesNotExist:
+        return None
 
 
 class PluginGroup(common):

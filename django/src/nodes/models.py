@@ -5,8 +5,9 @@ from common.models import common
 from django.contrib.postgres.fields import ArrayField
 from typing import Tuple
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models.signals import post_save
 
-
+from datetime import datetime
 import json
 
 # Create your models here.
@@ -53,7 +54,7 @@ class NullNode(NodeEntry):
         app_label= "nodes"
     
     def save(self, *args, **kwargs):
-        return
+        post_save.send(type(self),instance=self,created=True)
 
 class MonoNode(NodeEntry):
     '''A table will singular entry
@@ -71,11 +72,19 @@ class MonoNode(NodeEntry):
         if amount>0:
 
             fields:dict={}
+            
+            obj=cls.objects.get()
 
-            for field in self._meta.get_fields(include_parents=False):
-                fields[field.name]=field.value_from_object(self)
+            to_inh=self._meta.get_fields(include_parents=False)
+            
+            for field in to_inh:
+                if field != "uuid":
+                    fields[field.name]=field.value_from_object(self)
+                    
+            fields["created_date"]=obj.created_date
+            fields["modified_date"]=datetime.now()
 
-            cls.objects.filter(uuid=cls.objects.get().uuid).update(**fields)
+            cls.objects.filter(uuid=obj.uuid).update(**fields)
 
             return
 
@@ -91,36 +100,36 @@ class BeamerNode(NodeEntry):
         abstract = True
         app_label= "nodes"
 
-    def save(self,*args, **kwargs):
+    # def save(self,*args, **kwargs):
 
-        from mqtt.models import TopicBeamer
-        from mqtt.apps import MqttConfig
+    #     from mqtt.models import TopicBeamer
+    #     from mqtt.apps import MqttConfig
 
-        logging.debug("Node name: "+type(self).__name__)
+    #     logging.debug("Node name: "+type(self).__name__)
 
-        topics=TopicBeamer.objects.filter(node=type(self).__name__)
+    #     topics=TopicBeamer.objects.filter(node=type(self).__name__)
 
-        if topics.exists():
-            fields:dict={}
+    #     if topics.exists():
+    #         fields:dict={}
 
-            for field in self._meta.get_fields(include_parents=False):
-                fields[field.name]=field.value_from_object(self)
+    #         for field in self._meta.get_fields(include_parents=False):
+    #             fields[field.name]=field.value_from_object(self)
 
-            if "uuid" in fields.keys():
-                del fields["uuid"]
+    #         if "uuid" in fields.keys():
+    #             del fields["uuid"]
 
-            data:str=json.dumps(fields, cls=DjangoJSONEncoder)
+    #         data:str=json.dumps(fields, cls=DjangoJSONEncoder)
 
-            logging.debug("Data to publish: "+data)
+    #         logging.debug("Data to publish: "+data)
 
-        for topic in topics:
+    #     for topic in topics:
 
-            if MqttConfig.client is not None:
-                MqttConfig.client.publish(topic.path,data)
+    #         if MqttConfig.client is not None:
+    #             MqttConfig.client.publish(topic.path,data)
 
-            logging.debug("Publish data on topic: "+topic.path)
+    #         logging.debug("Publish data on topic: "+topic.path)
 
-        return super().save(*args,**kwargs)
+    #     return super().save(*args,**kwargs)
 
 class LedControllerMarcin(BeamerNode,MonoNode,PublicNode):
 
@@ -166,7 +175,7 @@ class PublicNodes:
             if child._name is None:
                 if name == child._name:
                     return child
-            elif child.__name__==name:
+            elif child.__name__ == name:
                 return child
         
         return None

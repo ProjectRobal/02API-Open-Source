@@ -10,13 +10,14 @@ import secrets
 from io import BytesIO
 import datetime
 from django.utils import timezone
+import django.contrib.postgres.fields as fields
 
 from PIL import Image
 
 from uuid import uuid4
 import os
 
-from nodes.models import PublicNode,MonoNode
+from nodes.models import PublicNode,MonoNode,BeamerNode,NullNode
 
 import logging
 
@@ -45,6 +46,14 @@ def gen_key()->bytes:
     
     return key
 
+class CardUp(PublicNode,BeamerNode,NullNode):
+    _name="cards_up"
+    
+    username=models.CharField(max_length=255)
+    first_name=models.CharField(max_length=255)
+    second_name=models.CharField(max_length=255)
+    is_in_basement=models.BooleanField(default=False)
+    projects=fields.ArrayField(models.CharField(max_length=255,blank=True))
 
 
 class CardNode(PublicNode):
@@ -95,6 +104,12 @@ class ProjectGroup(common):
     project_name=models.CharField(verbose_name="Nazwa projektu",max_length=255)
 
     user=models.ManyToManyField(O2User,blank=True)
+
+def get_user_projects(user:O2User):
+    
+    out=ProjectGroup.objects.filter(user=user)
+    
+    return out
 
 def user_directory_path(instance, filename):
     
