@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>Devices</title>
+</head>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div class="flex flex-col w-3/4 h-screen overflow-y-auto overflow-x-hidden gap-4 mt-10 ml-5">
+
+        <div class="bg-teritary text-secondary text-2xl w-full h-fit rounded-lg py-5 pl-3 pr-3 flex flex-row flex-nowrap gap-4">
+            <p class="hover:text-primary cursor-pointer" onclick="search_device()">Search:</p>
+            <input class="w-full text-black" type="text" id="device_search" placeholder="Device name">
+        </div>
+
+        {% for device in devices_list %}
+
+        <div class="bg-teritary text-secondary text-2xl w-full h-fit rounded-lg py-5 pl-3 pr-3 flex flex-row flex-nowrap gap-4">
+
+            <h2>{{device.name}}</h2>
+            <p>{{device.status}}</p>
+        
+        </div>
+
+        {% endfor %}
+
+        <label for="device_file" class="hover:text-primary bg-teritary text-black text-8xl w-fit h-fit font-bold px-4 rounded-lg cursor-pointer">+</label>
+
+    </div>
+
+    <input type="file" class="hidden" id="device_file">
+
+</body>
+
+<script>
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    const file = document.getElementById("device_file");
+
+    document.getElementById("device_search").addEventListener("keypress",(event)=>{
+        if( event.key == 'Enter' )
+        {
+            search_device();   
+        }
+    });
+
+    file.addEventListener('change', () => {
+        // Do something with the selected file(s)
+        const csrftoken = getCookie('csrftoken');
+
+        const selectedFile = file.files[0];
+
+        console.log('Selected file:', selectedFile.name);
+
+        const formData = new FormData();
+
+        formData.append("file",selectedFile);
+
+        // add device procedure:
+
+        fetch("/ext/dev/upload",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'multipart/form-data',
+                'X-CSRFToken': csrftoken,
+                'Content-Disposition':'attachment;filename='+selectedFile.name
+            },
+            mode: 'same-origin',
+            body:formData
+        }).then((res)=>{
+            console.log(res);
+
+            if( res.statusText == "OK" )
+            {
+                fetch("/ext/dev/add",{
+                    method:"POST",
+                    credentials: 'include',
+                    headers:{
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    mode: 'same-origin',
+                    body:JSON.stringify({go:true})
+                }).then((res)=>{
+                    window.location.replace("/device_list");
+                });
+            }
+
+        }).catch((error)=>{
+            console.log(error);
+        });
+      });
+
+    function search_device()
+    {
+        const device_name = document.getElementById("device_search").value;
+
+        if( device_name.length > 0 )
+        {
+            window.location.replace(`/device_list?search='${device_name}'`);
+        }
+        else
+        {
+            window.location.replace('/device_list');
+        }
+    }
+
+</script>
+
+</html>
