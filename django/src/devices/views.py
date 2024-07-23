@@ -306,3 +306,33 @@ def twingoPage(request):
     '''twoja stara'''
 
     return render(request,"/app/devices/templates/twingo.html")
+
+
+def device_list(request):
+    '''page to list devices installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+    
+    
+    if "search" in request.GET:
+        keyword = request.GET["search"]
+        logging.debug(f"Got keyword: {keyword}")
+        devices = Device.objects.filter(name__contains=keyword)
+    else:
+        devices = Device.objects.all()
+    
+    # list important informations
+    
+    logging.debug(f"Found {len(devices)} devices")
+    
+    device_list = []
+    
+    for device in devices:
+        device_list.append({
+            "name":device.name,
+            "status":device.status,
+            "id":device.uuid
+        })
+    
+    return render(request,"/app/devices/templates/list_device.html",context={"devices_list":device_list})

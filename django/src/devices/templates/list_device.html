@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>Devices</title>
+</head>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div class="flex flex-col md:w-3/4 w-full h-screen overflow-y-auto overflow-x-hidden gap-4 mt-10 ml-5">
+
+        <div class="device_entry">
+            <p class="hover:text-primary cursor-pointer" onclick="search_device()">Search:</p>
+            <input class="w-full text-black" type="text" id="device_search" placeholder="Device name">
+        </div>
+
+        {% for device in devices_list %}
+
+        <a href="/device/{{device.id}}">
+            <div class="device_entry bg-quaternary place-items-center md:w-1/2">
+
+                <h2 class="ml-5">{{device.name}}</h2>
+                <p class="ml-auto bg-secondary rounded-full text-black mr-5 h-fit px-10 py-8">{{device.status}}</p>
+            
+            </div>
+        </a>
+
+        {% endfor %}
+
+        <label for="device_file" class="addbutton">+</label>
+
+    </div>
+
+    <input type="file" class="hidden" id="device_file">
+
+</body>
+
+<script>
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    const file = document.getElementById("device_file");
+
+    document.getElementById("device_search").addEventListener("keypress",(event)=>{
+        if( event.key == 'Enter' )
+        {
+            search_device();   
+        }
+    });
+
+    function addDevice(add=true)
+    {
+        const csrftoken = getCookie('csrftoken');
+        
+        fetch("/ext/dev/add",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            mode: 'same-origin',
+            body:JSON.stringify({go:add})
+        }).then((res)=>{
+            window.location.replace("/device_list");
+        });
+    }
+
+    
+
+    file.addEventListener('change', () => {
+        // Do something with the selected file(s)
+        const csrftoken = getCookie('csrftoken');
+
+        const selectedFile = file.files[0];
+
+        console.log('Selected file:', selectedFile.name);
+
+        const formData = new FormData();
+
+        formData.append("file",selectedFile);
+
+        // add device procedure:
+
+        fetch("/ext/dev/upload",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'multipart/form-data',
+                'X-CSRFToken': csrftoken,
+                'Content-Disposition':'attachment;filename='+selectedFile.name
+            },
+            mode: 'same-origin',
+            body:formData
+        }).then((res)=>res.json())
+        .then((res)=>{
+            console.log(res);
+
+            if( res.code == 0 )
+            {
+
+                fetch("/ext/dev/vcheck",{
+                    method:"GET",
+                    credentials: 'include',
+                    headers:{
+                        'Content-Type': 'application/json'                    
+                    },
+                    mode: 'same-origin'
+                }).then((res)=>res.json())
+                .then((res)=>{
+                    
+                    if(res.code == 0)
+                    {
+                        addDevice(true);
+                    }
+                    else
+                    {   
+                        add_device_popup_show(res.msg);
+                    }
+
+                });
+            }
+
+        }).catch((error)=>{
+            console.log(error);
+        });
+      });
+
+    function search_device()
+    {
+        const device_name = document.getElementById("device_search").value;
+
+        if( device_name.length > 0 )
+        {
+            window.location.replace(`/device_list?search='${device_name}'`);
+        }
+        else
+        {
+            window.location.replace('/device_list');
+        }
+    }
+
+</script>
+
+{% include 'message_popup.html' with popup_name="add_device" on_ok="addDevice(true);" on_cancel="addDevice(false);" %}
+
+</html>

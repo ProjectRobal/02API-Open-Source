@@ -16,9 +16,10 @@ Including another URLconf
 import os
 from django.contrib import admin
 from django.urls import path,re_path,include
-from devices.views import devsPage,twingoPage,device_page,node_list,home_page,rat,plugin_add,ploader,plugin_show,plugin_rm,device_add,devloader,device_rm,device_purge,api
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
+
+import devices.views as device
 
 import domena.rest as rest
 import domena.settings as settings
@@ -26,7 +27,7 @@ from knox import views as knox_views
 
 urlpatterns = [
 
-    path('',home_page),
+    path('',device.home_page),
     path('rest-test',rest.ExampleView.as_view()),
     path('ext/auth/login', rest.LoginView.as_view()),
     path('ext/auth/logout', knox_views.LogoutView.as_view()),
@@ -57,20 +58,21 @@ urlpatterns = [
 
     #handle path in format api/<path> like api/samples/
     path('accounts/', include('allauth.urls')),
-    path('api/<path:path>',api),
+    path('api/<path:path>',device.api),
     #path('api/<str:path>/<str:cmd>',api),
-    path('devs/',devsPage),
+    path('devs/',device.devsPage),
     path('django-admin/', admin.site.urls),
-    path('hello/<str:name>',home_page),
-    path('twingo/',twingoPage),
-    path('device/<str:name>',device_page),
-    path('nodes/<str:name>',node_list),
-    path('pshow/<str:name>',plugin_show),
-    path('prm/',plugin_rm),
-    path('devrm/',device_rm),
-    path('devpr/',device_purge),
-    path('ploader/',ploader),
-    path('ave_prezes',rat)
+    path('hello/<str:name>',device.home_page),
+    path('twingo/',device.twingoPage),
+    path('device_list',device.device_list),
+    path('device/<str:name>',device.device_page),
+    path('nodes/<str:name>',device.node_list),
+    path('pshow/<str:name>',device.plugin_show),
+    path('prm/',device.plugin_rm),
+    path('devrm/',device.device_rm),
+    path('devpr/',device.device_purge),
+    path('ploader/',device.ploader),
+    path('ave_prezes',device.rat)
 ]
 
 if os.environ.get("DJANGO_MODE") == 'DEBUG':
