@@ -405,3 +405,37 @@ def serv_list(request):
         })
     
     return render(request,"/app/devices/templates/list_serv.html",context={"serv_list":servs_list})
+
+def list_node(request):
+    '''page to list devices installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+    
+    nodes = PublicNodes.get_nodes_list()
+    
+    if "search" in request.GET:
+        keyword = request.GET["search"]
+        logging.debug(f"Got keyword: {keyword}")
+        
+        n_nodes = []
+        
+        for node in nodes:
+            if node[1].lower().find(keyword) != -1:
+                n_nodes.append(node)     
+        
+        nodes = n_nodes   
+    
+    # list important informations
+    
+    logging.debug(f"Found {len(nodes)} nodes")
+    
+    node_list = []
+    
+    for node in nodes:
+        node_list.append({
+            "name":node[0],
+            "node_name":node[1]
+        })
+    
+    return render(request,"/app/devices/templates/node_list.html",context={"node_list":node_list})

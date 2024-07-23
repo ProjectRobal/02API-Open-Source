@@ -1125,6 +1125,10 @@ form input[type="checkbox"]:focus {
   height: 100vh;
 }
 
+.h-full {
+  height: 100%;
+}
+
 .max-h-64 {
   max-height: 16rem;
 }
@@ -1264,6 +1268,14 @@ form input[type="checkbox"]:focus {
 
 .overflow-x-hidden {
   overflow-x: hidden;
+}
+
+.overflow-y-visible {
+  overflow-y: visible;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll;
 }
 
 .rounded {

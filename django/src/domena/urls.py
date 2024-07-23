@@ -70,6 +70,7 @@ urlpatterns = [
     path('pshow/<str:name>',device.plugin_show),
     path('prm/',device.plugin_rm),
     path('plugins_list',device.plugin_list),
+    path('node_list',device.list_node),
     path('serv_list',device.serv_list),
     path('devrm/',device.device_rm),
     path('devpr/',device.device_purge),
