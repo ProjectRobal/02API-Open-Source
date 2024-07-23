@@ -10,25 +10,27 @@
 <body>
     {% include 'nav.html'  %}
 
-    <div class="flex flex-col w-3/4 h-screen overflow-y-auto overflow-x-hidden gap-4 mt-10 ml-5">
+    <div class="flex flex-col md:w-3/4 w-full h-screen overflow-y-auto overflow-x-hidden gap-4 mt-10 ml-5">
 
-        <div class="bg-teritary text-secondary text-2xl w-full h-fit rounded-lg py-5 pl-3 pr-3 flex flex-row flex-nowrap gap-4">
+        <div class="device_entry">
             <p class="hover:text-primary cursor-pointer" onclick="search_device()">Search:</p>
             <input class="w-full text-black" type="text" id="device_search" placeholder="Device name">
         </div>
 
         {% for device in devices_list %}
 
-        <div class="bg-teritary text-secondary text-2xl w-full h-fit rounded-lg py-5 pl-3 pr-3 flex flex-row flex-nowrap gap-4">
+        <a href="/device/{{device.id}}">
+            <div class="device_entry bg-quaternary place-items-center md:w-1/2">
 
-            <h2>{{device.name}}</h2>
-            <p>{{device.status}}</p>
-        
-        </div>
+                <h2 class="ml-5">{{device.name}}</h2>
+                <p class="ml-auto bg-secondary rounded-full text-black mr-5 h-fit px-10 py-8">{{device.status}}</p>
+            
+            </div>
+        </a>
 
         {% endfor %}
 
-        <label for="device_file" class="hover:text-primary bg-teritary text-black text-8xl w-fit h-fit font-bold px-4 rounded-lg cursor-pointer">+</label>
+        <label for="device_file" class="addbutton">+</label>
 
     </div>
 
@@ -52,6 +54,26 @@
             search_device();   
         }
     });
+
+    function addDevice(add=true)
+    {
+        const csrftoken = getCookie('csrftoken');
+        
+        fetch("/ext/dev/add",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            mode: 'same-origin',
+            body:JSON.stringify({go:add})
+        }).then((res)=>{
+            window.location.replace("/device_list");
+        });
+    }
+
+    
 
     file.addEventListener('change', () => {
         // Do something with the selected file(s)
@@ -77,22 +99,32 @@
             },
             mode: 'same-origin',
             body:formData
-        }).then((res)=>{
+        }).then((res)=>res.json())
+        .then((res)=>{
             console.log(res);
 
-            if( res.statusText == "OK" )
+            if( res.code == 0 )
             {
-                fetch("/ext/dev/add",{
-                    method:"POST",
+
+                fetch("/ext/dev/vcheck",{
+                    method:"GET",
                     credentials: 'include',
                     headers:{
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
+                        'Content-Type': 'application/json'                    
                     },
-                    mode: 'same-origin',
-                    body:JSON.stringify({go:true})
-                }).then((res)=>{
-                    window.location.replace("/device_list");
+                    mode: 'same-origin'
+                }).then((res)=>res.json())
+                .then((res)=>{
+                    
+                    if(res.code == 0)
+                    {
+                        addDevice(true);
+                    }
+                    else
+                    {   
+                        add_device_popup_show(res.msg);
+                    }
+
                 });
             }
 
@@ -116,5 +148,7 @@
     }
 
 </script>
+
+{% include 'message_popup.html' with popup_name="add_device" on_ok="addDevice(true);" on_cancel="addDevice(false);" %}
 
 </html>

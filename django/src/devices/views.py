@@ -331,7 +331,8 @@ def device_list(request):
     for device in devices:
         device_list.append({
             "name":device.name,
-            "status":device.status
+            "status":device.status,
+            "id":device.uuid
         })
     
     return render(request,"/app/devices/templates/list_device.html",context={"devices_list":device_list})
