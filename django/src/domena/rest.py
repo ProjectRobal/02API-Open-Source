@@ -138,6 +138,7 @@ class AcceptPluginInstallation(APIView):
         if prompt['go']:
             error=plugin_loader.add_plugin()
         else:
+            error = (1,"Removed temporary")
             logging.info("Cleaning temporary")
             plugin_loader.clean_temporary() 
             

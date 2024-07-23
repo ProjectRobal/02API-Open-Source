@@ -10,6 +10,7 @@ from domena.menu import entries as menu_entries
 from domena.menu_types import HomeBlock,MenuBlock
 
 import os
+import json
 
 
 PLUGINS:list[str]=[
@@ -34,3 +35,9 @@ def scan_for_plugin()-> list[str]:
         return []
     
     return output
+
+def get_meta(app_name:str)-> dict:
+    if os.path.isdir('/app/'+app_name):
+            if os.path.exists('/app/'+app_name+'/meta.json'):
+                return json.load(open('/app/'+app_name+'/meta.json',"r"))
+    
