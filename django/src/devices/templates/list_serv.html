@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>Plugins</title>
+</head>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div class="flex flex-col md:w-3/4 w-full h-screen overflow-y-auto overflow-x-hidden gap-4 mt-10 ml-5">
+
+        <div class="device_entry">
+            <p class="hover:text-primary cursor-pointer" onclick="search_device()">Search:</p>
+            <input class="w-full text-black" type="text" id="serv_search" placeholder="Service name">
+        </div>
+
+        {% for serv in serv_list %}
+
+        <a href="/serv/{{serv.id}}">
+            <div class="device_entry bg-quaternary place-items-center md:w-1/2">
+
+                <h2 class="ml-5">{{serv.name}}</h2>
+            
+            </div>
+        </a>
+
+        {% endfor %}
+
+        <label for="serv_file" class="addbutton">+</label>
+
+    </div>
+
+    <input type="file" class="hidden" id="serv_file">
+
+</body>
+
+<script>
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    const file = document.getElementById("serv_file");
+
+    document.getElementById("serv_search").addEventListener("keypress",(event)=>{
+        if( event.key == 'Enter' )
+        {
+            search_device();   
+        }
+    });
+
+    function addServ(add=true)
+    {
+        const csrftoken = getCookie('csrftoken');
+        
+        fetch("/ext/serv/add",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            mode: 'same-origin',
+            body:JSON.stringify({go:add})
+        }).then((res)=>{
+            window.location.replace("/serv_list");
+        });
+    }
+
+    
+
+    file.addEventListener('change', () => {
+        // Do something with the selected file(s)
+        const csrftoken = getCookie('csrftoken');
+
+        const selectedFile = file.files[0];
+
+        console.log('Selected file:', selectedFile.name);
+
+        const formData = new FormData();
+
+        formData.append("file",selectedFile);
+
+        // add device procedure:
+
+        fetch("ext/serv/upload",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'multipart/form-data',
+                'X-CSRFToken': csrftoken,
+                'Content-Disposition':'attachment;filename='+selectedFile.name
+            },
+            mode: 'same-origin',
+            body:formData
+        }).then((res)=>res.json())
+        .then((res)=>{
+            console.log(res);
+
+            if( res.code == 0 )
+            {
+                addServ(true);
+            }
+            else
+            {
+                add_serv_popup_show(res.msg);
+            }
+
+        }).catch((error)=>{
+            console.log(error);
+        });
+      });
+
+    function search_device()
+    {
+        const device_name = document.getElementById("serv_search").value;
+
+        if( device_name.length > 0 )
+        {
+            window.location.replace(`/serv_list?search=${device_name}`);
+        }
+        else
+        {
+            window.location.replace('/serv_list');
+        }
+    }
+
+</script>
+
+{% include 'message_popup.html' with popup_name="add_serv" on_ok="addServ(true);" on_cancel="addServ(false);" %}
+
+</html>

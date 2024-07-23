@@ -17,6 +17,7 @@ import json
 from common.fetch_api import Fetch,FetchResult
 from domena.settings import PLUGINS_LIST
 import domena.plugins as plugins_func
+from services.models import ServiceProfile
 
 import logging
 
@@ -366,13 +367,41 @@ def plugin_list(request):
     
     logging.debug(f"Found {len(plugins)} plugins")
     
-    device_list = []
+    plugin_list = []
     
     for plugin in plugins:
         meta:dict = plugins_func.get_meta(plugin)
-        device_list.append({
+        plugin_list.append({
             "name":meta["name"],
             "app_name":plugin
         })
     
-    return render(request,"/app/devices/templates/list_plugins.html",context={"plugins_list":device_list})
+    return render(request,"/app/devices/templates/list_plugins.html",context={"plugins_list":plugin_list})
+
+def serv_list(request):
+    '''page to list devices installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+    
+    
+    if "search" in request.GET:
+        keyword = request.GET["search"]
+        logging.debug(f"Got keyword: {keyword}")
+        servs = ServiceProfile.objects.filter(name__contains=keyword)
+    else:
+        servs = ServiceProfile.objects.all()
+    
+    # list important informations
+    
+    logging.debug(f"Found {len(servs)} services")
+    
+    servs_list = []
+    
+    for serv in servs:
+        servs_list.append({
+            "name":serv.name,
+            "id":serv.uuid
+        })
+    
+    return render(request,"/app/devices/templates/list_serv.html",context={"serv_list":servs_list})
