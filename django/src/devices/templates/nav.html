@@ -27,8 +27,6 @@
             </div>
         </a>
 
-        {% if perms.devices.plugin_view or perms.devices.device_view  %}
-
         <a href="/device_list">
             <div class="navblock">
                 Devices
@@ -41,7 +39,19 @@
             </div>
         </a>
 
-        {% endif %}
+        <a href="/serv_list">
+            <div class="navblock">
+                Services
+            </div>
+        </a>
+
+        <a href="/serv_list">
+            <div class="navblock">
+                Services
+            </div>
+        </a>
+
+        
 
     {% autoescape off %}
         {%for item in menu_items %}

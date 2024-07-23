@@ -76,6 +76,7 @@ class AcceptServiceInstallation(APIView):
         if prompt['go']:
             error=service_loader.add_service()
         else:
+            error=(1,"Cleaing temporary data")
             logging.info("Cleaning temporary")
             service_loader.clean_temporary()
             
