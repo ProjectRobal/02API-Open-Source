@@ -50,7 +50,7 @@ class PluginInfo:
 
 
 
-def parse_plugin(app_name:str)->PluginInfo or None:
+def parse_plugin(app_name:str)->PluginInfo|None:
 
     if os.path.exists("/app/"+app_name+"/meta.json"):
     
@@ -113,14 +113,16 @@ def unpack_and_verify_plugin()->(int,str):
             curr_meta:PluginInfo=parse_plugin(meta.app_name)
             
             if curr_meta is not None:
+                logging.info("Found plugin with the same name!")
                 cm_ver=version_to_number(curr_meta.version)
                 ver=compare_versions(m_ver,cm_ver)
                 
                 if ver<0:
                     return -4,"There is aleardy newest version of that plugin"
-
-                if ver>0:
+                elif ver>0:
                     return -4,"Plugin version mismatch with server version"
+                elif ver==0:
+                    return -4,"There is aleardy plugin installed"
                 
         except ValueError as e:
             logging.error(str(e))

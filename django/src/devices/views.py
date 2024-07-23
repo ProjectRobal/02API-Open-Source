@@ -15,6 +15,8 @@ from .forms import PluginFileForm,DeviceFileForm
 import os
 import json
 from common.fetch_api import Fetch,FetchResult
+from domena.settings import PLUGINS_LIST
+import domena.plugins as plugins_func
 
 import logging
 
@@ -336,3 +338,41 @@ def device_list(request):
         })
     
     return render(request,"/app/devices/templates/list_device.html",context={"devices_list":device_list})
+
+def plugin_list(request):
+    '''page to list plugins installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+    
+    plugins = PLUGINS_LIST
+    
+    
+    if "search" in request.GET:
+        keyword = request.GET["search"]
+        logging.debug(f"Got keyword: {keyword}")
+        
+        n_plugins = []
+        
+        for plugin in plugins:
+            meta:dict = plugins_func.get_meta(plugin)
+            if meta["name"].lower().find(keyword) != -1:
+                n_plugins.append(plugin)
+                
+        plugins = n_plugins
+        
+    
+    # list important informations
+    
+    logging.debug(f"Found {len(plugins)} plugins")
+    
+    device_list = []
+    
+    for plugin in plugins:
+        meta:dict = plugins_func.get_meta(plugin)
+        device_list.append({
+            "name":meta["name"],
+            "app_name":plugin
+        })
+    
+    return render(request,"/app/devices/templates/list_plugins.html",context={"plugins_list":device_list})

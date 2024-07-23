@@ -985,6 +985,10 @@ form input[type="checkbox"]:focus {
   position: relative;
 }
 
+.left-0 {
+  left: 0px;
+}
+
 .left-1\/2 {
   left: 50%;
 }
@@ -1015,10 +1019,6 @@ form input[type="checkbox"]:focus {
 
 .top-\[5px\] {
   top: 5px;
-}
-
-.left-0 {
-  left: 0px;
 }
 
 .z-10 {
@@ -1214,6 +1214,10 @@ form input[type="checkbox"]:focus {
   justify-content: space-around;
 }
 
+.gap-10 {
+  gap: 2.5rem;
+}
+
 .gap-2 {
   gap: 0.5rem;
 }
@@ -1228,10 +1232,6 @@ form input[type="checkbox"]:focus {
 
 .gap-5 {
   gap: 1.25rem;
-}
-
-.gap-10 {
-  gap: 2.5rem;
 }
 
 .gap-y-2 {
