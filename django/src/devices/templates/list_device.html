@@ -58,7 +58,7 @@
     function addDevice(add=true)
     {
         const csrftoken = getCookie('csrftoken');
-        
+
         fetch("/ext/dev/add",{
             method:"POST",
             credentials: 'include',
@@ -139,7 +139,7 @@
 
         if( device_name.length > 0 )
         {
-            window.location.replace(`/device_list?search='${device_name}'`);
+            window.location.replace(`/device_list?search=${device_name}`);
         }
         else
         {
