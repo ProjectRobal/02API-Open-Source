@@ -472,6 +472,31 @@ def serv_list(request):
     
     return render(request,"/app/devices/templates/list_serv.html",context={"serv_list":servs_list})
 
+def serv_info(request,uuid:str):
+    '''page to list services installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+    
+        
+    try:
+        
+        serv = ServiceProfile.objects.get(uuid=uuid)
+        
+    except ServiceProfile.DoesNotExist:
+        return HttpResponseNotFound()
+    
+    # list important informations
+    
+    logging.debug(f"Found services with uuid: {uuid}")
+        
+    serv_info = {
+        "name":serv.name,
+        "node":serv.node_name
+    }
+    
+    return render(request,"/app/devices/templates/serv_info.html",context={"serv":serv_info})
+
 def list_node(request):
     '''page to list devices installed on app'''
 
