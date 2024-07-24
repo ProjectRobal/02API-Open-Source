@@ -18,6 +18,8 @@ from common.fetch_api import Fetch,FetchResult
 from domena.settings import PLUGINS_LIST
 import domena.plugins as plugins_func
 from services.models import ServiceProfile
+import datetime
+
 
 import logging
 
@@ -340,6 +342,45 @@ def device_list(request):
     
     return render(request,"/app/devices/templates/list_device.html",context={"devices_list":device_list})
 
+def device_info(request,uuid:str):
+    '''page to list devices installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+    
+    
+    try:
+        
+        device = Device.objects.get(uuid=uuid)
+        
+    except Device.DoesNotExist:
+        logging.debug(f"Device with {uuid} not found")
+        return HttpResponseNotFound()
+    
+    # list important informations
+    
+    logging.debug(f"Found device with {uuid}")
+    
+    device_info = {
+        "uuid":uuid,
+        "name":device.name,
+        "installation_date":device.created_date,
+        "version":f"{device.major_version}.{device.minor_version}.{device.patch_version}"
+    }
+    
+    nodesacl=NodeACL.objects.filter(device=device.uuid)
+
+    node_list=[]
+        
+    for node in nodesacl:
+        node_list.append({
+            "path":node.topic.path,
+            "access":Access(node.access_level).name,
+            "name":node.topic.node,
+        })
+
+    return render(request,"/app/devices/templates/device_info.html",context={"device":device_info,"nodes":node_list})
+
 def plugin_list(request):
     '''page to list plugins installed on app'''
 
@@ -377,6 +418,31 @@ def plugin_list(request):
         })
     
     return render(request,"/app/devices/templates/list_plugins.html",context={"plugins_list":plugin_list})
+
+def plugin_info(request,name:str):
+    '''page to list plugins installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+            
+    if not name in PLUGINS_LIST:
+        return HttpResponseNotFound()
+        
+    meta:dict = plugins_func.get_meta(name)
+    
+    plugin_info = {
+        "name":meta["name"],
+        "author":meta["author"],
+        "installation_date":datetime.datetime.strptime(meta["installation_date"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S"),
+        "version":meta["version"],
+        "app_name":name
+    }
+    
+    # list important informations
+    
+    logging.debug(f"Found plugins with name {name}")
+            
+    return render(request,"/app/devices/templates/plugin_info.html",context={"plugin":plugin_info})
 
 def serv_list(request):
     '''page to list devices installed on app'''

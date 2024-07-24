@@ -1,8 +1,8 @@
 <div class="hidden fixed place-items-center justify-center md:top-1/2 md:left-1/2 top-0 left-0 md:w-fit md:h-fit w-full h-screen px-2 py-5 z-10 flex-nowrap flex-col gap-10 bg-secondary rounded" id="{{popup_name}}">
     <p class="text-xl">Hello World!</p>
     <div class="flex flex-wrap flex-row gap-5 md:w-fit w-full">
-        <button class="border-0 text-xl w-full md:w-fit" onclick="{{on_ok}};this.parentElement.style.display = 'none';">OK</button>
-        <button class="border-0 bg-teritary text-xl w-full md:w-fit" onclick="{{on_cancel}};this.parentElement.style.display = 'none';">Cancel</button>
+        <button class="border-0 text-xl w-full md:w-fit" onclick="{{on_ok}};this.parentElement.parentElement.style.display = 'none';">OK</button>
+        <button class="border-0 bg-teritary text-xl w-full md:w-fit" onclick="{{on_cancel}};this.parentElement.parentElement.style.display = 'none';">Cancel</button>
     </div>
 </div>
 

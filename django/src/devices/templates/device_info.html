@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>Device {{device.name}}</title>
+</head>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div class="flex flex-col md:w-3/4 w-full h-screen overflow-y-auto overflow-x-hidden gap-4 mt-10 ml-5">
+        
+        <div class="device_entry bg-teritary place-items-center md:w-1/2 ">
+
+            <h2 class="ml-5 text-3xl">{{device.name}}</h2>
+        
+        </div>
+
+
+        <div class="device_entry bg-secondary md:w-[55%] flex flex-row flex-nowrap h-fit justify-start ">
+            
+            <ul class="list-none text-black">
+                <li class="text-lg">Version:</li>
+                <li class="text-base mb-1">{{device.version}}</li>
+                <li class="text-lg">Installed on:</li>
+                <li class="text-base">{{device.installation_date}}</li>
+            </ul>
+
+            <p class="ml-auto bg-secondary place-self-start self-start rounded-full text-black mr-5 h-fit px-10 py-8 boder-black border-2">+</p>
+        
+        </div>
+
+        <div class="device_entry bg-teritary place-items-center md:w-1/2 mt-12 mb-5 ">
+
+            <h2 class="ml-5 text-3xl">Nodes used by device:</h2>
+        
+        </div>
+
+        {% for node in nodes %}
+
+        <a href="/node/{{node.node_name}}">
+            <div class="device_entry bg-quaternary place-items-center md:w-1/2">
+
+                <h2 class="ml-5">{{node.name}}  {{node.access}} {{node.path}}</h2>
+            
+            </div>
+        </a>
+
+        {% endfor %}
+
+        <div class="addbutton text-6xl bg-teritary p-5 mt-16" onclick="remove_device_popup_show('Remove device?')">Remove</div>
+
+    </div>
+
+</body>
+
+<script>
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function removeDevice()
+    {
+        const csrftoken = getCookie('csrftoken');
+        
+        fetch("/ext/dev/devrm",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            mode: 'same-origin',
+            body:JSON.stringify({uuid:"{{ device.uuid }}"})
+        }).then((res)=> res.json() )
+        .then((res)=>{
+            console.log(res);
+
+            //window.location.replace("/plugins_list");
+        });
+    }
+
+
+</script>
+
+{% include 'message_popup.html' with popup_name="remove_device" on_ok="removeDevice();" on_cancel="" %}
+
+</html>
