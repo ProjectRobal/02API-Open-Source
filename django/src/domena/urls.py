@@ -71,6 +71,7 @@ urlpatterns = [
     path('plugins_list',device.plugin_list),
     path('plugin/<str:name>',device.plugin_info),
     path('device/<str:uuid>',device.device_info),
+    path('serv/<str:uuid>',device.serv_info),
     path('node_list',device.list_node),
     path('serv_list',device.serv_list),
     path('devrm/',device.device_rm),
