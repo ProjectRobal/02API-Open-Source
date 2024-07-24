@@ -18,6 +18,8 @@ from common.fetch_api import Fetch,FetchResult
 from domena.settings import PLUGINS_LIST
 import domena.plugins as plugins_func
 from services.models import ServiceProfile
+import datetime
+
 
 import logging
 
@@ -377,6 +379,31 @@ def plugin_list(request):
         })
     
     return render(request,"/app/devices/templates/list_plugins.html",context={"plugins_list":plugin_list})
+
+def plugin_info(request,name:str):
+    '''page to list plugins installed on app'''
+
+    if request.method != 'GET':
+        return HttpResponseNotFound()
+            
+    if not name in PLUGINS_LIST:
+        return HttpResponseNotFound()
+        
+    meta:dict = plugins_func.get_meta(name)
+    
+    plugin_info = {
+        "name":meta["name"],
+        "author":meta["author"],
+        "installation_date":datetime.datetime.strptime(meta["installation_date"], "%Y-%m-%dT%H:%M:%SZ").strftime("%Y-%m-%d %H:%M:%S"),
+        "version":meta["version"],
+        "app_name":name
+    }
+    
+    # list important informations
+    
+    logging.debug(f"Found plugins with name {name}")
+            
+    return render(request,"/app/devices/templates/plugin_info.html",context={"plugin":plugin_info})
 
 def serv_list(request):
     '''page to list devices installed on app'''
