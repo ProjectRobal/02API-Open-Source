@@ -59,12 +59,12 @@
 
     .addbutton
     {
-        @apply hover:text-primary bg-teritary text-black text-8xl md:w-fit w-full text-center h-fit font-bold px-4 rounded-lg cursor-pointer;
+        @apply hover:text-primary bg-teritary text-black text-8xl md:w-fit w-full text-center h-fit font-bold px-4 rounded-lg cursor-pointer shadow-lg;
     }
 
     .device_entry
     {
-        @apply bg-teritary text-secondary text-2xl w-full h-fit rounded-lg py-5 pl-3 pr-3 flex flex-row flex-nowrap gap-4;
+        @apply bg-teritary text-secondary text-2xl w-full h-fit rounded-lg py-5 pl-3 pr-3 flex flex-row flex-nowrap gap-4 shadow-lg;
     }
 
 }

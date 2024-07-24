@@ -70,6 +70,9 @@ def remove_plugin(name:str)->bool:
     
     if os.path.exists("/app/"+name):
         shutil.rmtree("/app/"+name,ignore_errors=True)
+        
+        PLUGINS_LIST.remove(name)    
+
         return True
 
     return False

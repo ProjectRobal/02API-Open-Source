@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>Plugins</title>
+</head>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div class="flex flex-col md:w-3/4 w-full h-screen overflow-y-auto overflow-x-hidden gap-4 mt-10 ml-5">
+        
+        <div class="device_entry bg-teritary place-items-center md:w-1/2 ">
+
+            <h2 class="ml-5 text-3xl">{{plugin.name}}</h2>
+        
+        </div>
+
+        <div class="device_entry bg-teritary place-items-center md:w-1/4">
+
+            <h2 class="ml-5 text-xl">by {{plugin.author}}</h2>
+        
+        </div>
+
+        <div class="device_entry bg-secondary md:w-[55%] flex flex-col flex-nowrap h-fit justify-start ">
+            
+            <ul class="list-none text-black">
+            <li class="text-lg">Version:</li>
+            <li class="text-base mb-1">{{plugin.version}}</li>
+            <li class="text-lg">Installed on:</li>
+            <li class="text-base">{{plugin.installation_date}}</li>
+            </ul>
+        
+        </div>
+
+        <div for="plugin_file" class="addbutton text-6xl bg-teritary p-5 " onclick="remove_plugin_popup_show('Remove plugin?')">Remove</div>
+
+    </div>
+
+</body>
+
+<script>
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    function removePlugin()
+    {
+        const csrftoken = getCookie('csrftoken');
+        
+        fetch("/ext/plug/rm",{
+            method:"POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            mode: 'same-origin',
+            body:JSON.stringify({name:"{{ plugin.app_name }}"})
+        }).then((res)=> res.json() )
+        .then((res)=>{
+            console.log(res);
+
+            //window.location.replace("/plugins_list");
+        });
+    }
+
+
+</script>
+
+{% include 'message_popup.html' with popup_name="remove_plugin" on_ok="removePlugin();" on_cancel="" %}
+
+</html>
