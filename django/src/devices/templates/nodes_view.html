@@ -34,7 +34,7 @@
         
         </div>
 
-        <div class="addbutton text-5xl bg-teritary py-5 px-16 mb-10 " onclick="">Publish</div>
+        <div class="addbutton text-5xl bg-teritary py-5 px-16 mb-10 " onclick="publishData()">Publish</div>
     
 
         {% for param in node_params %}
@@ -273,6 +273,41 @@
         .then((response)=>{
             updateCharts(response);
         })
+
+    }
+
+    function publishData()
+    {
+        const csrftoken = getCookie('csrftoken');
+
+        let Data = {};
+
+        ParamList.forEach((param,i) => {
+            
+            const value = document.getElementById("apply_value"+i).value;
+
+            if(value.length > 0)
+            {
+                Data[param] = value;
+            }
+        });
+
+        fetch("/ext/node",
+        {
+            method:"POST",
+            headers: { 'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken},
+            credentials: 'include',
+            mode: 'same-origin',
+            body: JSON.stringify({
+                request:"post",
+                node:"{{node}}",
+                data:Data
+            })
+
+        }).then(res=>res.json())
+        .then(res => {console.log(res)});
 
     }
 
