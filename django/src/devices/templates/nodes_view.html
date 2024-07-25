@@ -1,0 +1,350 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>Node: {{node}}</title>
+</head>
+
+<body>
+    {% include 'nav.html'  %}
+
+    <div id="node_space" class="flex flex-col  w-full h-screen ml-4 mt-6 pb-8 overflow-y-auto">
+
+        <div id="node_data_list" class="flex w-full justify-center flex-col gap-4" >
+
+        <div class="device_entry bg-teritary place-items-center md:w-1/2 ">
+
+            <h2 class="ml-5 text-3xl text-black">{{app_name}}</h2>
+        
+        </div>
+
+        <div class="device_entry bg-secondary md:w-[55%] flex flex-col flex-nowrap h-fit justify-start ">
+            
+            {% for param in node_params %}
+
+                <div class="flex flex-col">
+                    <p class="text-black mb-4" id="apply_name{{ forloop.counter0 }}"></p>
+                    <div>
+                        <input class="text-black" type="text" id="apply_value{{ forloop.counter0 }}">
+                    </div>
+                </div>
+            {% endfor %}
+        
+        </div>
+
+        <div class="addbutton text-5xl bg-teritary py-5 px-16 mb-10 " onclick="publishData()">Publish</div>
+    
+
+        {% for param in node_params %}
+
+            <div class="value_block">
+
+                <div class="value_subblock">
+                    <p id="chart_name{{ forloop.counter0 }}"></p>
+                    <div>
+                        <label>Current value:</label>
+                        <input class="text-black" type="text" id="value{{ forloop.counter0 }}" readonly>
+                    </div>
+                </div>
+
+                <div class="chart_block">
+                    <canvas id="chart{{ forloop.counter0 }}"  class="chart_canvas"></canvas>                    
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+        </div>
+
+    </div>
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+<script>
+
+    // it will holds data from node
+    const DataList={};
+    const DataLabel= new Array();
+    
+    const Charts=new Array();
+
+    const ParamList=new Array(
+        {% for param in node_params %}
+            "{{param}}",
+        {% endfor %}
+    );
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function show_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="flex";
+    }
+    
+    function hide_block()
+    {
+        const block=document.getElementById("close_block");
+    
+        block.style.display="none";
+    }
+
+    function setCharts(data)
+    {
+            result=data["result"]
+
+            if(result === undefined)
+            {
+                return;
+            }
+            
+            DataLabel.splice(0, DataLabel.length)
+
+            Object.values(DataList).forEach( list => {
+                list.splice(0, list.length);
+            })
+
+            result.forEach(x =>{
+
+                const timestamp=x.created_date;
+
+                const date=new Date(timestamp)
+
+                DataLabel.push(date.toLocaleString())
+
+                Object.keys(x).forEach(key=>{
+                    
+                    const paramId=ParamList.indexOf(key);
+
+                    if( paramId >= 0 )
+                    {
+                        DataList[key].push({x:timestamp,y:x[key]});
+                        console.log("Key: ",DataList[key])
+                        document.getElementById("value"+paramId).value=x[key];
+                    }
+                })
+
+            })
+
+            Charts.forEach((chart)=>{
+                chart.update()
+            })
+
+    }
+
+    function updateCharts(data)
+    {
+            result=data["result"][0]
+
+            console.log("Result: ",result)
+
+            if(result === undefined)
+            {
+                return;
+            }
+
+            const timestamp=result.created_date;
+
+            const date=new Date(timestamp)
+            
+            if((DataLabel.length > 0) && (date.getTime() <= new Date(DataList[ParamList[0]][DataList[ParamList[0]].length-1].x).getTime()))
+            {
+                return;
+            }
+
+            if(DataLabel.length > 10)
+            {
+
+                DataLabel.shift();
+
+                Object.values(DataList).forEach( list => {
+                    list.shift();
+                })
+            }
+
+            DataLabel.push(date.toLocaleString())
+
+            Object.keys(result).forEach(key=>{
+                    
+                const paramId=ParamList.indexOf(key);
+
+                if( paramId >= 0 )
+                {
+                    DataList[key].push({x:timestamp,y:result[key]});
+                    console.log("Key: ",DataList[key])
+                    document.getElementById("value"+paramId).value=result[key];
+                }
+            })
+
+            Charts.forEach((chart)=>{
+                chart.update()
+            })
+
+    }
+
+    function initCharts()
+    {
+
+        console.info("Parameters: ",ParamList);
+
+
+        ParamList.forEach((param,i) => {
+            DataList[param]=new Array();
+
+            document.getElementById("chart_name"+i).innerHTML=param;
+            document.getElementById("apply_name"+i).innerHTML=param;
+
+            Charts.push(new Chart("chart"+i, {
+                type: "line",
+                
+                data: {
+                    labels:DataLabel,
+                    datasets: [{
+                        label:param,
+                        data: DataList[param]
+                }]},
+                options: {
+                    devicePixelRatio:2,
+                    responsive:true,
+                    aspectRatio:6,
+                    scales: {
+                        y:{
+                            type:'linear'
+                        },
+                        x: {
+                            type: 'time',
+                            time:
+                            {
+                                parser:'YYYY-MM-DDTHH:mm:ss.ssssssZ'
+                               
+                            }   
+                        }
+                    }
+                }
+            }))
+        })
+
+        getDataInitial();
+
+    }
+
+    function getData()
+    {
+        const csrftoken = getCookie('csrftoken');
+
+        fetch("/ext/node",
+        {
+            method:"POST",
+            headers: { 'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken},
+            credentials: 'include',
+            mode: 'same-origin',
+            body: JSON.stringify({
+                request:"get",
+                node:"{{node}}",
+                data:{
+                    "max":1,
+                    "mask":[...ParamList,"created_date"],
+                    "order":"-created_date"
+                }
+            })
+
+        }).then((response)=>response.json())
+        .then((response)=>{
+            updateCharts(response);
+        })
+
+    }
+
+    function publishData()
+    {
+        const csrftoken = getCookie('csrftoken');
+
+        let Data = {};
+
+        ParamList.forEach((param,i) => {
+            
+            const value = document.getElementById("apply_value"+i).value;
+
+            if(value.length > 0)
+            {
+                Data[param] = value;
+            }
+        });
+
+        fetch("/ext/node",
+        {
+            method:"POST",
+            headers: { 'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken},
+            credentials: 'include',
+            mode: 'same-origin',
+            body: JSON.stringify({
+                request:"post",
+                node:"{{node}}",
+                data:Data
+            })
+
+        }).then(res=>res.json())
+        .then(res => {console.log(res)});
+
+    }
+
+    function getDataInitial()
+    {
+        const csrftoken = getCookie('csrftoken');
+
+        fetch("/ext/node",
+        {
+            method:"POST",
+            headers: { 'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken},
+            credentials: 'include',
+            mode: 'same-origin',
+            body: JSON.stringify({
+                request:"get",
+                node:"{{node}}",
+                data:{
+                    "max":10,
+                    "mask":[...ParamList,"created_date"],
+                    "order":"created_date"
+                }
+            })
+
+        }).then((response)=>response.json())
+        .then((response)=>{
+            setCharts(response);
+            setInterval(getData,500);   
+        })
+
+    }
+
+
+    initCharts();
+
+        
+    </script>
+
+</html>

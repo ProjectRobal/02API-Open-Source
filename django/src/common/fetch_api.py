@@ -97,6 +97,8 @@ class Fetch:
     
     def match(self,request:str,data:dict|None)->FetchResult:
 
+        request=request.lower()
+
         if request in self.requests:
             return self.requests[request](self,data)
         else:
@@ -238,6 +240,7 @@ class Fetch:
         if "mask" in data.keys():
             if type(data["mask"])==list:
                 mask=data["mask"]
+                logging.debug("Using mask of: "+str(mask))
         
         if 'id' in data.keys():
             try:
@@ -276,6 +279,10 @@ class Fetch:
         output:list[dict]=[]    
         
         result=self.model.objects.all()
+        
+        if "order" in data.keys():
+            logging.debug("Ordered by "+data["order"])
+            result=result.order_by(data["order"])
 
         if max<=0:
             max=len(result)

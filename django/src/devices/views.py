@@ -90,7 +90,32 @@ def api(request,path):
         logging.error(str(e))
         return HttpResponse(str(FetchResult(-12,"Server error!","")),content_type="application/json")
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
+#@permission_required("devices.device_add",login_url="/permf")
+def node_view(request,name:str):
+
+    if request.method != "GET":   
+        return HttpResponseBadRequest()
+    
+    obj=PublicNodes.get_obj(name)
+
+    if obj is None:
+        logging.error("Not found node with name: "+str(name))
+        return HttpResponseNotFound()
+    
+    # we exclude fields about creation date and modification date
+    params_list_count:list=[x.name for x in obj._meta.get_fields()]
+    logging.debug("Got "+str(params_list_count))
+
+    for rem in ["created_date","modified_date","uuid"]:
+        params_list_count.remove(rem)
+    
+    return render(request,"/app/devices/templates/nodes_view.html",context={"node":name,"app_name":obj.__name__,"node_params":params_list_count})
+    
+    
+
+
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.device_rm",login_url="/permf")
 def device_rm(request):
 
@@ -109,7 +134,7 @@ def device_rm(request):
     
     return HttpResponseBadRequest()
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.device_rm",login_url="/permf")
 def device_purge(request):
 
@@ -128,7 +153,7 @@ def device_purge(request):
     
     return HttpResponseBadRequest()
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.plugin_rm",login_url="/permf")
 def plugin_rm(request):
 
@@ -149,24 +174,24 @@ def plugin_rm(request):
 
 
     
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.plugin_add",login_url="/permf")
 def plugin_add(request):
 
     return render(request,"/app/devices/templates/add_plugin.html",context={"plugin_form":PluginFileForm})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.device_add",login_url="/permf")
 def device_add(request):
 
     return render(request,"/app/devices/templates/add_device.html",context={"form":DeviceFileForm})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 def plugin_show(request,name):
 
     return render(request,"/app/devices/templates/show_plugin.html",context={"plugin":parse_plugin(name)})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.plugin_add",login_url="/permf")
 def ploader(request):
     '''A function to load plugins'''
@@ -198,7 +223,7 @@ def ploader(request):
     return redirect("/devs")
 
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.device_add",login_url="/permf")
 def devloader(request):
     '''A function to load plugins'''
@@ -235,12 +260,12 @@ def home_page(request,name=None):
 
     return render(request,"/app/devices/templates/home.html",context={"name":name,"blocks":entries})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 def rat(request):
 
     return render(request,"/app/devices/templates/rat.html")
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.device_view",login_url="/permf")
 def node_list(request,name):
     
@@ -265,7 +290,7 @@ def node_list(request,name):
     
     return render(request,"/app/devices/templates/list_nodes.html",context={"nodes":list_nodes,"name":name})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required(["devices.device_view","devices.plugin_view"],login_url="/permf")
 def devsPage(request):
     '''placeholder page'''
@@ -281,7 +306,7 @@ def devsPage(request):
 
     return render(request,"/app/devices/templates/index.html",context={"devices":devices,"plugins":plugins})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 @permission_required("devices.device_view",login_url="/permf")
 def device_page(request,name):
     '''page to display informations about device'''
@@ -306,7 +331,7 @@ def device_page(request,name):
     
     return render(request,"/app/devices/templates/device.html",context={"device":device,"login_date":last_login,"nodesacl":node_list})
 
-@login_required(login_url="/login")
+@login_required(login_url="/accounts/login/")
 def twingoPage(request):
     '''twoja stara'''
 

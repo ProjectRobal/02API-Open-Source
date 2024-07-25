@@ -1,11 +1,11 @@
 from django.contrib import admin
 from .models import PublicNodes
 
+from nodes.imported import *
+
+
 # Register your models here.
 
-#admin.site.register(PublicNodes.SampleNode)
-
-#admin.site.register(PublicNodes.CardNode)
 
 
 for node in PublicNodes.get_node():

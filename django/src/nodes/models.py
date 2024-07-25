@@ -172,7 +172,7 @@ class PublicNodes:
         childs:list[PublicNode]=PublicNode.__subclasses__()
 
         for child in childs:
-            if child._name is None:
+            if not child._name is None:
                 if name == child._name:
                     return child
             elif child.__name__ == name:

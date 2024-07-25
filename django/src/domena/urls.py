@@ -66,6 +66,7 @@ urlpatterns = [
     path('twingo/',device.twingoPage),
     path('device_list',device.device_list),
     path('nodes/<str:name>',device.node_list),
+    path('node_view/<str:name>',device.node_view),
     path('pshow/<str:name>',device.plugin_show),
     path('prm/',device.plugin_rm),
     path('plugins_list',device.plugin_list),
