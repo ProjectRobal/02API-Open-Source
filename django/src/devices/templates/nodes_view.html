@@ -4,82 +4,38 @@
 
 <head>
     {% include 'header.html'  %}
-    <title>{{node}}</title>
+    <title>Node: {{node}}</title>
 </head>
-
-<style>
-
-    .value_block
-    {
-        display: flex;
-        flex-direction: row;
-        width: 80%;
-        height: fit-content;
-    }
-
-    .value_subblock
-    {
-        display:flex;
-        flex-direction: column;
-        width:fit-content;
-        padding-left:5px;
-        padding-right:5px;
-        padding-top:10px;
-        padding-bottom:10px;
-        background-color:var(--primary-color);
-        justify-content: flex-start;
-        align-items: center;
-    }
-
-    .chart_block
-    {
-        background-color:var(--secondary-color);
-        width:100%;
-        height: 100%;
-        padding:2px;
-    }
-
-    #node_space
-    {
-        display:flex;
-        flex-direction: column;
-        gap:10px;
-        width:100%;
-        height:100vh;
-        margin-left:5px;
-        margin-right:5px;
-    }
-    
-    #node_data_list
-    {
-        padding-top:200px;
-        display:flex;
-        width:100%;
-        height:100%;
-        justify-content:center;
-        overflow-y:auto;
-        flex-direction: column;
-        gap:10px;
-    }
-
-    .chart_canvas
-    {
-        display: flex;
-        justify-content:center;
-        width:100%;
-        height:100%;
-    }
-
-</style>
 
 <body>
     {% include 'nav.html'  %}
 
-    <div id="node_space">
+    <div id="node_space" class="flex flex-col  w-full h-screen ml-4 mt-6 pb-8 overflow-y-auto">
 
-        <h1>{{node}}</h1>
+        <div id="node_data_list" class="flex w-full justify-center flex-col gap-4" >
 
-        <div id="node_data_list">
+        <div class="device_entry bg-teritary place-items-center md:w-1/2 ">
+
+            <h2 class="ml-5 text-3xl text-black">{{app_name}}</h2>
+        
+        </div>
+
+        <div class="device_entry bg-secondary md:w-[55%] flex flex-col flex-nowrap h-fit justify-start ">
+            
+            {% for param in node_params %}
+
+                <div class="flex flex-col">
+                    <p class="text-black mb-4" id="apply_name{{ forloop.counter0 }}"></p>
+                    <div>
+                        <input class="text-black" type="text" id="apply_value{{ forloop.counter0 }}">
+                    </div>
+                </div>
+            {% endfor %}
+        
+        </div>
+
+        <div class="addbutton text-5xl bg-teritary py-5 px-16 mb-10 " onclick="">Publish</div>
+    
 
         {% for param in node_params %}
 
@@ -89,7 +45,7 @@
                     <p id="chart_name{{ forloop.counter0 }}"></p>
                     <div>
                         <label>Current value:</label>
-                        <input type="text" id="value{{ forloop.counter0 }}" readonly>
+                        <input class="text-black" type="text" id="value{{ forloop.counter0 }}" readonly>
                     </div>
                 </div>
 
@@ -166,8 +122,6 @@
             Object.values(DataList).forEach( list => {
                 list.splice(0, list.length);
             })
-            
-            
 
             result.forEach(x =>{
 
@@ -257,6 +211,7 @@
             DataList[param]=new Array();
 
             document.getElementById("chart_name"+i).innerHTML=param;
+            document.getElementById("apply_name"+i).innerHTML=param;
 
             Charts.push(new Chart("chart"+i, {
                 type: "line",
@@ -303,7 +258,7 @@
             'Content-Type': 'application/json',
             "X-CSRFToken": csrftoken},
             credentials: 'include',
-            mode:"cors",
+            mode: 'same-origin',
             body: JSON.stringify({
                 request:"get",
                 node:"{{node}}",
@@ -332,7 +287,7 @@
             'Content-Type': 'application/json',
             "X-CSRFToken": csrftoken},
             credentials: 'include',
-            mode:"cors",
+            mode: 'same-origin',
             body: JSON.stringify({
                 request:"get",
                 node:"{{node}}",

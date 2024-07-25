@@ -67,4 +67,24 @@
         @apply bg-teritary text-secondary text-2xl w-full h-fit rounded-lg py-5 pl-3 pr-3 flex flex-row flex-nowrap gap-4 shadow-lg;
     }
 
+    .value_block
+    {
+        @apply flex flex-row w-4/5 w-fit;
+    }
+
+    .value_subblock
+    {
+        @apply flex flex-col w-fit px-4 py-10 bg-teritary justify-center items-center rounded-l-xl;
+    }
+
+    .chart_block
+    {
+        @apply bg-secondary w-full h-full p-2;
+    }
+
+    .chart_canvas
+    {
+        @apply flex justify-center w-full h-full;
+    }
+
 }
