@@ -4,7 +4,8 @@ bin
 include
 lib
 lib64
-migrations
+migrations/*
+!migrations/__init__.py
 pyvenv.cfg
 mqtt/config/password.txt
 build/dev/sql
@@ -12,8 +13,8 @@ build/prod/sql
 build/stagging/sql
 django/web/
 
-django/src/**/migrations/*
-django/src/**/migrations
+django/src/*/migrations/*
+!django/src/*/migrations/__init__.py
 
 build/prod/conf/django.env
 build/prod/conf/sql.env
