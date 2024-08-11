@@ -9,6 +9,8 @@ pip3 install -r /app/requirements.txt --no-cache-dir
 echo "Collecing static files"
 python3  manage.py collectstatic --noinput
 
+python3 manage.py tailwind build
+
 python3  manage.py makemigrations auth02
 
 echo "Database migration"
