@@ -91,6 +91,16 @@ class MonoNode(NodeEntry):
         super().save(*args, **kwargs)
 
 
+class UniqueNode(NodeEntry):
+    '''
+        A node that will save into existing node's record if the same value is present. 
+    '''
+    _unique_fields=[]
+    class Meta:
+        abstract = True
+        app_label= "nodes"
+
+
 class BeamerNode(NodeEntry):
     '''
         A node that will post message on mqtt topic,

@@ -1,5 +1,5 @@
 from django.contrib.auth.signals import user_logged_in,user_logged_out,user_login_failed
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save,pre_save
 from django.dispatch import receiver
 import importlib
 
@@ -41,6 +41,37 @@ def onLogout(func):
 def onLoginFailed(func):
     on_login_failed_callbacks.append(func)
     
+
+'''
+ Here the registers services will listen for incoming Nodes updates
+'''
+@receiver(pre_save)
+def pre_save_slot(sender,instance,**kwargs):
+    from nodes.models import UniqueNode
+    
+    if isinstance(instance,UniqueNode):
+        
+        logging.debug("Name of UniqueNode: "+sender.__name__)
+        
+        attrs={}
+        
+        for uniq_fields in instance._unique_fields:
+            attrs[uniq_fields] = getattr(instance,uniq_fields)
+        
+        object_with_same_value = type(instance).objects.filter(**attrs)
+    
+        if len(object_with_same_value)>0:
+            
+            logging.debug("Found instance with the same value: "+str(*attrs))
+            
+            obj = object_with_same_value[0]
+            
+            id = obj.uuid
+            
+            obj.delete()
+            
+            instance.uuid = id
+
 
 '''
  Here the registers services will listen for incoming Nodes updates

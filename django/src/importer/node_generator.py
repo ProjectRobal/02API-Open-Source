@@ -45,12 +45,15 @@ class NodeHeader:
     mono:bool
     null:bool
     topic:bool
+    unique:bool
     fields:dict
+    unique_list:list[str]
 
     def __init__(self, **entries):
         self.mono=False
         self.null=False
         self.topic=False
+        self.unique=False
 
         self.__dict__.update(entries)
 
@@ -64,7 +67,7 @@ def make_node(node_name:str,node:NodeHeader)->str:
     # string that will be saved into python instance
     buff_str:str="""from django.db import models
 import django.contrib.postgres.fields as postgres
-from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode
+from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode,UniqueNode
 """
 
     try:
@@ -79,10 +82,16 @@ from nodes.models import PublicNode,MonoNode,NullNode,BeamerNode
 
         if node.topic:
             superior+=",BeamerNode"
+        
+        if node.unique:
+            superior+=",UniqueNode"
 
         buff_str+="class {}(PublicNode{}):\n".format(node_name,superior)
 
         buff_str+="""   _name="{}"\n""".format(node.verbose)
+        
+        if len(node.unique_list)>0:
+            buff_str+="""   _unique_fields={}\n""".format(node.unique_list)
 
         #generate model fileds
         for field in node.fields.items():
