@@ -48,13 +48,14 @@ def api(request,path):
 
         try:
 
-            check=Topic.objects.get(path="/"+path)
+            check=Topic.objects.get(path="/"+path+"/")
 
         except Topic.DoesNotExist:
             logging.debug("Topic not found")
             return HttpResponse(str(FetchResult(-12,"Topic not found","")),content_type="application/json")
     
         logging.debug("Found command: "+cmd)
+        logging.debug("Check node: "+check.node)
 
         body=json.load(request)
 

@@ -180,12 +180,13 @@ class PublicNodes:
     
     def get_obj(name:str)->PublicNode|None:
         childs:list[PublicNode]=PublicNode.__subclasses__()
-
+        logging.debug("Target name: "+name)
         for child in childs:
+            logging.debug("Child: "+child.__name__)
             if not child._name is None:
                 if name == child._name:
                     return child
-            elif child.__name__ == name:
+            if child.__name__ == name:
                 return child
         
         return None
