@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include 'header.html'  %}
+    <title>RANKING TEST2137</title>
+</head>
+
+<body class="bg-black text-secondary">
+
+    <div class="flex flex-col md:w-1/2 w-full h-full overflow-y-auto overflow-x-hidden border-2 border-secondary mx-auto mt-10 gap-0">
+
+        <h2 class="w-full text-center text-5xl">Testowy ranking CyberLeja</h2>
+    
+        <div class="flex flex-row w-full h-fit border-2 border-secondary">
+            <div class="w-full border-2 border-secondary text-center">Name</div>
+            <div class="w-full border-2 border-secondary text-center">Czas [s]</div>
+        </div>
+
+    {% for record in records %}
+
+        <div class="flex flex-row w-full h-fit border-2 border-secondary">
+            <div class="w-full border-2 border-secondary text-center">{{ record.name }}</div>
+            <div class="w-full border-2 border-secondary text-center">{{ record.seconds }}.{{ record.miliseconds }}</div>
+        </div>
+    
+    {% endfor %}
+
+    </div>
+
+</body>
+
+
+</html>

@@ -7,7 +7,10 @@ from common.models import common
 
 class LejUserRecord(PublicNode):
     '''
-        A model that holds record in who entered/left basement on specific date
+        A model that holds CyberLej user records,
+        name should be unique
     '''
-    name=models.TextField(max_length=32)
-    time=models.IntegerField()
+    _name="lej_record"
+    
+    name=models.CharField(max_length=20)
+    miliseconds=models.IntegerField()
