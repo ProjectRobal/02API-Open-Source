@@ -103,6 +103,15 @@ class Fetch:
             return self.requests[request](self,data)
         else:
             return self.get(data)
+        
+    def clr(self,data:dict)->FetchResult:
+        
+        if not FetchAuth.check(self.dev_id,Access.CLS,self.topic):
+            return FetchResult(-11,"Wrong privileges",self.model.get_name())
+        
+        self.model.objects.all().delete()
+        
+        return FetchResult(0,"Clear table!",self.model.get_name())
                 
     def pop(self,data:dict)->FetchResult:
 
@@ -298,7 +307,8 @@ class Fetch:
         "post":post,
         "mod":mod,
         "pop":pop,
-        "":get 
+        "cls":clr,
+        "":get
         }
                     
 
