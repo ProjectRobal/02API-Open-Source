@@ -58,6 +58,15 @@ class AFetch:
             return await self.requests[request](self,data)
         else:
             return await self.get(data)
+        
+    async def clr(self,data:dict)->FetchResult:
+        
+        if not await AFetchAuth.check(self.dev_id,Access.CLS,self.topic):
+            return FetchResult(-11,"Wrong privileges",self.model.get_name())
+        
+        await self.model.objects.all().delete()
+        
+        return FetchResult(0,"Clear table!",self.model.get_name())
                 
     async def pop(self,data:dict)->FetchResult:
 
@@ -249,5 +258,6 @@ class AFetch:
         "post":post,
         "mod":mod,
         "pop":pop,
+        "cls":clr,
         "":get 
         }
