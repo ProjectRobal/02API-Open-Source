@@ -4,25 +4,33 @@
 
 <head>
     {% include 'header.html'  %}
-    <title>RANKING TEST2137</title>
+    <title>Cyberlej Ranking</title>
 </head>
 
-<body class="bg-black text-secondary">
+<body class="flex flex-col text-secondary bg-synthwave bg-scroll bg-cover w-screen h-screen overflow-x-hidden overflow-y-auto">
 
-    <div class="flex flex-col md:w-1/2 w-full h-full overflow-y-auto overflow-x-hidden border-2 border-secondary mx-auto mt-10 gap-0">
+    <h1 class="animate-ranking_title w-full text-center text-7xl font-['Poppins'] tracking-widest italic mt-10 font-bold">CYBERLEJ RANK</h1>
 
-        <h2 class="w-full text-center text-5xl">Testowy ranking CyberLeja</h2>
+    <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto mt-10 gap-0 bg-black p-3 rounded-lg">
     
-        <div class="flex flex-row w-full h-fit border-2 border-secondary">
-            <div class="w-full border-2 border-secondary text-center">Name</div>
-            <div class="w-full border-2 border-secondary text-center">Czas [s]</div>
+        <div class="flex flex-row w-full h-fit text-sm font-bold text-secondary border-b bg-[#4CAF50] p-3">
+            <div class="w-full text-center">Name</div>
+            <div class="w-full text-center">Czas [s]</div>
         </div>
 
     {% for record in records %}
 
-        <div class="flex flex-row w-full h-fit border-2 border-secondary">
-            <div class="w-full border-2 border-secondary text-center">{{ record.name }}</div>
-            <div class="w-full border-2 border-secondary text-center">{{ record.seconds }}.{{ record.miliseconds }}</div>
+        {% if forloop.counter0 == 0 %}
+        <div class="animate-first_stage flex flex-row w-full h-fit border-b py-10 border-secondary text-[#ff78b7] font-['Poppins'] tracking-widest italic text-xl">
+        {% elif forloop.counter0 == 1 %}
+        <div class="animate-second_stage flex flex-row w-full h-fit border-b py-10 border-secondary text-[#78ffac] font-['Poppins'] tracking-widest italic text-xl">
+        {% elif forloop.counter0 == 2 %}
+        <div class="animate-third_stage flex flex-row w-full h-fit border-b py-10 border-secondary text-[#ac78ff] font-['Poppins'] tracking-widest italic text-xl">
+        {% else %}
+        <div class="flex flex-row w-full h-fit border-b py-3 border-secondary text-sm">
+        {% endif %}
+            <div class="w-full text-center">{{ record.name }}</div>
+            <div class="w-full text-center">{{ record.seconds }}.{{ record.miliseconds }}</div>
         </div>
     
     {% endfor %}

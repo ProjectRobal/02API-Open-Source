@@ -1240,12 +1240,100 @@ form input[type="checkbox"]:focus {
   width: 100%;
 }
 
+.w-screen {
+  width: 100vw;
+}
+
 .basis-1\/4 {
   flex-basis: 25%;
 }
 
 .basis-3\/4 {
   flex-basis: 75%;
+}
+
+@keyframes first_place {
+  0% {
+    color: #e478ff;
+  }
+
+  50% {
+    color: #ff78f8;
+  }
+
+  100% {
+    color: #ff78b7;
+  }
+}
+
+.animate-first_stage {
+  animation: first_place 3s linear infinite;
+}
+
+@keyframes title {
+  0%,50% {
+    color: #ff78f8;
+  }
+
+  20%,80% {
+    color: #78d9ff;
+  }
+
+  10%,60% {
+    color: #ff78bc;
+  }
+
+  5%,30% {
+    color: #ff7878;
+  }
+
+  45%,85% {
+    color: #fffd78d3;
+  }
+
+  75%,100% {
+    color: #78ff83;
+  }
+}
+
+.animate-ranking_title {
+  animation: title 4s linear infinite;
+}
+
+@keyframes second_place {
+  0% {
+    color: #d0ff78;
+  }
+
+  50% {
+    color: #8fff78;
+  }
+
+  100% {
+    color: #78ffac;
+  }
+}
+
+.animate-second_stage {
+  animation: second_place 3s linear infinite;
+}
+
+@keyframes third_place {
+  0% {
+    color: #78aeff;
+  }
+
+  50% {
+    color: #7898ff;
+  }
+
+  100% {
+    color: #ac78ff;
+  }
+}
+
+.animate-third_stage {
+  animation: third_place 3s linear infinite;
 }
 
 .cursor-pointer {
@@ -1372,6 +1460,10 @@ form input[type="checkbox"]:focus {
   border-radius: 9999px;
 }
 
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
 .rounded-xl {
   border-radius: 0.75rem;
 }
@@ -1382,6 +1474,10 @@ form input[type="checkbox"]:focus {
 
 .border-2 {
   border-width: 2px;
+}
+
+.border-b {
+  border-bottom-width: 1px;
 }
 
 .border-none {
@@ -1412,6 +1508,11 @@ form input[type="checkbox"]:focus {
   background-color: #00000000;
 }
 
+.bg-\[\#4CAF50\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(76 175 80 / var(--tw-bg-opacity));
+}
+
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
@@ -1437,8 +1538,16 @@ form input[type="checkbox"]:focus {
   background-color: rgb(244 144 123 / var(--tw-bg-opacity));
 }
 
+.bg-synthwave {
+  background-image: url(/static/vecteezy_80s.gif);
+}
+
 .bg-cover {
   background-size: cover;
+}
+
+.bg-scroll {
+  background-attachment: scroll;
 }
 
 .p-0 {
@@ -1495,6 +1604,11 @@ form input[type="checkbox"]:focus {
   padding-bottom: 2.5rem;
 }
 
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -1536,6 +1650,10 @@ form input[type="checkbox"]:focus {
 
 .text-center {
   text-align: center;
+}
+
+.font-\[\'Poppins\'\] {
+  font-family: 'Poppins';
 }
 
 .font-serif {
@@ -1600,12 +1718,35 @@ form input[type="checkbox"]:focus {
   font-weight: 500;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .leading-normal {
   line-height: 1.5;
 }
 
 .tracking-normal {
   letter-spacing: 0em;
+}
+
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+
+.text-\[\#78ffac\] {
+  --tw-text-opacity: 1;
+  color: rgb(120 255 172 / var(--tw-text-opacity));
+}
+
+.text-\[\#ac78ff\] {
+  --tw-text-opacity: 1;
+  color: rgb(172 120 255 / var(--tw-text-opacity));
+}
+
+.text-\[\#ff78b7\] {
+  --tw-text-opacity: 1;
+  color: rgb(255 120 183 / var(--tw-text-opacity));
 }
 
 .text-black {
@@ -1699,6 +1840,10 @@ form input[type="checkbox"]:focus {
 
   .md\:w-1\/2 {
     width: 50%;
+  }
+
+  .md\:w-1\/3 {
+    width: 33.333333%;
   }
 
   .md\:w-3\/4 {
