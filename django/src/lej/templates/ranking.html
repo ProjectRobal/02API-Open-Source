@@ -7,13 +7,39 @@
     <title>Cyberlej Ranking</title>
 </head>
 
-<body class="flex flex-col text-secondary bg-synthwave bg-scroll bg-cover w-screen h-screen overflow-x-hidden overflow-y-auto">
+<body class="flex flex-col text-secondary 
+
+{% if seed < 45 and seed >= 30 %}
+bg-milos  
+{% elif seed < 50 and seed >= 45 %}
+bg-trippy
+{% elif seed < 61 and seed >= 50 %}
+bg-trippy1
+{% else %}
+bg-synthwave 
+{% endif %}
+
+bg-scroll 
+
+{% if seed < 55 and seed >= 40 %}
+    bg-repeat 
+{% else %}
+    bg-cover 
+{% endif %}
+
+w-screen h-screen overflow-x-hidden overflow-y-auto">
 
     <h1 class="animate-ranking_title w-full text-center text-7xl font-['Poppins'] tracking-widest italic mt-10 font-bold">CYBERLEJ RANK</h1>
 
-    <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto mt-10 gap-0 bg-black p-3 rounded-lg">
+    {% if seed < 30 and seed >= 20 %}
+            <img src="{% static 'dance1.gif' %}" alt="dance" class="w-96 mx-auto">
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
+    {% else %}
+        <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto mt-10 gap-0 bg-black p-3 rounded-lg">
+    {% endif %}
     
-    {% if records.len|length == 0 %}
+    
+    {% if records|length < 1 %}
     
         {% if seed < 10 %}
             <div class="font-bold text-3xl text-center" >Nic tu nie ma</div>
@@ -41,6 +67,7 @@
 
     {% else %}        
 
+        
         <div class="flex flex-row w-full h-fit text-sm font-bold text-secondary border-b bg-[#4CAF50] p-3">
             <div class="w-full text-center">Name</div>
             <div class="w-full text-center">Czas [s]</div>
@@ -51,13 +78,26 @@
     {% for record in records %}
 
         {% if forloop.counter0 == 0 %}
+        
         <div class="animate-first_stage flex flex-row w-full h-fit border-b py-10 border-secondary text-[#ff78b7] font-['Poppins'] tracking-widest italic text-xl">
+            {% if seed < 20 %}
+                <img src="{% static 'milos1.gif' %}" alt="milo" class="w-20 h-20">
+            {% endif %}
         {% elif forloop.counter0 == 1 %}
         <div class="animate-second_stage flex flex-row w-full h-fit border-b py-10 border-secondary text-[#78ffac] font-['Poppins'] tracking-widest italic text-xl">
+            {% if seed < 20 %}
+                <img src="{% static 'milos1.gif' %}" alt="milo" class="w-12 h-12">
+            {% endif %}
         {% elif forloop.counter0 == 2 %}
         <div class="animate-third_stage flex flex-row w-full h-fit border-b py-10 border-secondary text-[#ac78ff] font-['Poppins'] tracking-widest italic text-xl">
+            {% if seed < 20 %}
+                <img src="{% static 'milos1.gif' %}" alt="milo" class="w-10 h-10">
+            {% endif %}
         {% else %}
         <div class="flex flex-row w-full h-fit border-b py-3 border-secondary text-sm">
+            {% if seed < 10 %}
+                <img src="{% static 'milos1.gif' %}" alt="milo" class="w-8 h-8">
+            {% endif %}
         {% endif %}
             <div class="w-full text-center">{{ record.name }}</div>
             <div class="w-full text-center">{{ record.seconds }}.{{ record.miliseconds }}</div>

@@ -49,7 +49,10 @@ module.exports = {
             backgroundImage:
             {
                 "synthwave":"url(/static/vecteezy_80s.gif)",
-                "najman":"url(/static/najman.webp)"
+                "najman":"url(/static/najman.webp)",
+                "milos":"url(/static/milos2.gif)",
+                "trippy":"url(/static/tripy1.gif)",
+                "trippy1":"url(/static/tripy2.gif)"
             },
             animation:
             {

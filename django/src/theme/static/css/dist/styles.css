@@ -1186,8 +1186,20 @@ form input[type="checkbox"]:focus {
   display: none;
 }
 
+.h-10 {
+  height: 2.5rem;
+}
+
+.h-12 {
+  height: 3rem;
+}
+
 .h-20 {
   height: 5rem;
+}
+
+.h-8 {
+  height: 2rem;
 }
 
 .h-fit {
@@ -1201,10 +1213,6 @@ form input[type="checkbox"]:focus {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-1\/2 {
-  height: 50%;
 }
 
 .max-h-64 {
@@ -1223,8 +1231,24 @@ form input[type="checkbox"]:focus {
   width: 25%;
 }
 
+.w-10 {
+  width: 2.5rem;
+}
+
+.w-12 {
+  width: 3rem;
+}
+
 .w-20 {
   width: 5rem;
+}
+
+.w-8 {
+  width: 2rem;
+}
+
+.w-96 {
+  width: 24rem;
 }
 
 .w-\[200px\] {
@@ -1517,10 +1541,6 @@ form input[type="checkbox"]:focus {
   background-color: rgb(76 175 80 / var(--tw-bg-opacity));
 }
 
-.bg-\[\'url\(\/static\/najman\.webp\)\'\] {
-  background-color: 'url(/static/najman.webp)';
-}
-
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
@@ -1546,16 +1566,20 @@ form input[type="checkbox"]:focus {
   background-color: rgb(244 144 123 / var(--tw-bg-opacity));
 }
 
-.bg-\[url\(\/static\/najman\.webp\)\] {
-  background-image: url(/static/najman.webp);
+.bg-milos {
+  background-image: url(/static/milos2.gif);
 }
 
 .bg-synthwave {
   background-image: url(/static/vecteezy_80s.gif);
 }
 
-.bg-najman {
-  background-image: url(/static/najman.webp);
+.bg-trippy {
+  background-image: url(/static/tripy1.gif);
+}
+
+.bg-trippy1 {
+  background-image: url(/static/tripy2.gif);
 }
 
 .bg-cover {
@@ -1564,6 +1588,10 @@ form input[type="checkbox"]:focus {
 
 .bg-scroll {
   background-attachment: scroll;
+}
+
+.bg-repeat {
+  background-repeat: repeat;
 }
 
 .p-0 {
