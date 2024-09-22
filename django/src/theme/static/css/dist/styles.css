@@ -1203,6 +1203,10 @@ form input[type="checkbox"]:focus {
   height: 100vh;
 }
 
+.h-1\/2 {
+  height: 50%;
+}
+
 .max-h-64 {
   max-height: 16rem;
 }
@@ -1513,6 +1517,10 @@ form input[type="checkbox"]:focus {
   background-color: rgb(76 175 80 / var(--tw-bg-opacity));
 }
 
+.bg-\[\'url\(\/static\/najman\.webp\)\'\] {
+  background-color: 'url(/static/najman.webp)';
+}
+
 .bg-black {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity));
@@ -1538,8 +1546,16 @@ form input[type="checkbox"]:focus {
   background-color: rgb(244 144 123 / var(--tw-bg-opacity));
 }
 
+.bg-\[url\(\/static\/najman\.webp\)\] {
+  background-image: url(/static/najman.webp);
+}
+
 .bg-synthwave {
   background-image: url(/static/vecteezy_80s.gif);
+}
+
+.bg-najman {
+  background-image: url(/static/najman.webp);
 }
 
 .bg-cover {

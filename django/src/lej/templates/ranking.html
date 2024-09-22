@@ -13,10 +13,40 @@
 
     <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto mt-10 gap-0 bg-black p-3 rounded-lg">
     
+    {% if records.len|length == 0 %}
+    
+        {% if seed < 10 %}
+            <div class="font-bold text-3xl text-center" >Nic tu nie ma</div>
+        {% elif seed < 20 %}
+            <div class="font-bold text-3xl text-center" >No nie ma</div>
+        {% elif seed < 30 %}
+            <div class="font-bold text-3xl text-center" >Czego tu szukasz?</div>
+        {% elif seed < 50 %}
+            <div class="font-bold text-3xl text-center" >Twój szczęśliwy numer to  {{second}} </div>
+        {% elif seed < 60 %}
+            <img src="{% static 'najman.webp' %}" alt="Tu nikogo nie ma">
+        {% elif seed == 69 %}
+            <div class="font-bold text-3xl text-center" >Zbyśiu.Ś ciebie widzi</div>
+        {% elif seed < 70 %}
+            <img src="{% static 'prezes_exe.png' %}" alt="No kurwa gdzie?">
+            <div class="font-bold text-sm text-center" >Prezes obserwuje</div>
+        {% elif seed < 80 %}
+            <img src="{% static 'where.gif' %}" alt="No kurwa gdzie?">
+        {% elif seed < 90 %}
+            <img src="{% static 'ide_srac.gif' %}" alt="Maka paka cię wyrucha">
+        {% elif seed <= 100 %}
+            <img src="{% static 'beton.jpg' %}" alt="Wyroby betonowe i żel betonowe. Betoniarnia Śmigiel. Bloczki M6 oraz kostki brukowe betoniarnia, Śmigiel. Na wprożach kraweźniki i słupki parkanowe, u nas kupisz od ręki. W betoniarni Śmigiel! Śmigiel, ulica Południowa! Telefon 65 518 00 28. U nas tanio budujjj!">
+            <div class="font-bold text-3xl text-center" >Ranking w budowie</div>
+        {% endif %}
+
+    {% else %}        
+
         <div class="flex flex-row w-full h-fit text-sm font-bold text-secondary border-b bg-[#4CAF50] p-3">
             <div class="w-full text-center">Name</div>
             <div class="w-full text-center">Czas [s]</div>
         </div>
+
+    {% endif %}
 
     {% for record in records %}
 

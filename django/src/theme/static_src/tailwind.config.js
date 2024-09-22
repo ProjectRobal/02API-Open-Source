@@ -48,7 +48,8 @@ module.exports = {
         extend: {
             backgroundImage:
             {
-                "synthwave":"url(/static/vecteezy_80s.gif)"
+                "synthwave":"url(/static/vecteezy_80s.gif)",
+                "najman":"url(/static/najman.webp)"
             },
             animation:
             {

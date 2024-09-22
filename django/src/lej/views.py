@@ -4,6 +4,8 @@ from auth02.models import O2User
 from django.contrib.auth.decorators import login_required
 import logging
 
+import random
+
 from lej.models import LejUserRecord
 import datetime
 
@@ -17,9 +19,20 @@ def ranking_view(request):
     if request.method != "GET":
         return HttpResponseBadRequest()
     
+    
+    
     records = LejUserRecord.objects.all().order_by('miliseconds')
     
     record_list = []
+        
+    if "seed" in request.GET:
+        seed = int(request.GET["seed"])
+    else:
+        seed = random.randint(0,100)
+        
+    helper = random.randint(0,1000)
+    
+    logging.debug("Seed: {}".format(seed))
     
     for record in records:
         
@@ -33,4 +46,4 @@ def ranking_view(request):
             "seconds":seconds,
         })
     
-    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list})
+    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list,"seed":seed,"second":helper})
