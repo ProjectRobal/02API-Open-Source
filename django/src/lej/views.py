@@ -30,6 +30,26 @@ def ranking_view(request):
     else:
         seed = random.randint(0,100)
         
+    if "seed1" in request.GET:
+        seed1 = int(request.GET["seed1"])
+    else:
+        seed1 = random.randint(0,100)
+        
+    if "seed2" in request.GET:
+        seed2 = int(request.GET["seed2"])
+    else:
+        seed2 = random.randint(0,100)
+        
+    if "seedm" in request.GET:
+        seedm = int(request.GET["seedm"])
+    else:
+        seedm = random.randint(0,100)
+        
+    if "seedc" in request.GET:
+        seedc = int(request.GET["seedc"])
+    else:
+        seedc = random.randint(0,100)
+        
     helper = random.randint(0,1000)
     
     logging.debug("Seed: {}".format(seed))
@@ -46,4 +66,4 @@ def ranking_view(request):
             "seconds":seconds,
         })
     
-    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list,"seed":seed,"second":helper})
+    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list,"seed":seed,"seed_1":seed1,"seed_2":seed2,"seedm":seedm,"seedc":seedc,"second":helper})

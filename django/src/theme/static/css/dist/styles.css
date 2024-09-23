@@ -1296,6 +1296,24 @@ form input[type="checkbox"]:focus {
   flex-basis: 75%;
 }
 
+@keyframes move_pass_screen_x_axis {
+  0% {
+    left: -300%;
+  }
+
+  50% {
+    left: 300%;
+  }
+
+  100% {
+    left: -300%;
+  }
+}
+
+.animate-big_cow_move {
+  animation: move_pass_screen_x_axis 20s linear infinite;
+}
+
 @keyframes first_place {
   0% {
     color: #e478ff;
@@ -1498,6 +1516,16 @@ form input[type="checkbox"]:focus {
 
 .animate-third_stage {
   animation: third_place 3s linear infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .cursor-pointer {
@@ -1958,6 +1986,34 @@ form input[type="checkbox"]:focus {
   --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-500 {
+  transition-delay: 500ms;
+}
+
+.delay-1000 {
+  transition-delay: 1000ms;
+}
+
+.ease-in {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+}
+
+.hover\:w-64:hover {
+  width: 16rem;
+}
+
+.hover\:w-96:hover {
+  width: 24rem;
+}
+
+.hover\:w-full:hover {
+  width: 100%;
 }
 
 .hover\:text-primary:hover {

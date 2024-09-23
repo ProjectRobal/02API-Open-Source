@@ -67,10 +67,23 @@ module.exports = {
                 "move_cow_both":"move_across_axis 2s linear infinite",
                 "mir_move_cow":"mir_move_across_x_axis 2s linear infinite",
                 "mir_move_cow_down":"mir_move_across_y_axis 2s linear infinite",
-                "mir_move_cow_both":"mir_move_across_axis 2s linear infinite"
+                "mir_move_cow_both":"mir_move_across_axis 2s linear infinite",
+                "big_cow_move":"move_pass_screen_x_axis 20s linear infinite"
             },
             keyframes:
             {
+                move_pass_screen_x_axis:{
+                    "0%":{
+                        left:"-300%"
+                    },
+                    "50%":{
+                        left:"300%"
+                    },
+                    "100%":
+                    {
+                        left:"-300%"
+                    }
+                },
                 mir_move_across_axis:{
                     "0%":{
                         right:"0",
