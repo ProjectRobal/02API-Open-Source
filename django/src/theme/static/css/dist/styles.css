@@ -1031,6 +1031,10 @@ form input[type="checkbox"]:focus {
   position: relative;
 }
 
+.bottom-0 {
+  bottom: 0px;
+}
+
 .left-0 {
   left: 0px;
 }
@@ -1041,6 +1045,10 @@ form input[type="checkbox"]:focus {
 
 .left-\[5px\] {
   left: 5px;
+}
+
+.right-0 {
+  right: 0px;
 }
 
 .right-2 {
@@ -1061,6 +1069,10 @@ form input[type="checkbox"]:focus {
 
 .top-2 {
   top: 0.5rem;
+}
+
+.top-3\/4 {
+  top: 75%;
 }
 
 .top-\[5px\] {
@@ -1243,6 +1255,10 @@ form input[type="checkbox"]:focus {
   width: 5rem;
 }
 
+.w-32 {
+  width: 8rem;
+}
+
 .w-8 {
   width: 2rem;
 }
@@ -1298,6 +1314,102 @@ form input[type="checkbox"]:focus {
   animation: first_place 3s linear infinite;
 }
 
+@keyframes mir_move_across_x_axis {
+  0% {
+    right: 0;
+  }
+
+  50% {
+    right: 100%;
+  }
+
+  100% {
+    right: 0;
+  }
+}
+
+.animate-mir_move_cow {
+  animation: mir_move_across_x_axis 2s linear infinite;
+}
+
+@keyframes mir_move_across_axis {
+  0% {
+    right: 0;
+    bottom: 0;
+  }
+
+  50% {
+    right: 100%;
+    bottom: 100%;
+  }
+
+  100% {
+    right: 0;
+    bottom: 0;
+  }
+}
+
+.animate-mir_move_cow_both {
+  animation: mir_move_across_axis 2s linear infinite;
+}
+
+@keyframes move_across_x_axis {
+  0% {
+    left: 0;
+  }
+
+  50% {
+    left: 100%;
+  }
+
+  100% {
+    left: 0;
+  }
+}
+
+.animate-move_cow {
+  animation: move_across_x_axis 2s linear infinite;
+}
+
+@keyframes move_across_axis {
+  0% {
+    left: 0;
+    top: 0;
+  }
+
+  50% {
+    left: 100%;
+    top: 100%;
+  }
+
+  100% {
+    left: 0;
+    top: 0;
+  }
+}
+
+.animate-move_cow_both {
+  animation: move_across_axis 2s linear infinite;
+}
+
+@keyframes move_across_y_axis {
+  0% {
+    top: 0;
+  }
+
+  50% {
+    top: 100%;
+  }
+
+  100% {
+    top: 0;
+  }
+}
+
+.animate-move_cow_down {
+  animation: move_across_y_axis 2s linear infinite;
+}
+
 @keyframes title {
   0%,50% {
     color: #ff78f8;
@@ -1344,6 +1456,30 @@ form input[type="checkbox"]:focus {
 
 .animate-second_stage {
   animation: second_place 3s linear infinite;
+}
+
+@keyframes size_out_anim {
+  0% {
+    transform: scale(0.0);
+  }
+
+  100% {
+    transform: scale(1.0);
+  }
+}
+
+.animate-size_out_ranking {
+  animation: size_out_anim 5s ease-in 1;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
 @keyframes third_place {
@@ -1564,6 +1700,10 @@ form input[type="checkbox"]:focus {
 .bg-teritary {
   --tw-bg-opacity: 1;
   background-color: rgb(244 144 123 / var(--tw-bg-opacity));
+}
+
+.bg-dhl {
+  background-image: url(/static/bus.gif);
 }
 
 .bg-milos {
@@ -1892,6 +2032,10 @@ form input[type="checkbox"]:focus {
 
   .md\:w-3\/4 {
     width: 75%;
+  }
+
+  .md\:w-64 {
+    width: 16rem;
   }
 
   .md\:w-\[200px\] {

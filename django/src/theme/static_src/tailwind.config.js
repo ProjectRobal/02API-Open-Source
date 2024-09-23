@@ -52,17 +52,111 @@ module.exports = {
                 "najman":"url(/static/najman.webp)",
                 "milos":"url(/static/milos2.gif)",
                 "trippy":"url(/static/tripy1.gif)",
-                "trippy1":"url(/static/tripy2.gif)"
+                "trippy1":"url(/static/tripy2.gif)",
+                "dhl":"url(/static/bus.gif)"
             },
             animation:
             {
                 "first_stage":"first_place 3s linear infinite",
                 "second_stage":"second_place 3s linear infinite",
                 "third_stage":"third_place 3s linear infinite",
-                "ranking_title":"title 4s linear infinite"
+                "ranking_title":"title 4s linear infinite",
+                "size_out_ranking":"size_out_anim 5s ease-in 1",
+                "move_cow":"move_across_x_axis 2s linear infinite",
+                "move_cow_down":"move_across_y_axis 2s linear infinite",
+                "move_cow_both":"move_across_axis 2s linear infinite",
+                "mir_move_cow":"mir_move_across_x_axis 2s linear infinite",
+                "mir_move_cow_down":"mir_move_across_y_axis 2s linear infinite",
+                "mir_move_cow_both":"mir_move_across_axis 2s linear infinite"
             },
             keyframes:
             {
+                mir_move_across_axis:{
+                    "0%":{
+                        right:"0",
+                        bottom:"0"
+                    },
+                    "50%":{
+                        right:"100%",
+                        bottom:"100%"
+                    },
+                    "100%":
+                    {
+                        right:"0",
+                        bottom:"0"
+                    }
+                },
+                mir_move_across_x_axis:{
+                    "0%":{
+                        right:"0"
+                    },
+                    "50%":{
+                        right:"100%"
+                    },
+                    "100%":
+                    {
+                        right:"0"
+                    }
+                },
+                mir_move_across_y_axis:{
+                    "0%":{
+                        bottom:"0"
+                    },
+                    "50%":{
+                        bottom:"100%"
+                    },
+                    "100%":
+                    {
+                        bottom:"0"
+                    }
+                },
+                move_across_axis:{
+                    "0%":{
+                        left:"0",
+                        top:"0"
+                    },
+                    "50%":{
+                        left:"100%",
+                        top:"100%"
+                    },
+                    "100%":
+                    {
+                        left:"0",
+                        top:"0"
+                    }
+                },
+                move_across_x_axis:{
+                    "0%":{
+                        left:"0"
+                    },
+                    "50%":{
+                        left:"100%"
+                    },
+                    "100%":
+                    {
+                        left:"0"
+                    }
+                },
+                move_across_y_axis:{
+                    "0%":{
+                        top:"0"
+                    },
+                    "50%":{
+                        top:"100%"
+                    },
+                    "100%":
+                    {
+                        top:"0"
+                    }
+                },
+                size_out_anim:{
+                    "0%":{
+                        transform:"scale(0.0)"
+                    },
+                    "100%":{
+                        transform:"scale(1.0)"
+                    }
+                },
                 title:{
                     "0%,50%":{
                         color:"#ff78f8"
