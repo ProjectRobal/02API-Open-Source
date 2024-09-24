@@ -67,6 +67,11 @@ def ranking_view(request):
     else:
         seedc = random.randint(0,100)
         
+    if "seede" in request.GET:
+        seede = int(request.GET["seede"])
+    else:
+        seede = random.randint(0,100)
+        
     helper = random.randint(0,1000)
     
     last_update_time = get_last_update()
@@ -85,4 +90,4 @@ def ranking_view(request):
             "seconds":seconds,
         })
     
-    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list,"seed":seed,"seed_1":seed1,"seed_2":seed2,"seedm":seedm,"seedc":seedc,"update_time":last_update_time,"second":helper})
+    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list,"seed":seed,"seed_1":seed1,"seed_2":seed2,"seedm":seedm,"seedc":seedc,"seede":seede,"update_time":last_update_time,"second":helper})

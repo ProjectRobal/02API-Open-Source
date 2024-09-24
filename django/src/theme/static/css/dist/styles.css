@@ -1043,6 +1043,10 @@ form input[type="checkbox"]:focus {
   left: 50%;
 }
 
+.left-\[19\%\] {
+  left: 19%;
+}
+
 .left-\[5px\] {
   left: 5px;
 }
@@ -1053,6 +1057,10 @@ form input[type="checkbox"]:focus {
 
 .right-2 {
   right: 0.5rem;
+}
+
+.right-\[20\%\] {
+  right: 20%;
 }
 
 .top-0 {
@@ -1067,6 +1075,10 @@ form input[type="checkbox"]:focus {
   top: 33.333333%;
 }
 
+.top-1\/4 {
+  top: 25%;
+}
+
 .top-2 {
   top: 0.5rem;
 }
@@ -1077,6 +1089,14 @@ form input[type="checkbox"]:focus {
 
 .top-\[5px\] {
   top: 5px;
+}
+
+.left-2 {
+  left: 0.5rem;
+}
+
+.z-0 {
+  z-index: 0;
 }
 
 .z-10 {
@@ -1190,6 +1210,10 @@ form input[type="checkbox"]:focus {
   display: block;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 .flex {
   display: flex;
 }
@@ -1210,8 +1234,16 @@ form input[type="checkbox"]:focus {
   height: 5rem;
 }
 
+.h-32 {
+  height: 8rem;
+}
+
 .h-8 {
   height: 2rem;
+}
+
+.h-96 {
+  height: 24rem;
 }
 
 .h-fit {
@@ -1237,6 +1269,10 @@ form input[type="checkbox"]:focus {
 
 .max-h-screen {
   max-height: 100vh;
+}
+
+.w-1\/2 {
+  width: 50%;
 }
 
 .w-1\/4 {
@@ -1312,6 +1348,22 @@ form input[type="checkbox"]:focus {
 
 .animate-big_cow_move {
   animation: move_pass_screen_x_axis 20s linear infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
 }
 
 @keyframes first_place {
@@ -1426,6 +1478,17 @@ form input[type="checkbox"]:focus {
 
 .animate-move_cow_down {
   animation: move_across_y_axis 2s linear infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 @keyframes pulse {
@@ -1734,6 +1797,14 @@ form input[type="checkbox"]:focus {
   background-image: url(/static/bus.gif);
 }
 
+.bg-fnaf {
+  background-image: url(/static/springtrap_stare.gif);
+}
+
+.bg-kurlik {
+  background-image: url(/static/kurlik.gif);
+}
+
 .bg-milos {
   background-image: url(/static/milos2.gif);
 }
@@ -1748,6 +1819,10 @@ form input[type="checkbox"]:focus {
 
 .bg-trippy1 {
   background-image: url(/static/tripy2.gif);
+}
+
+.bg-power {
+  background-image: url(/static/power.gif);
 }
 
 .bg-cover {
@@ -2000,6 +2075,32 @@ form input[type="checkbox"]:focus {
   width: 24rem;
 }
 
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.hover\:animate-bounce:hover {
+  animation: bounce 1s infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hover\:animate-spin:hover {
+  animation: spin 1s linear infinite;
+}
+
 .hover\:text-primary:hover {
   --tw-text-opacity: 1;
   color: rgb(166 110 98 / var(--tw-text-opacity));
@@ -2055,6 +2156,10 @@ form input[type="checkbox"]:focus {
 
   .md\:flex {
     display: flex;
+  }
+
+  .md\:h-96 {
+    height: 24rem;
   }
 
   .md\:h-fit {

@@ -53,7 +53,10 @@ module.exports = {
                 "milos":"url(/static/milos2.gif)",
                 "trippy":"url(/static/tripy1.gif)",
                 "trippy1":"url(/static/tripy2.gif)",
-                "dhl":"url(/static/bus.gif)"
+                "dhl":"url(/static/bus.gif)",
+                "fnaf":"url(/static/springtrap_stare.gif)",
+                "kurlik":"url(/static/kurlik.gif)",
+                "power":"url(/static/power.gif)"
             },
             animation:
             {

@@ -21,13 +21,17 @@ bg-trippy
 bg-trippy1
 {% elif seed < 68 and seed >= 64 and records|length > 0 %}
 bg-dhl
+{% elif seed < 80 and seed >= 72 and records|length > 0 %}
+bg-kurlik
+{% elif seed < 90 and seed >= 85 and records|length > 0 %}
+bg-power
 {% else %}
 bg-synthwave 
 {% endif %}
 
 bg-scroll 
 
-{% if seed < 55 and seed >= 40 %}
+{% if seed < 55 and seed >= 40 or seed < 80 and seed >= 72 %}
     bg-repeat 
 {% else %}
     bg-cover 
@@ -51,6 +55,28 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
         <img src="{% static 'frog_mlg.gif' %}" alt="dance" class="fixed right-0 bottom-0 md:w-64 w-32">
     {% endif %}
 
+    {% if seedm < 10 and seedm >= 5 and records|length > 0 %}
+        <img src="{% static 'kowolski_brush.gif' %}" alt="dance" class="fixed left-2 bottom-0 md:w-64 w-32">
+        <img src="{% static 'kowolski_brush.gif' %}" alt="dance" class="fixed right-2 bottom-0 md:w-64 w-32">
+    {% endif %}
+
+    {% if seedm < 90 and seedm >= 80 and records|length > 0 %}
+        <img src="{% static 'kapitan_bomba.gif' %}" alt="dance" class="absolute right-0 top-1/2 h-96">
+    {% endif %}
+
+    {% if seede < 90 and seede >= 70 and records|length > 0 %}
+        <img src="{% static 'grim-dance.gif' %}" alt="dance" class="absolute left-0 top-1/2 h-96 animate-move_cow">
+    {% endif %}
+
+    {% if seede < 24 and seede >= 10 and records|length > 0 %}
+        <img src="{% static 'Choirak_strach.gif' %}" alt="dance" class="absolute left-0 top-1/4 h-96">
+    {% endif %}
+
+    {% if seedm < 50 and seedm >= 30 and records|length > 0 %}
+        <img src="{% static 'cat-legs.gif' %}" alt="dance" class="fixed left-[19%] bottom-0 md:w-64 z-0 md:h-96 h-32 w-8 animate-bounce">
+        <img src="{% static 'cat-legs.gif' %}" alt="dance" class="fixed right-[20%] bottom-0 md:w-64 z-0 md:h-96 h-32 w-8 animate-bounce">
+    {% endif %}
+
     {% if seed == 34 and records|length > 0 %}
         <img src="{% static 'tarn.gif' %}" alt="dance" class="fixed left-0 bottom-0 w-full h-full z-10">
     {% endif %}
@@ -61,6 +87,11 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
 
     {% if seed == 98 and records|length > 0 %}
         <img src="{% static 'elmo_ogien.gif' %}" alt="dance" class="fixed left-0 bottom-0 w-full h-full z-10 animate-pulse">
+    {% endif %}
+
+    {% if seede < 60 and seede >= 42 and records|length > 0 %}
+        <img src="{% static 'ed1.gif' %}" alt="dance" class="fixed left-0 bottom-0 w-full h-full z-10 animate-pulse">
+        <img src="{% static 'ed1.gif' %}" alt="dance" class="fixed left-0 bottom-0 w-full h-full z-10 animate-ping">
     {% endif %}
 
     {% if seed == 55 and records|length > 0 %}
@@ -76,6 +107,13 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
             <img src="{% static 'polish_cow.gif' %}" alt="dance" class="fixed left-0 top-3/4 animate-move_cow w-32">
         {% elif seedc == 41 or seedc == 19 %}
             <img src="{% static 'polish_cow.gif' %}" alt="dance" class="fixed left-0 top-0 animate-big_cow_move w-full">
+        {% elif seedc == 96 or seedc == 14 %}
+            <img src="{% static 'Gumball_run.gif' %}" alt="dance" class="fixed left-0 top-0 animate-big_cow_move w-full">
+        {% elif seedc <= 5 and seedc >= 0 %}
+            <img src="{% static 'kopanie_kurlika.gif' %}" alt="dance" class="fixed left-0 top-0 animate-big_cow_move w-96">
+            <img src="{% static 'kopanie_kurlika.gif' %}" alt="dance" class="fixed left-0 bottom-0 w-96 animate-bounce">
+        {% elif seedc <= 100 and seedc >= 96 %}
+            <img src="{% static 'lego-batman-falls-in-love.gif' %}" alt="dance" class="fixed left-0 bottom-0 w-96 animate-bounce">
         {% elif seedc < 59 and seedc >= 45 %}
             <img src="{% static 'polish_cow.gif' %}" alt="dance" class="fixed left-1/2 animate-move_cow_down  w-32">
         {% elif seedc < 82 and seedc >= 70 %}
@@ -101,6 +139,24 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
     {% elif seed_2 == 47 and records|length > 0 %}
             <img src="{% static 'benson_dance.gif' %}" alt="dance" class="w-96 mx-auto animate-spin">
             <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg animate-spin">
+    {% elif seed_2 == 12 and records|length > 0 %}
+            <img src="{% static 'jake_dance.gif' %}" alt="dance" class="w-full mx-auto animate-ping">
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
+    {% elif seed_2 < 20 and seed_2 >= 10 and records|length > 0 %}
+            <img src="{% static 'jake_dance.gif' %}" alt="dance" class="w-full mx-auto">
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
+    {% elif seed_2 < 10 and seed_2 >= 4 and records|length > 0 %}
+            <div class="w-fit mx-auto inline-block relative">
+                <img src="{% static 'guts-berserk-psycho.gif' %}" alt="dance" class="w-96 relative  z-0">
+                <img src="{% static 'guts-berserk-psycho.gif' %}" alt="dance" class="w-96  absolute animate-ping top-0 left-0 z-10">
+            </div>
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
+    {% elif seed_2 == 3 and records|length > 0 %}
+            <div class="w-fit mx-auto inline-block relative">
+                <img src="{% static 'kids-next-door-knd.gif' %}" alt="dance" class="w-96 relative  z-0">
+                <img src="{% static 'kids-next-door-knd.gif' %}" alt="dance" class="w-96  absolute animate-ping top-0 left-0 z-10">
+            </div>
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
     {% elif seed_2 < 49 and seed_2 >= 46 and records|length > 0 %}
             <img src="{% static 'benson_dance.gif' %}" alt="dance" class="w-96 mx-auto">
             <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
@@ -110,14 +166,30 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
     {% elif seed_2 < 66 and seed_2 >= 50 and records|length > 0 %}
             <img src="{% static 'Atleta_upada.gif' %}" alt="dance" class="w-96 mx-auto">
             <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
+    {% elif seed_2 < 69 and seed_2 >= 66 and records|length > 0 %}
+            <img src="{% static 'joker kicks batman.gif' %}" alt="dance" class="w-96 mx-auto hover:animate-bounce">
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
     {% elif seed_2 < 80 and seed_2 >= 69 and records|length > 0 %}
             <img src="{% static 'entire_bee_movie.gif' %}" alt="dance" class="w-96 mx-auto">
             <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
+    {% elif seed_2 < 97 and seed_2 >= 90 and records|length > 0 %}
+            <img src="{% static 'springtrap_dance.gif' %}" alt="dance" class="w-96 mx-auto hover:animate-spin">
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
+    {% elif seed_2 < 100 and seed_2 >= 97 and records|length > 0 %}
+            <img src="{% static 'talking-ben-ugh.gif' %}" alt="dance" class="w-96 mx-auto">
+            <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto gap-0 bg-black p-3 rounded-lg">
     {% else %}
-        <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto mt-10 gap-0 bg-black p-3 rounded-lg 
+        <div class="flex flex-col md:w-1/3 w-full h-fit mx-auto mt-10 gap-0  p-3 rounded-lg 
         
             {% if seed_2 < 68 and seed_2 >= 64 and records|length > 0 %}
         animate-size_out_ranking
+            {% endif %}
+                
+            {% if seed_2 < 42 and seed_2 >= 31 and records|length > 0 %}
+                bg-fnaf
+                bg-cover
+            {% else %}
+                bg-black
             {% endif %}
             
             {% if seed_2 == 9 and records|length > 0 %}
@@ -154,21 +226,44 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
             <div class="font-bold text-3xl text-center" >Ranking w budowie</div>
         {% endif %}
 
+    {% elif seedc == 12 %}
+    
+        <div class="flex flex-row h-96">
+            <img src="{% static 'kurliki.gif' %}" alt="Oddajcie Rayamna!!!" class="w-1/2">
+            <img src="{% static 'kapitan_bomba.gif' %}" alt="Oddajcie Rayamna!!!" class="w-1/2">
+        </div>
+
+    {% elif seedc < 14 and seedc >= 4  %}
+
+    <img src="{% static 'kurliki.gif' %}" alt="Oddajcie Rayamna!!!">
+
     {% else %}        
 
-        
+    
         <div class="flex flex-row w-full h-fit text-sm font-bold text-secondary border-b bg-[#4CAF50] p-3">
             <div class="w-full text-center">Name</div>
             <div class="w-full text-center">Czas [s]</div>
         </div>
-
-    {% endif %}
 
     {% for record in records %}
 
         {% if forloop.counter0 == 0 %}
         
         <div class="animate-first_stage flex flex-row w-full h-fit border-b py-10 border-secondary text-[#ff78b7] font-['Poppins'] tracking-widest italic text-xl">
+            {% if seedm < 25 %}
+                <img src="{% static 'zły_ed.gif' %}" alt="milo" class="w-20 h-20">
+            {% elif seedm < 45 and seedm >= 30 %}
+                <img src="{% static 'chojrak.gif' %}" alt="milo" class="w-20 h-20">
+            {% elif seedm < 75 and seedm >= 60 %}
+                <img src="{% static 'Him_pp.gif' %}" alt="milo" class="w-20 h-20">
+            {% elif seedm < 85 and seedm >= 80 %}
+                <img src="{% static 'Nicole_waterson.gif' %}" alt="milo" class="w-20 h-20">
+            {% elif seedm < 90 and seedm >= 85 %}
+                <img src="{% static 'Alice.gif' %}" alt="milo" class="w-20 h-20">
+            {% elif seedm < 30 and seedm >= 25 %}
+                <img src="{% static 'Davy_jones_eyebrow.gif' %}" alt="milo" class="w-20 h-20">
+            {% endif %}
+
             {% if seed_1 < 20 %}
                 <img src="{% static 'milos1.gif' %}" alt="milo" class="w-20 h-20">
             {% elif seed_1 < 31 %}
@@ -179,6 +274,8 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
             <img src="{% static 'purple_man.gif' %}" alt="milo" class="w-20 h-20">
             {% elif seed_1 < 40 and seed_1 >= 30 %}
             <img src="{% static 'frog_mlg.gif' %}" alt="milo" class="w-20 h-20">
+            {% elif seed_1 < 47 and seed_1 >= 40 %}
+            <img src="{% static 'joker.gif' %}" alt="milo" class="w-20 h-20">
             {% elif seed_1 < 54 and seed_1 >= 47 %}
             <img src="{% static 'missisipi_queen.gif' %}" alt="milo" class="w-20 h-20">
             {% elif seed_1 < 61 and seed_1 >= 54 %}
@@ -187,8 +284,10 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
             <img src="{% static 'benson_dance.gif' %}" alt="milo" class="w-20 h-20">
             {% elif seed_1 < 79 and seed_1 >= 70 %}
             <img src="{% static 'richard_chad_walk.gif' %}" alt="milo" class="w-20 h-20">
+            {% elif seed_1 < 85 and seed_1 >= 79 %}
+            <img src="{% static 'richard_chad_walk.gif' %}" alt="milo" class="w-20 h-20">
             {% elif seed_1 < 94 and seed_1 >= 87 %}
-            <img src="{% static '3d-saul-saul-goodman.gif' %}" alt="milo" class="w-20 h-20">
+            <img src="{% static 'alucard_laugh.gif' %}" alt="milo" class="w-20 h-20">
             {% elif seed_1 < 100 and seed_1 >= 94 %}
             <img src="{% static 'soldier_on_party.gif' %}" alt="milo" class="w-20 h-20">
             {% endif %}
@@ -198,6 +297,8 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
                 <img src="{% static 'milos1.gif' %}" alt="milo" class="w-12 h-12">
             {% elif seed_1 < 40 and seed_1 >= 30 %}
                 <img src="{% static 'frog_mlg.gif' %}" alt="milo" class="w-12 h-12">
+            {% elif seed_1 < 47 and seed_1 >= 40 %}
+                <img src="{% static 'joker.gif' %}" alt="milo" class="w-12 h-12">
             {% elif seed_1 < 61 and seed_1 >= 54 %}
                 <img src="{% static 'tarn.gif' %}" alt="milo" class="w-12 h-12">
             {% endif %}
@@ -207,6 +308,8 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
                 <img src="{% static 'milos1.gif' %}" alt="milo" class="w-10 h-10">
             {% elif seed_1 < 40 and seed_1 >= 30 %}
                 <img src="{% static 'frog_mlg.gif' %}" alt="milo" class="w-10 h-10">
+            {% elif seed_1 < 47 and seed_1 >= 40 %}
+                <img src="{% static 'joker.gif' %}" alt="milo" class="w-10 h-10">
             {% elif seed_1 < 61 and seed_1 >= 54 %}
                 <img src="{% static 'tarn.gif' %}" alt="milo" class="w-10 h-10">
             {% endif %}
@@ -216,6 +319,10 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
                 <img src="{% static 'milos1.gif' %}" alt="milo" class="w-8 h-8">
             {% elif seed_1 < 40 and seed_1 >= 30 %}
                 <img src="{% static 'frog_mlg.gif' %}" alt="milo" class="w-8 h-8">
+            {% elif seed_1 < 47 and seed_1 >= 40 %}
+                <img src="{% static 'joker.gif' %}" alt="milo" class="w-8 h-8">
+            {% elif seedm < 90 and seedm >= 70 %}
+                <img src="{% static 'blade.gif' %}" alt="milo" class="w-8 h-8">
             {% endif %}
         {% endif %}
             <div class="w-full text-center
@@ -235,6 +342,8 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
         </div>
     
     {% endfor %}
+
+    {% endif %}
 
     </div>
 
