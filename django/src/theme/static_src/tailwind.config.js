@@ -56,7 +56,10 @@ module.exports = {
                 "dhl":"url(/static/bus.gif)",
                 "fnaf":"url(/static/springtrap_stare.gif)",
                 "kurlik":"url(/static/kurlik.gif)",
-                "power":"url(/static/power.gif)"
+                "power":"url(/static/power.gif)",
+                "monke":"url(/static/monke.gif)",
+                "texas":"url(/static/texas.gif)",
+                "bears":"url(/static/black-bear.gif)"
             },
             animation:
             {
@@ -71,10 +74,33 @@ module.exports = {
                 "mir_move_cow":"mir_move_across_x_axis 2s linear infinite",
                 "mir_move_cow_down":"mir_move_across_y_axis 2s linear infinite",
                 "mir_move_cow_both":"mir_move_across_axis 2s linear infinite",
-                "big_cow_move":"move_pass_screen_x_axis 20s linear infinite"
+                "big_cow_move":"move_pass_screen_x_axis 20s linear infinite",
+                "move_heavy":"move_up 15s linear infinite",
+                "spy_fadeing_from_existance":"fade_out 2s linear 1",
+                "springtrap_story":"fade_out 5.5s linear 1",
+                "praise_sun":"fade_out 4s linear 1",
+                "kotel":"fade_out 3s linear 1",
             },
             keyframes:
             {
+                fade_out:
+                {
+                    "0%,75%":{
+                        opacity:"1.0"
+                    },
+                    "100%":
+                    {
+                        opacity:"0.0"
+                    }
+                },
+                move_up:{
+                    "0%":{
+                        top:"150%"
+                    },
+                    "100%":{
+                        top:"-100%"
+                    }
+                },
                 move_pass_screen_x_axis:{
                     "0%":{
                         left:"-300%"

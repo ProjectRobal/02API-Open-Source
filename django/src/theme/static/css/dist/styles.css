@@ -1043,6 +1043,14 @@ form input[type="checkbox"]:focus {
   left: 50%;
 }
 
+.left-1\/4 {
+  left: 25%;
+}
+
+.left-2 {
+  left: 0.5rem;
+}
+
 .left-\[19\%\] {
   left: 19%;
 }
@@ -1089,10 +1097,6 @@ form input[type="checkbox"]:focus {
 
 .top-\[5px\] {
   top: 5px;
-}
-
-.left-2 {
-  left: 0.5rem;
 }
 
 .z-0 {
@@ -1480,6 +1484,20 @@ form input[type="checkbox"]:focus {
   animation: move_across_y_axis 2s linear infinite;
 }
 
+@keyframes move_up {
+  0% {
+    top: 150%;
+  }
+
+  100% {
+    top: -100%;
+  }
+}
+
+.animate-move_heavy {
+  animation: move_up 15s linear infinite;
+}
+
 @keyframes ping {
   75%, 100% {
     transform: scale(2);
@@ -1489,6 +1507,20 @@ form input[type="checkbox"]:focus {
 
 .animate-ping {
   animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes fade_out {
+  0%,75% {
+    opacity: 1.0;
+  }
+
+  100% {
+    opacity: 0.0;
+  }
+}
+
+.animate-praise_sun {
+  animation: fade_out 4s linear 1;
 }
 
 @keyframes pulse {
@@ -1573,6 +1605,34 @@ form input[type="checkbox"]:focus {
   animation: spin 1s linear infinite;
 }
 
+@keyframes fade_out {
+  0%,75% {
+    opacity: 1.0;
+  }
+
+  100% {
+    opacity: 0.0;
+  }
+}
+
+.animate-springtrap_story {
+  animation: fade_out 5.5s linear 1;
+}
+
+@keyframes fade_out {
+  0%,75% {
+    opacity: 1.0;
+  }
+
+  100% {
+    opacity: 0.0;
+  }
+}
+
+.animate-spy_fadeing_from_existance {
+  animation: fade_out 2s linear 1;
+}
+
 @keyframes third_place {
   0% {
     color: #78aeff;
@@ -1589,6 +1649,20 @@ form input[type="checkbox"]:focus {
 
 .animate-third_stage {
   animation: third_place 3s linear infinite;
+}
+
+@keyframes fade_out {
+  0%,75% {
+    opacity: 1.0;
+  }
+
+  100% {
+    opacity: 0.0;
+  }
+}
+
+.animate-kotel {
+  animation: fade_out 3s linear 1;
 }
 
 .cursor-pointer {
@@ -1793,6 +1867,10 @@ form input[type="checkbox"]:focus {
   background-color: rgb(244 144 123 / var(--tw-bg-opacity));
 }
 
+.bg-bears {
+  background-image: url(/static/black-bear.gif);
+}
+
 .bg-dhl {
   background-image: url(/static/bus.gif);
 }
@@ -1809,8 +1887,20 @@ form input[type="checkbox"]:focus {
   background-image: url(/static/milos2.gif);
 }
 
+.bg-monke {
+  background-image: url(/static/monke.gif);
+}
+
+.bg-power {
+  background-image: url(/static/power.gif);
+}
+
 .bg-synthwave {
   background-image: url(/static/vecteezy_80s.gif);
+}
+
+.bg-texas {
+  background-image: url(/static/texas.gif);
 }
 
 .bg-trippy {
@@ -1821,8 +1911,8 @@ form input[type="checkbox"]:focus {
   background-image: url(/static/tripy2.gif);
 }
 
-.bg-power {
-  background-image: url(/static/power.gif);
+.bg-contain {
+  background-size: contain;
 }
 
 .bg-cover {
@@ -2049,6 +2139,10 @@ form input[type="checkbox"]:focus {
 .text-secondary {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.opacity-0 {
+  opacity: 0;
 }
 
 .shadow {
