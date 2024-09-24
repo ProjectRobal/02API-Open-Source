@@ -240,5 +240,32 @@ w-screen h-screen overflow-x-hidden overflow-y-auto">
 
 </body>
 
+<script>
+
+    const LAST_UPDATE_TIME = {{ update_time }};
+
+    console.log("Last update: ",LAST_UPDATE_TIME, " s");
+
+    function check_for_updates()
+    {
+        fetch("/lej/check")
+        .then(res => res.json() )
+        .then(json =>
+        {
+            console.log("Text: ",json["time"]);
+
+            time = json["time"];
+
+            if( time > LAST_UPDATE_TIME )
+            {
+                location.reload();
+            }
+        });
+            
+    }
+
+    setInterval(check_for_updates,10000);
+
+</script>
 
 </html>

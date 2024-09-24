@@ -7,11 +7,28 @@ import logging
 import random
 
 from lej.models import LejUserRecord
-import datetime
 
 import json
 
+def get_last_update()->float:
+    if LejUserRecord.objects.count() > 0:
+        return LejUserRecord.objects.all().order_by("-modified_date")[0].modified_date.timestamp()
+    
+    return 0.0
+
 # Create your views here.
+
+def check_for_update(request):
+    if request.method != "GET":
+        return HttpResponseBadRequest()
+    
+    last_update_time = get_last_update()
+    
+    output = {
+        "time":last_update_time
+    }
+    
+    return HttpResponse(json.dumps(output),content_type="application/json")
 
 # for testings
 # @login_required(login_url="/accounts/login")
@@ -52,6 +69,8 @@ def ranking_view(request):
         
     helper = random.randint(0,1000)
     
+    last_update_time = get_last_update()
+    
     logging.debug("Seed: {}".format(seed))
     
     for record in records:
@@ -66,4 +85,4 @@ def ranking_view(request):
             "seconds":seconds,
         })
     
-    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list,"seed":seed,"seed_1":seed1,"seed_2":seed2,"seedm":seedm,"seedc":seedc,"second":helper})
+    return render(request,"/app/lej/templates/ranking.html",context={"records":record_list,"seed":seed,"seed_1":seed1,"seed_2":seed2,"seedm":seedm,"seedc":seedc,"update_time":last_update_time,"second":helper})

@@ -8,13 +8,16 @@ class LejConfig(AppConfig):
 
     APP_READY=False
     
+    LAST_UPDATE = 0
+    
     def ready(self) -> None:
 
-        from lej.views import ranking_view
+        from lej.views import ranking_view,check_for_update
         from domena.home import entries
         from domena.menu import entries as menu_entries
         from domena.menu_types import HomeBlock,MenuBlock
         
+        addURL('lej/check/',check_for_update)
         addURL('lej/ranking/',ranking_view)
         
         entries.append(HomeBlock("CyberLej","/lej/ranking/"))
